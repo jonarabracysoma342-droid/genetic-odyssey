@@ -200,7 +200,7 @@ export const MainMenu = () => {
   );
 
   return (
-    <div className="w-full md:max-w-6xl mx-auto px-4 py-4 space-y-5 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
+    <div className="w-full md:max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-5 md:space-y-6 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
       
       {/* Aurora Background Blobs */}
       <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-sky-200/50 blur-3xl pointer-events-none float-anim z-0" />
@@ -216,36 +216,36 @@ export const MainMenu = () => {
           {/* 1. SEARCH INPUT ROW */}
           <div className="flex items-center gap-2 relative z-10">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search className="w-4 h-4 md:w-5 md:h-5 absolute left-3.5 md:left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="Cari modul, kamus, fitur..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/50 backdrop-blur-md border border-white/70 text-xs font-semibold text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white/80 transition shadow-2xs"
+                className="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 rounded-2xl bg-white/50 backdrop-blur-md border border-white/70 text-xs md:text-sm font-semibold text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white/80 transition shadow-2xs"
               />
             </div>
 
             <button 
               onClick={() => navigateTo('map')}
-              className="w-11 h-11 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center shadow-md shadow-sky-500/20 flex-shrink-0 transition cursor-pointer hover:scale-105"
+              className="w-11 h-11 md:w-13 md:h-13 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center shadow-md shadow-sky-500/20 flex-shrink-0 transition cursor-pointer hover:scale-105"
               title="Buka Peta Game"
             >
-              <SlidersHorizontal className="w-5 h-5" />
+              <SlidersHorizontal className="w-5 h-5 md:w-6 md:h-6" />
             </button>
           </div>
 
           {/* 2. CATEGORY QUICK ACTION 3D PNG ILLUSTRATIONS ROW (4 columns wrap) */}
-          <div className="grid grid-cols-4 gap-2 pt-1 relative z-10">
+          <div className="grid grid-cols-4 gap-2 md:gap-3 pt-1 relative z-10">
             {categories.map((cat, idx) => (
               <button
                 key={idx}
                 onClick={cat.action}
-                className="flex flex-col items-center gap-1.5 group cursor-pointer"
+                className="flex flex-col items-center gap-1.5 md:gap-2.5 group cursor-pointer"
               >
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60 flex items-center justify-center p-1.5 shadow-2xs group-hover:scale-105 group-hover:bg-white/60 transition-all duration-250 overflow-hidden">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60 flex items-center justify-center p-1.5 md:p-2 shadow-2xs group-hover:scale-105 group-hover:bg-white/60 transition-all duration-250 overflow-hidden">
                   {cat.icon ? (
-                    <cat.icon className="w-6 h-6 text-sky-600 stroke-[2.5]" />
+                    <cat.icon className="w-6 h-6 md:w-8 md:h-8 text-sky-600 stroke-[2.5]" />
                   ) : (
                     <img 
                       src={cat.img} 
@@ -254,7 +254,7 @@ export const MainMenu = () => {
                     />
                   )}
                 </div>
-                <span className="text-[9px] font-bold text-slate-700 tracking-tight text-center truncate w-full">
+                <span className="text-[9px] md:text-xs font-bold text-slate-700 tracking-tight text-center truncate w-full">
                   {cat.label}
                 </span>
               </button>
@@ -262,18 +262,18 @@ export const MainMenu = () => {
           </div>
 
           {/* 3. HERO PROMOTIONAL BANNER CARD (Glassmorphic Banner) */}
-          <div className="relative rounded-3xl bg-gradient-to-br from-sky-100/60 via-sky-50/45 to-blue-50/50 backdrop-blur-md border border-white/60 p-5 overflow-hidden shadow-2xs z-10 flex-1 flex flex-col justify-between min-h-[220px]">
-            <div className="relative z-10 max-w-[65%] space-y-2 text-left">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-200/60 text-sky-800 text-[10px] font-black uppercase tracking-wider">
-                <Sparkles className="w-3 h-3 text-sky-600" /> Game Edukasi
+          <div className="relative rounded-3xl bg-gradient-to-br from-sky-100/60 via-sky-50/45 to-blue-50/50 backdrop-blur-md border border-white/60 p-5 md:p-7 overflow-hidden shadow-2xs z-10 flex-1 flex flex-col justify-between min-h-[220px]">
+            <div className="relative z-10 max-w-[65%] space-y-2 md:space-y-3 text-left">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full bg-sky-200/60 text-sky-800 text-[10px] md:text-xs font-black uppercase tracking-wider">
+                <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-sky-600" /> Game Edukasi
               </span>
 
-              <h2 className="text-base font-black text-slate-900 leading-tight">
+              <h2 className="text-base md:text-xl font-black text-slate-900 leading-tight">
                 Jelajahi Gen. <br />
                 <span className="text-sky-600">Pecahkan Sifat.</span>
               </h2>
 
-              <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
+              <p className="text-[11px] md:text-sm text-slate-600 font-medium leading-relaxed">
                 Pelajari hukum Mendel & persilangan genetik secara interaktif.
               </p>
             </div>
@@ -281,9 +281,9 @@ export const MainMenu = () => {
             <div className="relative z-10 pt-3 text-left">
               <button
                 onClick={() => navigateTo('map')}
-                className="px-4 py-2 rounded-full bg-sky-655 hover:bg-sky-700 text-white font-extrabold text-xs shadow-md shadow-sky-500/30 flex items-center gap-1.5 transition cursor-pointer"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-sky-655 hover:bg-sky-700 text-white font-extrabold text-xs md:text-sm shadow-md shadow-sky-500/30 flex items-center gap-1.5 transition cursor-pointer"
               >
-                <Play className="w-3.5 h-3.5 fill-white stroke-none" />
+                <Play className="w-3.5 h-3.5 md:w-4 md:h-4 fill-white stroke-none" />
                 <span>Mulai Petualangan</span>
               </button>
             </div>
@@ -292,59 +292,59 @@ export const MainMenu = () => {
             <img
               src="/assets/mendel_avatar.png"
               alt="Mendel Character"
-              className="absolute -right-3 -bottom-4 w-36 h-36 object-contain pointer-events-none drop-shadow-md"
+              className="absolute -right-3 -bottom-4 w-36 h-36 md:w-44 md:h-44 object-contain pointer-events-none drop-shadow-md"
             />
           </div>
 
         </div>
 
         {/* RIGHT COLUMN: Modules list (takes 7 cols on md) */}
-        <div className="md:col-span-7 space-y-4 flex flex-col justify-start">
-          <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase pl-1 border-l-3 border-sky-500 text-left">
+        <div className="md:col-span-7 space-y-4 md:space-y-5 flex flex-col justify-start">
+          <h3 className="text-xs md:text-sm font-bold text-slate-400 tracking-wider uppercase pl-1 border-l-3 border-sky-500 text-left">
             Modul Pembelajaran
           </h3>
 
-          <div className="space-y-4 overflow-y-auto max-h-[75vh] pr-1 pb-6">
+          <div className="space-y-4 md:space-y-5 overflow-y-auto max-h-[75vh] pr-1 pb-6">
           {filteredSections.map((sec, idx) => {
             const isLeft = sec.layout === 'left';
             return (
               <ScrollReveal key={sec.id} delay={idx * 50}>
                 <div 
                   onClick={sec.action}
-                  className="relative flex items-center justify-between gap-4 group cursor-pointer p-4 transition-all duration-350 rounded-3xl bg-white/75 backdrop-blur-md border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:bg-white/90 hover:shadow-[0_12px_36px_rgba(2,132,199,0.12)] hover:scale-[1.01]"
+                  className="relative flex items-center justify-between gap-4 md:gap-5 group cursor-pointer p-4 md:p-5 transition-all duration-350 rounded-3xl bg-white/75 backdrop-blur-md border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:bg-white/90 hover:shadow-[0_12px_36px_rgba(2,132,199,0.12)] hover:scale-[1.01]"
                 >
                   {/* Giant low-opacity background number */}
-                  <div className="absolute top-1 left-3 text-7xl font-serif-display font-black text-slate-200/40 select-none pointer-events-none transition-all group-hover:text-slate-300/60 group-hover:scale-105 duration-300">
+                  <div className="absolute top-1 left-3 text-7xl md:text-8xl font-serif-display font-black text-slate-200/40 select-none pointer-events-none transition-all group-hover:text-slate-300/60 group-hover:scale-105 duration-300">
                     {sec.num}
                   </div>
 
                   {isLeft ? (
                     <>
                       {/* Text Column (Left) */}
-                      <div className="flex-1 text-left space-y-1.5 z-10 pl-1">
+                      <div className="flex-1 text-left space-y-1.5 md:space-y-2 z-10 pl-1">
                         <div className="flex items-center gap-2">
                           <div className="w-5 h-[1.5px] bg-amber-400" />
-                          <span className="text-[9px] font-bold text-amber-500 tracking-widest uppercase">
+                          <span className="text-[9px] md:text-[11px] font-bold text-amber-500 tracking-widest uppercase">
                             {sec.tag}
                           </span>
                         </div>
 
-                        <h3 className="text-xs sm:text-sm font-bold font-serif-display text-slate-900 tracking-wide leading-snug group-hover:text-sky-600 transition duration-300">
+                        <h3 className="text-xs sm:text-sm md:text-base font-bold font-serif-display text-slate-900 tracking-wide leading-snug group-hover:text-sky-600 transition duration-300">
                           {sec.title}
                         </h3>
 
-                        <p className="text-[10px] text-slate-500 font-medium leading-relaxed">
+                        <p className="text-[10px] md:text-xs text-slate-500 font-medium leading-relaxed">
                           {sec.desc}
                         </p>
 
-                        <div className="inline-flex items-center gap-1 text-[10px] font-extrabold text-sky-600 group-hover:translate-x-1 transition-transform duration-300 pt-0.5">
+                        <div className="inline-flex items-center gap-1 text-[10px] md:text-xs font-extrabold text-sky-600 group-hover:translate-x-1 transition-transform duration-300 pt-0.5">
                           <span>{sec.linkText}</span>
-                          <ArrowRight className="w-3 h-3" />
+                          <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
                         </div>
                       </div>
 
                       {/* Image Column (Right) */}
-                      <div className="w-20 h-20 rounded-2xl bg-white border border-sky-100/75 flex items-center justify-center p-1.5 shadow-2xs overflow-hidden transition-transform duration-300 group-hover:scale-105 flex-shrink-0 z-10">
+                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white border border-sky-100/75 flex items-center justify-center p-1.5 md:p-2 shadow-2xs overflow-hidden transition-transform duration-300 group-hover:scale-105 flex-shrink-0 z-10">
                         <img 
                           src={sec.img} 
                           alt={sec.title} 
@@ -355,7 +355,7 @@ export const MainMenu = () => {
                   ) : (
                     <>
                       {/* Image Column (Left) */}
-                      <div className="w-20 h-20 rounded-2xl bg-white border border-sky-100/75 flex items-center justify-center p-1.5 shadow-2xs overflow-hidden transition-transform duration-300 group-hover:scale-105 flex-shrink-0 z-10">
+                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white border border-sky-100/75 flex items-center justify-center p-1.5 md:p-2 shadow-2xs overflow-hidden transition-transform duration-300 group-hover:scale-105 flex-shrink-0 z-10">
                         <img 
                           src={sec.img} 
                           alt={sec.title} 
@@ -364,25 +364,25 @@ export const MainMenu = () => {
                       </div>
 
                       {/* Text Column (Right) */}
-                      <div className="flex-1 text-left space-y-1.5 z-10 pr-1">
+                      <div className="flex-1 text-left space-y-1.5 md:space-y-2 z-10 pr-1">
                         <div className="flex items-center gap-2">
                           <div className="w-5 h-[1.5px] bg-amber-400" />
-                          <span className="text-[9px] font-bold text-amber-500 tracking-widest uppercase">
+                          <span className="text-[9px] md:text-[11px] font-bold text-amber-500 tracking-widest uppercase">
                             {sec.tag}
                           </span>
                         </div>
 
-                        <h3 className="text-xs sm:text-sm font-bold font-serif-display text-slate-900 tracking-wide leading-snug group-hover:text-sky-600 transition duration-300">
+                        <h3 className="text-xs sm:text-sm md:text-base font-bold font-serif-display text-slate-900 tracking-wide leading-snug group-hover:text-sky-600 transition duration-300">
                           {sec.title}
                         </h3>
 
-                        <p className="text-[10px] text-slate-500 font-medium leading-relaxed">
+                        <p className="text-[10px] md:text-xs text-slate-500 font-medium leading-relaxed">
                           {sec.desc}
                         </p>
 
-                        <div className="inline-flex items-center gap-1 text-[10px] font-extrabold text-sky-600 group-hover:translate-x-1 transition-transform duration-300 pt-0.5">
+                        <div className="inline-flex items-center gap-1 text-[10px] md:text-xs font-extrabold text-sky-600 group-hover:translate-x-1 transition-transform duration-300 pt-0.5">
                           <span>{sec.linkText}</span>
-                          <ArrowRight className="w-3 h-3" />
+                          <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
                         </div>
                       </div>
                     </>
