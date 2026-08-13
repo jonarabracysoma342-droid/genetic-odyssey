@@ -200,101 +200,111 @@ export const MainMenu = () => {
   );
 
   return (
-    <div className="max-w-md mx-auto px-4 py-4 space-y-5 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
+    <div className="w-full md:max-w-6xl mx-auto px-4 py-4 space-y-5 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
       
       {/* Aurora Background Blobs */}
       <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-sky-200/50 blur-3xl pointer-events-none float-anim z-0" />
       <div className="absolute top-1/2 -left-20 w-56 h-56 rounded-full bg-indigo-200/40 blur-3xl pointer-events-none float-anim z-0 animate-pulse duration-[8s]" />
       <div className="absolute -bottom-10 right-10 w-44 h-44 rounded-full bg-amber-100/60 blur-3xl pointer-events-none float-anim z-0" />
 
-      {/* 1. SEARCH INPUT ROW */}
-      <div className="flex items-center gap-2 relative z-10">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Cari modul, kamus, fitur..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/50 backdrop-blur-md border border-white/70 text-xs font-semibold text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white/80 transition shadow-2xs"
-          />
-        </div>
-
-        <button 
-          onClick={() => navigateTo('map')}
-          className="w-11 h-11 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center shadow-md shadow-sky-500/20 flex-shrink-0 transition cursor-pointer hover:scale-105"
-          title="Buka Peta Game"
-        >
-          <SlidersHorizontal className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* 2. CATEGORY QUICK ACTION 3D PNG ILLUSTRATIONS ROW (7 Columns Glassmorphic Grid) */}
-      <div className="grid grid-cols-4 sm:grid-cols-4 gap-2 pt-1 relative z-10">
-        {categories.map((cat, idx) => (
-          <button
-            key={idx}
-            onClick={cat.action}
-            className="flex flex-col items-center gap-1.5 group cursor-pointer"
-          >
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60 flex items-center justify-center p-1.5 shadow-2xs group-hover:scale-105 group-hover:bg-white/60 transition-all duration-250 overflow-hidden">
-              {cat.icon ? (
-                <cat.icon className="w-6 h-6 text-sky-600 stroke-[2.5]" />
-              ) : (
-                <img 
-                  src={cat.img} 
-                  alt={cat.label} 
-                  className="w-full h-full object-contain drop-shadow-xs"
-                />
-              )}
+      {/* Grid wrapper for Desktop Widescreen / Landscape layout */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative z-10">
+        
+        {/* LEFT COLUMN: Search, Quick Actions, and Hero Banner */}
+        <div className="md:col-span-5 space-y-5 flex flex-col justify-start">
+          
+          {/* 1. SEARCH INPUT ROW */}
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Cari modul, kamus, fitur..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/50 backdrop-blur-md border border-white/70 text-xs font-semibold text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white/80 transition shadow-2xs"
+              />
             </div>
-            <span className="text-[9px] font-bold text-slate-700 tracking-tight text-center truncate w-full">
-              {cat.label}
-            </span>
-          </button>
-        ))}
-      </div>
 
-      {/* 3. HERO PROMOTIONAL BANNER CARD (Glassmorphic Banner) */}
-      <div className="relative rounded-3xl bg-gradient-to-br from-sky-100/60 via-sky-50/45 to-blue-50/50 backdrop-blur-md border border-white/60 p-5 overflow-hidden shadow-2xs z-10">
-        <div className="relative z-10 max-w-[65%] space-y-2">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-200/60 text-sky-800 text-[10px] font-black uppercase tracking-wider">
-            <Sparkles className="w-3 h-3 text-sky-600" /> Game Edukasi
-          </span>
+            <button 
+              onClick={() => navigateTo('map')}
+              className="w-11 h-11 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center shadow-md shadow-sky-500/20 flex-shrink-0 transition cursor-pointer hover:scale-105"
+              title="Buka Peta Game"
+            >
+              <SlidersHorizontal className="w-5 h-5" />
+            </button>
+          </div>
 
-          <h2 className="text-base font-black text-slate-900 leading-tight">
-            Jelajahi Gen. <br />
-            <span className="text-sky-600">Pecahkan Sifat.</span>
-          </h2>
+          {/* 2. CATEGORY QUICK ACTION 3D PNG ILLUSTRATIONS ROW (4 columns wrap) */}
+          <div className="grid grid-cols-4 gap-2 pt-1 relative z-10">
+            {categories.map((cat, idx) => (
+              <button
+                key={idx}
+                onClick={cat.action}
+                className="flex flex-col items-center gap-1.5 group cursor-pointer"
+              >
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60 flex items-center justify-center p-1.5 shadow-2xs group-hover:scale-105 group-hover:bg-white/60 transition-all duration-250 overflow-hidden">
+                  {cat.icon ? (
+                    <cat.icon className="w-6 h-6 text-sky-600 stroke-[2.5]" />
+                  ) : (
+                    <img 
+                      src={cat.img} 
+                      alt={cat.label} 
+                      className="w-full h-full object-contain drop-shadow-xs"
+                    />
+                  )}
+                </div>
+                <span className="text-[9px] font-bold text-slate-700 tracking-tight text-center truncate w-full">
+                  {cat.label}
+                </span>
+              </button>
+            ))}
+          </div>
 
-          <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
-            Pelajari hukum Mendel & persilangan genetik secara interaktif.
-          </p>
+          {/* 3. HERO PROMOTIONAL BANNER CARD (Glassmorphic Banner) */}
+          <div className="relative rounded-3xl bg-gradient-to-br from-sky-100/60 via-sky-50/45 to-blue-50/50 backdrop-blur-md border border-white/60 p-5 overflow-hidden shadow-2xs z-10 flex-1 flex flex-col justify-between min-h-[220px]">
+            <div className="relative z-10 max-w-[65%] space-y-2 text-left">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-200/60 text-sky-800 text-[10px] font-black uppercase tracking-wider">
+                <Sparkles className="w-3 h-3 text-sky-600" /> Game Edukasi
+              </span>
 
-          <button
-            onClick={() => navigateTo('map')}
-            className="mt-1 px-4 py-2 rounded-full bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs shadow-md shadow-sky-500/30 flex items-center gap-1.5 transition cursor-pointer"
-          >
-            <Play className="w-3.5 h-3.5 fill-white" />
-            <span>Mulai Petualangan</span>
-          </button>
+              <h2 className="text-base font-black text-slate-900 leading-tight">
+                Jelajahi Gen. <br />
+                <span className="text-sky-600">Pecahkan Sifat.</span>
+              </h2>
+
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
+                Pelajari hukum Mendel & persilangan genetik secara interaktif.
+              </p>
+            </div>
+
+            <div className="relative z-10 pt-3 text-left">
+              <button
+                onClick={() => navigateTo('map')}
+                className="px-4 py-2 rounded-full bg-sky-655 hover:bg-sky-700 text-white font-extrabold text-xs shadow-md shadow-sky-500/30 flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <Play className="w-3.5 h-3.5 fill-white stroke-none" />
+                <span>Mulai Petualangan</span>
+              </button>
+            </div>
+
+            {/* Right Character PNG Graphic */}
+            <img
+              src="/assets/mendel_avatar.png"
+              alt="Mendel Character"
+              className="absolute -right-3 -bottom-4 w-36 h-36 object-contain pointer-events-none drop-shadow-md"
+            />
+          </div>
+
         </div>
 
-        {/* Right Character PNG Graphic */}
-        <img
-          src="/assets/mendel_avatar.png"
-          alt="Mendel Character"
-          className="absolute -right-3 -bottom-4 w-36 h-36 object-contain pointer-events-none drop-shadow-md"
-        />
-      </div>
+        {/* RIGHT COLUMN: Modules list (takes 7 cols on md) */}
+        <div className="md:col-span-7 space-y-4 flex flex-col justify-start">
+          <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase pl-1 border-l-3 border-sky-500 text-left">
+            Modul Pembelajaran
+          </h3>
 
-      {/* 4. MNTN ALTERNATING SECTIONS LIST (6 Cards with ScrollReveal) */}
-      <div className="space-y-4 pt-2 relative z-10">
-        <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase pl-1 border-l-3 border-sky-500">
-          Modul Pembelajaran
-        </h3>
-
-        <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto max-h-[75vh] pr-1 pb-6">
           {filteredSections.map((sec, idx) => {
             const isLeft = sec.layout === 'left';
             return (
@@ -383,7 +393,7 @@ export const MainMenu = () => {
           })}
         </div>
       </div>
-
     </div>
+  </div>
   );
 };
