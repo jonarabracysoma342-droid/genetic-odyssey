@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <!-- Linear Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#7e22ce" />
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255, 255, 255, 0.15)" />
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.05)" />
+    </linearGradient>
+    
+    <!-- Filters for 3D Glow & Shadow -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.35" />
+    </filter>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.2" />
+    </filter>
+  </defs>
+
+  <!-- Card Background -->
+  <rect width="400" height="300" rx="24" fill="url(#bgGrad)" />
+  
+  <!-- Subtle Grid Lines -->
+  <g opacity="0.05" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="50" x2="400" y2="50" />
+    <line x1="0" y1="100" x2="400" y2="100" />
+    <line x1="0" y1="150" x2="400" y2="150" />
+    <line x1="0" y1="200" x2="400" y2="200" />
+    <line x1="0" y1="250" x2="400" y2="250" />
+    <line x1="100" y1="0" x2="100" y2="300" />
+    <line x1="200" y1="0" x2="200" y2="300" />
+    <line x1="300" y1="0" x2="300" y2="300" />
+  </g>
+
+  
+  <text x="200" y="30" fill="#f8fafc" font-family="Arial, sans-serif" font-weight="bold" font-size="15" text-anchor="middle">
+    Rasio Fenotipe F2 Dihibrid (9 : 3 : 3 : 1)
+  </text>
+
+  <g transform="translate(20, 50)" filter="url(#shadow)">
+    <!-- 9 Bulat Kuning -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="175" height="100" rx="14" fill="#1e293b" stroke="#f59e0b" stroke-width="2" />
+      <circle cx="35" cy="50" r="22" fill="#fbbf24" filter="url(#glow)" />
+      <text x="75" y="42" fill="#fef08a" font-family="Arial, sans-serif" font-weight="bold" font-size="18">9 bagian</text>
+      <text x="75" y="62" fill="#cbd5e1" font-family="Arial, sans-serif" font-weight="bold" font-size="11">🟡 Bulat Kuning</text>
+      <text x="75" y="78" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">(B- K-)</text>
+    </g>
+
+    <!-- 3 Bulat Hijau -->
+    <g transform="translate(185, 0)">
+      <rect x="0" y="0" width="175" height="100" rx="14" fill="#1e293b" stroke="#10b981" stroke-width="2" />
+      <circle cx="35" cy="50" r="22" fill="#10b981" filter="url(#glow)" />
+      <text x="75" y="42" fill="#a7f3d0" font-family="Arial, sans-serif" font-weight="bold" font-size="18">3 bagian</text>
+      <text x="75" y="62" fill="#cbd5e1" font-family="Arial, sans-serif" font-weight="bold" font-size="11">🟢 Bulat Hijau</text>
+      <text x="75" y="78" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">(B- kk)</text>
+    </g>
+
+    <!-- 3 Keriput Kuning -->
+    <g transform="translate(0, 115)">
+      <rect x="0" y="0" width="175" height="100" rx="14" fill="#1e293b" stroke="#3b82f6" stroke-width="2" />
+      <path d="M 35 32 C 25 42 45 52 25 62 C 45 72 25 82 35 85" fill="none" stroke="#fbbf24" stroke-width="5" />
+      <text x="75" y="42" fill="#93c5fd" font-family="Arial, sans-serif" font-weight="bold" font-size="18">3 bagian</text>
+      <text x="75" y="62" fill="#cbd5e1" font-family="Arial, sans-serif" font-weight="bold" font-size="11">🟡 Keriput Kuning</text>
+      <text x="75" y="78" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">(bb K-)</text>
+    </g>
+
+    <!-- 1 Keriput Hijau -->
+    <g transform="translate(185, 115)">
+      <rect x="0" y="0" width="175" height="100" rx="14" fill="#1e293b" stroke="#f43f5e" stroke-width="2" />
+      <path d="M 35 32 C 25 42 45 52 25 62 C 45 72 25 82 35 85" fill="none" stroke="#10b981" stroke-width="5" />
+      <text x="75" y="42" fill="#fca5a5" font-family="Arial, sans-serif" font-weight="bold" font-size="18">1 bagian</text>
+      <text x="75" y="62" fill="#cbd5e1" font-family="Arial, sans-serif" font-weight="bold" font-size="11">🟢 Keriput Hijau</text>
+      <text x="75" y="78" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">(bb kk)</text>
+    </g>
+  </g>
+
+</svg>
