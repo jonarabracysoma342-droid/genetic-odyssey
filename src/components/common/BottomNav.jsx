@@ -14,7 +14,7 @@ export const BottomNav = () => {
   ];
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 bg-white/70 backdrop-blur-md border-t border-white/45 px-2 py-1.5 shadow-[0_-4px_24px_rgba(2,132,199,0.04)]">
+    <div className="absolute bottom-0 left-0 right-0 z-40 bg-white/70 backdrop-blur-md border-t border-white/45 px-2 py-1.5 shadow-[0_-4px_24px_rgba(2,132,199,0.04)] md:hidden">
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;

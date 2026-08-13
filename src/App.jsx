@@ -15,8 +15,152 @@ import { SettingsModal } from './components/features/SettingsModal';
 // Firebase Auth & Group Dashboard imports
 import { AuthScreen } from './components/features/AuthScreen';
 import { GroupDashboard } from './components/features/GroupDashboard';
-import { Brain, AlertCircle } from 'lucide-react';
+import { 
+  Brain, 
+  AlertCircle, 
+  Home, 
+  Map, 
+  GraduationCap, 
+  BookOpen, 
+  Trophy, 
+  Settings, 
+  LogOut 
+} from 'lucide-react';
 import { sound } from './services/sound';
+
+const DesktopSidebar = () => {
+  const { 
+    activeView, 
+    navigateTo, 
+    userName, 
+    userRole, 
+    setIsLeaderboardOpen, 
+    setIsSettingsOpen, 
+    handleLogout 
+  } = useGame();
+
+  const menuItems = [
+    { id: 'main-menu', label: 'Dashboard Utama', icon: Home, action: () => navigateTo('main-menu') },
+    { id: 'map', label: 'Peta Petualangan', icon: Map, action: () => navigateTo('map') },
+    { id: 'group-dashboard', label: userRole === 'guru' ? 'Kelola Kelas (LMS)' : 'Kelas Saya', icon: GraduationCap, action: () => navigateTo('group-dashboard') },
+    { id: 'hots-quiz', label: 'Evaluasi Kuis HOTS', icon: Brain, action: () => navigateTo('hots-quiz') },
+    { id: 'genopedia', label: 'Ensiklopedia Genopedia', icon: BookOpen, action: () => navigateTo('genopedia') },
+  ];
+
+  return (
+    <aside className="w-64 bg-slate-900 border-r-3 border-slate-950 flex flex-col h-screen text-slate-100 p-4 justify-between z-30 select-none flex-shrink-0">
+      <div className="space-y-6">
+        
+        {/* Brand Header */}
+        <div className="flex items-center gap-3 p-2 bg-gradient-to-r from-sky-600 to-indigo-650 rounded-2xl border-2 border-slate-950 shadow-3xs">
+          <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-black text-white text-base">
+            🧬
+          </div>
+          <div className="text-left">
+            <h1 className="text-xs font-black uppercase tracking-widest leading-none text-white">GENETIC</h1>
+            <span className="text-[10px] font-bold text-sky-200 tracking-wider">ODYSSEY</span>
+          </div>
+        </div>
+
+        {/* User Profile Info Card */}
+        <div className="p-3.5 border-2 border-slate-950 bg-slate-950/40 rounded-2xl flex items-center gap-3 shadow-3xs">
+          <div className="w-9 h-9 rounded-xl bg-indigo-900 border border-slate-800 flex items-center justify-center font-black text-indigo-200">
+            {userName ? userName.charAt(0).toUpperCase() : 'G'}
+          </div>
+          <div className="text-left truncate max-w-[130px]">
+            <span className="text-[10px] font-black text-slate-100 block truncate">{userName}</span>
+            <span className="text-[7.5px] font-bold uppercase tracking-wider text-sky-400 mt-0.5 block leading-none">
+              {userRole === 'guru' ? '👨‍🏫 GURU' : '🧬 SISWA'}
+            </span>
+          </div>
+        </div>
+
+        {/* Navigation Link List */}
+        <nav className="space-y-1 text-left">
+          <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block px-2 mb-2 font-sans">Menu Navigasi</span>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeView === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => { sound.playClick(); item.action(); }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 cursor-pointer transition text-[9px] font-black uppercase ${
+                  isActive
+                    ? 'bg-sky-600 border-slate-950 text-white shadow-3xs'
+                    : 'bg-transparent border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850'
+                }`}
+              >
+                <Icon className={`w-4.5 h-4.5 ${isActive ? 'text-white' : 'text-slate-505'}`} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Footer / System Utilities */}
+      <div className="space-y-1.5 border-t border-slate-800 pt-3">
+        <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block px-2 mb-2 font-sans text-left">Utilitas Game</span>
+        
+        <button
+          onClick={() => { sound.playClick(); setIsLeaderboardOpen(true); }}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-slate-200 hover:bg-slate-850 border border-transparent hover:border-slate-800 transition cursor-pointer text-left"
+        >
+          <Trophy className="w-4 h-4 text-amber-500" />
+          <span>LEADERBOARD</span>
+        </button>
+
+        <button
+          onClick={() => { sound.playClick(); setIsSettingsOpen(true); }}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-slate-200 hover:bg-slate-850 border border-transparent hover:border-slate-800 transition cursor-pointer text-left"
+        >
+          <Settings className="w-4 h-4 text-slate-400" />
+          <span>PENGATURAN</span>
+        </button>
+
+        <button
+          onClick={() => { sound.playClick(); handleLogout(); }}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[9px] font-black uppercase text-rose-400 hover:text-rose-300 hover:bg-slate-850 border border-transparent transition cursor-pointer text-left"
+        >
+          <LogOut className="w-4 h-4 text-rose-500" />
+          <span>KELUAR AKUN</span>
+        </button>
+      </div>
+    </aside>
+  );
+};
+
+const DesktopHeader = () => {
+  const { activeView } = useGame();
+  
+  const getViewTitle = () => {
+    switch (activeView) {
+      case 'main-menu': return 'Dashboard Utama';
+      case 'map': return 'Peta Petualangan';
+      case 'group-dashboard': return 'Portal Kelas Belajar';
+      case 'hots-quiz': return 'Ujian Evaluasi Kuis HOTS';
+      case 'genopedia': return 'Ensiklopedia Genetika';
+      default: return 'Genetic Odyssey';
+    }
+  };
+
+  return (
+    <header className="bg-white border-b-2 border-slate-200 px-6 py-4 flex items-center justify-between shadow-2xs select-none">
+      <div className="text-left">
+        <span className="text-[8px] font-black text-sky-600 uppercase tracking-widest leading-none">PORTAL BELAJAR DIGITAL</span>
+        <h2 className="text-sm font-black text-slate-850 mt-0.5 uppercase tracking-wide leading-none">{getViewTitle()}</h2>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="px-3 py-1.5 bg-sky-50 border border-sky-200 rounded-xl text-[9px] font-bold text-sky-800 flex items-center gap-1.5">
+          <span className="animate-pulse">✨</span>
+          <span>BioBot Companion Aktif</span>
+        </div>
+      </div>
+    </header>
+  );
+};
 
 const GameMainContent = () => {
   const { activeView } = useGame();
@@ -93,11 +237,33 @@ const AppShell = () => {
     return <AuthScreen />;
   }
 
+  const getContainerMaxWidth = () => {
+    if (activeView === 'group-dashboard' || activeView === 'genopedia') {
+      return 'w-full max-w-6xl';
+    }
+    return 'w-full max-w-md';
+  };
+
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-0 sm:p-4 font-sans selection:bg-sky-500 selection:text-white w-full">
-      {/* Mobile Device Container Shell (Pixel-Perfect Responsive App Wrapper) */}
-      <div id="app-shell-container" className="w-full sm:max-w-md min-h-screen sm:min-h-[840px] sm:max-h-[920px] bg-white sm:rounded-[2.5rem] sm:border-[6px] sm:border-slate-800 sm:shadow-[0_25px_60px_-15px_rgba(2,132,199,0.25)] flex flex-col relative overflow-hidden overflow-y-auto">
-        
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-0 md:p-0 font-sans selection:bg-sky-500 selection:text-white w-full overflow-hidden">
+      
+      {/* 1. DESKTOP TATA LETAK SHELL (Visible only on md and above) */}
+      <div className="hidden md:flex w-full h-screen bg-slate-100 overflow-hidden relative">
+        <DesktopSidebar />
+        <div className="flex-1 flex flex-col h-screen overflow-hidden">
+          {activeView !== 'stage' && <DesktopHeader />}
+          <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+            <div className="flex justify-center w-full min-h-full">
+              <div className={getContainerMaxWidth()}>
+                <GameMainContent />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. MOBILE TATA LETAK SHELL (Visible only below md) */}
+      <div id="app-shell-container" className="w-full md:hidden min-h-screen bg-white flex flex-col relative overflow-hidden overflow-y-auto">
         {/* Top Notch / Status Bar simulator for Desktop view */}
         <div className="hidden sm:flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-bold text-slate-400 select-none bg-white z-50">
           <span>9:41</span>
@@ -113,15 +279,15 @@ const AppShell = () => {
         {activeView !== 'stage' && <Header />}
         <GameMainContent />
         {activeView !== 'stage' && <BottomNav />}
-
-        {/* Modals & Overlay Drawers */}
-        <BioBotDrawer />
-        <TeacherReportModal />
-        <LeaderboardModal />
-        <SettingsModal />
-        <CustomGlobalModal />
-
       </div>
+
+      {/* Modals & Overlay Drawers (Always rendered globally for both layouts) */}
+      <BioBotDrawer />
+      <TeacherReportModal />
+      <LeaderboardModal />
+      <SettingsModal />
+      <CustomGlobalModal />
+
     </div>
   );
 };

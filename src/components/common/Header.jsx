@@ -19,7 +19,7 @@ export const Header = () => {
   } = useGame();
 
   return (
-    <header className="sticky top-0 z-30 bg-white/70 backdrop-blur-md border-b border-white/45 px-4 py-2.5 shadow-2xs">
+    <header className="sticky top-0 z-30 bg-white/70 backdrop-blur-md border-b border-white/45 px-4 py-2.5 shadow-2xs md:hidden">
       <div className="flex items-center justify-between">
         
         {/* User Profile Avatar & Greeting */}
