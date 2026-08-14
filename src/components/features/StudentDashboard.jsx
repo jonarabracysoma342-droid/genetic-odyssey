@@ -229,10 +229,10 @@ export const StudentDashboard = () => {
     const totalQuestions = activeQuiz.questions.length;
 
     return (
-      <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col text-left">
+      <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left">
         {/* HUD Top Bar */}
-        <div className="w-full p-3 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-4 flex-shrink-0">
-          <div className="flex items-center gap-2">
+        <div className="w-full p-3 md:p-5 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-4 md:mb-6 flex-shrink-0">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => {
                 sound.playClick();
@@ -240,13 +240,13 @@ export const StudentDashboard = () => {
                   setActiveQuiz(null);
                 });
               }}
-              className="p-1 rounded-lg border-2 border-slate-800 bg-white hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+              className="p-1 md:p-1.5 rounded-lg border-2 border-slate-800 bg-white hover:bg-slate-55 text-slate-700 transition cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4 stroke-[3px]" />
+              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 stroke-[3px]" />
             </button>
             <div>
-              <span className="text-[7.5px] font-black text-indigo-755 uppercase tracking-widest block font-sans">Kuis Kustom Guru</span>
-              <h2 className="text-[11px] sm:text-xs font-black text-black leading-tight">{activeQuiz.title}</h2>
+              <span className="text-[7.5px] md:text-[10px] font-black text-indigo-755 uppercase tracking-widest block font-sans">Kuis Kustom Guru</span>
+              <h2 className="text-[11px] sm:text-xs md:text-sm font-black text-black leading-tight">{activeQuiz.title}</h2>
             </div>
           </div>
           <div className="text-[9px] font-black text-slate-855 bg-indigo-50 border-2 border-slate-800 px-3 py-1 rounded-xl shadow-3xs">
@@ -388,7 +388,7 @@ export const StudentDashboard = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 md:space-y-6">
       
       {/* Feedback Banner */}
       {message.text && (
@@ -402,14 +402,14 @@ export const StudentDashboard = () => {
 
       {!groupId ? (
         /* JOIN GROUP FORM */
-        <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 shadow-[4px_4px_0px_#1e293b] space-y-4 animate-scale-up">
-          <div className="text-center space-y-1.5">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-slate-800 p-2.5 flex items-center justify-center mx-auto shadow-3xs">
-              <GraduationCap className="w-6 h-6 text-indigo-655" />
+        <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 md:p-7 shadow-[4px_4px_0px_#1e293b] space-y-4 md:space-y-5 animate-scale-up">
+          <div className="text-center space-y-1.5 md:space-y-2">
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-indigo-50 border-2 border-slate-800 p-2.5 md:p-3 flex items-center justify-center mx-auto shadow-3xs">
+              <GraduationCap className="w-6 h-6 md:w-7 md:h-7 text-indigo-655" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-slate-855 uppercase font-sans">Gabung Kelompok Belajar</h2>
-              <p className="text-[9.5px] font-bold text-slate-500 mt-1 leading-relaxed max-w-[280px] mx-auto">
+              <h2 className="text-sm md:text-base font-black text-slate-855 uppercase font-sans">Gabung Kelompok Belajar</h2>
+              <p className="text-[9.5px] md:text-xs font-bold text-slate-500 mt-1 leading-relaxed max-w-[280px] md:max-w-[400px] mx-auto">
                 Game Anda belum terhubung ke kelompok kelas manapun. Masukkan 6-digit kode kelas yang diberikan oleh guru Anda.
               </p>
             </div>

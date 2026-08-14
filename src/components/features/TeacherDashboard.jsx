@@ -698,18 +698,18 @@ export const TeacherDashboard = () => {
     : 0;
 
   return (
-    <div className="space-y-4 pb-12 select-none text-left">
+    <div className="space-y-4 md:space-y-6 pb-12 select-none text-left">
       
       {/* Top Welcome Title Banner */}
-      <div className="bg-gradient-to-r from-indigo-600 to-indigo-850 border-2 border-slate-800 rounded-3xl p-5 text-white shadow-[4px_4px_0px_#1e293b] flex items-center justify-between">
+      <div className="bg-gradient-to-r from-indigo-600 to-indigo-850 border-2 border-slate-800 rounded-3xl p-5 md:p-7 text-white shadow-[4px_4px_0px_#1e293b] flex items-center justify-between">
         <div>
-          <span className="text-[7px] font-black uppercase tracking-widest text-indigo-200">PORTAL MANAGEMENT KELAS</span>
-          <h2 className="text-sm font-black mt-0.5 font-sans leading-none">Dashboard Guru: {userName}</h2>
-          <p className="text-[9px] text-indigo-100 font-bold mt-1.5 leading-normal max-w-[260px]">
+          <span className="text-[7px] md:text-[10px] font-black uppercase tracking-widest text-indigo-200">PORTAL MANAGEMENT KELAS</span>
+          <h2 className="text-sm md:text-lg font-black mt-0.5 font-sans leading-none">Dashboard Guru: {userName}</h2>
+          <p className="text-[9px] md:text-xs text-indigo-100 font-bold mt-1.5 leading-normal max-w-[260px] md:max-w-[400px]">
             Pantau performa, lakukan analisis materi & soal, kelola bank soal, dan ekspor lembar laporan secara praktis.
           </p>
         </div>
-        <GraduationCap className="w-10 h-10 text-indigo-200/30 stroke-[1.5]" />
+        <GraduationCap className="w-10 h-10 md:w-14 md:h-14 text-indigo-200/30 stroke-[1.5]" />
       </div>
 
       {/* Message Notifications */}
@@ -723,10 +723,10 @@ export const TeacherDashboard = () => {
       )}
 
       {/* Group Selector Pill Bar */}
-      <div className="bg-white border-2 border-slate-800 rounded-3xl p-4 shadow-[4px_4px_0px_#1e293b] space-y-3">
+      <div className="bg-white border-2 border-slate-800 rounded-3xl p-4 md:p-6 shadow-[4px_4px_0px_#1e293b] space-y-3 md:space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-[10px] font-black text-slate-850 uppercase tracking-wider flex items-center gap-1.5">
-            <Users className="w-4 h-4 text-indigo-650" /> Kelompok Kelas Anda ({teacherGroups.length})
+          <h3 className="text-[10px] md:text-xs font-black text-slate-850 uppercase tracking-wider flex items-center gap-1.5">
+            <Users className="w-4 h-4 md:w-5 md:h-5 text-indigo-650" /> Kelompok Kelas Anda ({teacherGroups.length})
           </h3>
           <button
             onClick={handleCreateDemoClass}

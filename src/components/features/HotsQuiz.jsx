@@ -48,7 +48,7 @@ const QuestionIllustration = ({ id }) => {
   if (!src) return null;
 
   return (
-    <div className="w-full flex justify-center items-center bg-slate-50 border border-slate-200 rounded-2xl p-2 h-28 overflow-hidden animate-scale-up">
+    <div className="w-full flex justify-center items-center bg-slate-50 border border-slate-200 rounded-2xl p-2 md:p-3 h-28 md:h-40 overflow-hidden animate-scale-up">
       <img 
         src={src} 
         alt={"Ilustrasi Soal " + id} 
@@ -509,72 +509,72 @@ export const HotsQuiz = () => {
   // VIEW 1: QUIZ SELECTOR SCREEN
   if (activeQuizType === null) {
     return (
-      <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 text-left">
+      <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left">
         {/* Parchment background */}
         <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] z-0" />
         
         {/* Header HUD */}
-        <div className="w-full p-4 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-3 z-30 relative mb-5 flex-shrink-0">
+        <div className="w-full p-4 md:p-5 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-3 z-30 relative mb-5 flex-shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigateTo('main-menu')}
-              className="p-1.5 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-655 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
+              className="p-1.5 md:p-2 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-655 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
             >
-              <ChevronLeft className="w-4 h-4 stroke-[3px]" />
+              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 stroke-[3px]" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-purple-50 border-2 border-slate-800 p-1.5 flex items-center justify-center">
-                <Brain className="w-5 h-5 text-purple-650" />
+              <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-purple-50 border-2 border-slate-800 p-1.5 md:p-2 flex items-center justify-center">
+                <Brain className="w-5 h-5 md:w-6 md:h-6 text-purple-650" />
               </div>
               <div>
-                <span className="text-[7.5px] font-black text-purple-700 uppercase tracking-widest block">MENU EVALUASI</span>
-                <h2 className="text-sm font-black text-black leading-tight">Evaluasi Kuis Biologi</h2>
+                <span className="text-[7.5px] md:text-[10px] font-black text-purple-700 uppercase tracking-widest block">MENU EVALUASI</span>
+                <h2 className="text-sm md:text-base font-black text-black leading-tight">Evaluasi Kuis Biologi</h2>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="space-y-4 z-10 relative overflow-y-auto max-h-[75vh] pr-1 pb-6">
+        <div className="space-y-4 md:space-y-5 z-10 relative overflow-y-auto max-h-[75vh] pr-1 pb-6">
           
           {/* Card Option 1: System Quiz */}
-          <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 shadow-[4px_4px_0px_#1e293b] space-y-3.5 hover:scale-[1.005] transition-all">
+          <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 md:p-6 shadow-[4px_4px_0px_#1e293b] space-y-3.5 md:space-y-4 hover:scale-[1.005] transition-all">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-50 border-2 border-slate-800 flex items-center justify-center p-2 flex-shrink-0">
-                  <Brain className="w-5 h-5 text-indigo-755" />
+              <div className="flex items-center gap-2.5 md:gap-3">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-indigo-50 border-2 border-slate-800 flex items-center justify-center p-2 flex-shrink-0">
+                  <Brain className="w-5 h-5 md:w-6 md:h-6 text-indigo-755" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-black text-slate-855 uppercase">1. KUIS EVALUASI HOTS</h3>
-                  <span className="text-[7.5px] font-black text-indigo-755 uppercase tracking-wide block mt-0.5">Kuis Sistem Mandiri</span>
+                  <h3 className="text-xs md:text-sm font-black text-slate-855 uppercase">1. KUIS EVALUASI HOTS</h3>
+                  <span className="text-[7.5px] md:text-[10px] font-black text-indigo-755 uppercase tracking-wide block mt-0.5">Kuis Sistem Mandiri</span>
                 </div>
               </div>
               {userProgress?.hotsQuiz && (
-                <span className="text-[8px] font-black px-2 py-0.5 bg-emerald-100 border border-emerald-500 rounded text-emerald-800">SELESAI (Skor: {userProgress.hotsQuiz.score})</span>
+                <span className="text-[8px] md:text-[10px] font-black px-2 md:px-3 py-0.5 md:py-1 bg-emerald-100 border border-emerald-500 rounded text-emerald-800">SELESAI (Skor: {userProgress.hotsQuiz.score})</span>
               )}
             </div>
 
-            <p className="text-[9.5px] font-medium text-slate-600 leading-relaxed">
+            <p className="text-[9.5px] md:text-xs font-medium text-slate-600 leading-relaxed">
               Uji pemahaman kognitif teori persilangan dan Hukum Mendel Anda secara menyeluruh dengan kuis HOTS 20 soal Taksonomi Bloom (C1-C6).
             </p>
 
             <button
               onClick={handleStartSystemQuiz}
-              className="w-full py-2.5 bg-indigo-650 hover:bg-indigo-700 text-white font-black text-[9.5px] border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 md:py-3 bg-indigo-650 hover:bg-indigo-700 text-white font-black text-[9.5px] md:text-xs border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
-              <Play className="w-3.5 h-3.5 fill-white stroke-none" />
+              <Play className="w-3.5 h-3.5 md:w-4 md:h-4 fill-white stroke-none" />
               <span>MULAI KUIS SISTEM</span>
             </button>
           </div>
 
           {/* Card Option 2: Class Quizzes */}
-          <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 shadow-[4px_4px_0px_#1e293b] space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-purple-50 border-2 border-slate-800 flex items-center justify-center p-2 flex-shrink-0">
-                <ClipboardList className="w-5 h-5 text-purple-655" />
+          <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 md:p-6 shadow-[4px_4px_0px_#1e293b] space-y-4 md:space-y-5">
+            <div className="flex items-center gap-2.5 md:gap-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-purple-50 border-2 border-slate-800 flex items-center justify-center p-2 flex-shrink-0">
+                <ClipboardList className="w-5 h-5 md:w-6 md:h-6 text-purple-655" />
               </div>
               <div>
-                <h3 className="text-xs font-black text-slate-855 uppercase">2. KUIS KUSTOM KELAS</h3>
-                <span className="text-[7.5px] font-black text-purple-700 uppercase tracking-wide block mt-0.5">Tugas Khusus Guru</span>
+                <h3 className="text-xs md:text-sm font-black text-slate-855 uppercase">2. KUIS KUSTOM KELAS</h3>
+                <span className="text-[7.5px] md:text-[10px] font-black text-purple-700 uppercase tracking-wide block mt-0.5">Tugas Khusus Guru</span>
               </div>
             </div>
 
@@ -646,11 +646,11 @@ export const HotsQuiz = () => {
   const accuracyPercentage = qListSize > 0 ? Math.round((correctCount / qListSize) * 100) : 0;
 
   return (
-    <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 text-left">
+    <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left">
       {/* Parchment background */}
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] z-0" />
 
-      <div className="w-full p-3 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-3 flex-shrink-0">
+      <div className="w-full p-3 md:p-5 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-3 md:mb-5 flex-shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -659,59 +659,59 @@ export const HotsQuiz = () => {
                 setActiveQuizType(null);
               });
             }}
-            className="p-1.5 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-655 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
+            className="p-1.5 md:p-2 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-655 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
             title="Kembali ke Pemilihan Kuis"
           >
-            <ChevronLeft className="w-4 h-4 stroke-[3px]" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 stroke-[3px]" />
           </button>
           
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-purple-50 border-2 border-slate-800 p-1 flex items-center justify-center flex-shrink-0">
-              <Brain className="w-5 h-5 text-purple-650" />
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-purple-50 border-2 border-slate-800 p-1 md:p-1.5 flex items-center justify-center flex-shrink-0">
+              <Brain className="w-5 h-5 md:w-6 md:h-6 text-purple-650" />
             </div>
             <div>
-              <span className="text-[7px] font-black text-purple-700 uppercase tracking-widest block leading-none">
+              <span className="text-[7px] md:text-[10px] font-black text-purple-700 uppercase tracking-widest block leading-none">
                 {activeQuizType === 'system' ? 'Kuis HOTS Sistem' : 'Kuis Kustom Guru'}
               </span>
-              <h2 className="text-[11px] sm:text-xs font-black text-black leading-tight mt-1 max-w-[140px] truncate">
+              <h2 className="text-[11px] sm:text-xs md:text-sm font-black text-black leading-tight mt-1 max-w-[140px] md:max-w-[250px] truncate">
                 {activeQuizType === 'system' ? 'Evaluasi Mandiri' : selectedClassQuiz?.title}
               </h2>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-amber-500/10 border-2 border-slate-800 px-3 py-1 rounded-xl shadow-3xs">
-          <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-          <span className="text-[9.5px] font-black text-amber-900 font-mono">
+        <div className="flex items-center gap-1.5 bg-amber-500/10 border-2 border-slate-800 px-3 md:px-4 py-1 md:py-1.5 rounded-xl shadow-3xs">
+          <Star className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-500 fill-amber-500" />
+          <span className="text-[9.5px] md:text-xs font-black text-amber-900 font-mono">
             {activeQuizType === 'system' ? 'Skor: ' + score : 'Benar: ' + correctCount}
           </span>
         </div>
       </div>
 
       {!quizCompleted ? (
-        <div className="flex-1 flex flex-col justify-between relative z-10 py-1 overflow-y-auto space-y-4">
+        <div className="flex-1 flex flex-col justify-between relative z-10 py-1 overflow-y-auto space-y-4 md:space-y-5">
           
           {/* Question Card */}
-          <div className="bg-white border-2 border-slate-800 rounded-3xl p-4 sm:p-5 shadow-[4px_4px_0px_#1e293b] flex flex-col gap-3.5 relative overflow-hidden flex-shrink-0">
+          <div className="bg-white border-2 border-slate-800 rounded-3xl p-4 sm:p-5 md:p-6 shadow-[4px_4px_0px_#1e293b] flex flex-col gap-3.5 md:gap-4 relative overflow-hidden flex-shrink-0">
             
             {/* Header info */}
             <div className="border-b-2 border-slate-800 pb-2 flex justify-between items-center">
               <div>
-                <span className="text-[7.5px] font-black text-purple-700 uppercase tracking-widest block font-sans">
+                <span className="text-[7.5px] md:text-[10px] font-black text-purple-700 uppercase tracking-widest block font-sans">
                   {currentQuestion.category || 'Evaluasi Pembelajaran'}
                 </span>
-                <h1 className="text-xs font-black text-slate-855 tracking-wide uppercase mt-0.5">
+                <h1 className="text-xs md:text-sm font-black text-slate-855 tracking-wide uppercase mt-0.5">
                   Soal {currentIdx + 1} dari {questionsList.length}
                 </h1>
               </div>
-              <div className="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-300 px-2.5 py-0.5 rounded-lg">
+              <div className="text-[9px] md:text-xs font-black text-slate-400 bg-slate-100 border border-slate-300 px-2.5 md:px-3 py-0.5 md:py-1 rounded-lg">
                 Pilihan Ganda
               </div>
             </div>
 
             {/* Question Text */}
-            <div className="p-3 bg-purple-500/5 border-2 border-slate-800 rounded-2xl text-[10px] font-bold text-slate-800 leading-relaxed text-left flex items-start gap-2">
-              <HelpCircle className="w-4 h-4 text-purple-650 flex-shrink-0 mt-0.5" />
+            <div className="p-3 md:p-4 bg-purple-500/5 border-2 border-slate-800 rounded-2xl text-[10px] md:text-sm font-bold text-slate-800 leading-relaxed text-left flex items-start gap-2 md:gap-3">
+              <HelpCircle className="w-4 h-4 md:w-5 md:h-5 text-purple-650 flex-shrink-0 mt-0.5" />
               <p>{currentQuestion.question}</p>
             </div>
 
@@ -723,7 +723,7 @@ export const HotsQuiz = () => {
             )}
 
             {/* Multiple choices */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 md:gap-2">
               {currentQuestion.options.map((opt) => {
                 const isSelected = selectedKey === opt.key;
                 const isCorrect = opt.key === currentQuestion.answer;
@@ -748,9 +748,9 @@ export const HotsQuiz = () => {
                     key={opt.key}
                     onClick={() => handleSelectOption(opt.key)}
                     disabled={isLocked}
-                    className={"w-full p-2.5 rounded-2xl border-2 text-[9.5px] font-bold text-left shadow-3xs cursor-pointer flex items-start gap-2 transition active:translate-y-0.5 active:shadow-none hover:scale-[1.005] " + btnStyle}
+                    className={"w-full p-2.5 md:p-3.5 rounded-2xl border-2 text-[9.5px] md:text-sm font-bold text-left shadow-3xs cursor-pointer flex items-start gap-2 md:gap-3 transition active:translate-y-0.5 active:shadow-none hover:scale-[1.005] " + btnStyle}
                   >
-                    <span className="w-4.5 h-4.5 rounded-lg border-2 border-slate-850 flex items-center justify-center flex-shrink-0 text-[9.5px] font-black bg-white">
+                    <span className="w-4.5 h-4.5 md:w-6 md:h-6 rounded-lg border-2 border-slate-850 flex items-center justify-center flex-shrink-0 text-[9.5px] md:text-xs font-black bg-white">
                       {opt.key}
                     </span>
                     <p className="flex-1 leading-normal">{opt.text}</p>
@@ -764,7 +764,7 @@ export const HotsQuiz = () => {
               <div className="space-y-3 border-t border-slate-350 pt-3 animate-scale-up">
                 
                 {/* Visual Correction Alert */}
-                <div className={"p-2.5 rounded-xl border-2 border-slate-800 flex items-start gap-2.5 text-[9px] font-bold shadow-[2px_2px_0px_#1e293b] text-left leading-normal " + (
+                <div className={"p-2.5 md:p-4 rounded-xl border-2 border-slate-800 flex items-start gap-2.5 md:gap-3 text-[9px] md:text-xs font-bold shadow-[2px_2px_0px_#1e293b] text-left leading-normal " + (
                   selectedKey === currentQuestion.answer
                     ? 'bg-emerald-100 text-emerald-850'
                     : 'bg-rose-100 text-rose-850'
@@ -792,7 +792,7 @@ export const HotsQuiz = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={handleNext}
-                    className="px-5 py-2 rounded-xl border-2 border-slate-800 bg-gradient-to-r from-purple-500 to-indigo-650 text-white font-black text-[9px] shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 cursor-pointer hover:scale-102"
+                    className="px-5 md:px-6 py-2 md:py-2.5 rounded-xl border-2 border-slate-800 bg-gradient-to-r from-purple-500 to-indigo-650 text-white font-black text-[9px] md:text-xs shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 cursor-pointer hover:scale-102"
                   >
                     <span>{currentIdx < questionsList.length - 1 ? 'PERTANYAAN BERIKUTNYA' : 'LIHAT HASIL EVALUASI'}</span>
                     <ArrowRight className="w-3.5 h-3.5 stroke-[3.5px]" />

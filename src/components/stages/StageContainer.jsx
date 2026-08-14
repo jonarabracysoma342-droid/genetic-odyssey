@@ -84,12 +84,12 @@ const StageTutorialModal = ({ stageId, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in text-left">
-      <div className="w-full max-w-sm rounded-3xl bg-white border-3 border-slate-800 p-5 shadow-[6px_6px_0px_#1e293b] space-y-4 relative overflow-hidden animate-scale-up">
+      <div className="w-full max-w-sm md:max-w-lg rounded-3xl bg-white border-3 border-slate-800 p-5 md:p-7 shadow-[6px_6px_0px_#1e293b] space-y-4 md:space-y-5 relative overflow-hidden animate-scale-up">
         
         {/* Modal Header */}
         <div className="flex items-start justify-between border-b-2 border-slate-155 pb-2.5">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white border-2 border-slate-800 p-1.5 flex items-center justify-center flex-shrink-0 shadow-3xs">
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border-2 border-slate-800 p-1.5 md:p-2 flex items-center justify-center flex-shrink-0 shadow-3xs">
               <img 
                 src={tutorial.illustration || '/assets/cat_genopedia_icon.png'} 
                 alt={tutorial.title}
@@ -97,10 +97,10 @@ const StageTutorialModal = ({ stageId, onClose }) => {
               />
             </div>
             <div>
-              <span className="text-[7.5px] font-black text-indigo-700 uppercase tracking-widest font-sans">
+              <span className="text-[7.5px] md:text-[10px] font-black text-indigo-700 uppercase tracking-widest font-sans">
                 TUTORIAL BERMAIN &bull; STAGE 0{stageId}
               </span>
-              <h3 className="text-xs font-black text-black leading-tight">
+              <h3 className="text-xs md:text-sm font-black text-black leading-tight">
                 {tutorial.title}
               </h3>
             </div>
@@ -108,18 +108,18 @@ const StageTutorialModal = ({ stageId, onClose }) => {
         </div>
 
         {/* Learning Topic */}
-        <div className="p-3 rounded-2xl bg-indigo-50 border-2 border-slate-800 shadow-3xs space-y-0.5">
-          <span className="text-[8px] text-indigo-700 font-extrabold uppercase font-sans">Fokus Pembelajaran</span>
-          <p className="text-xs text-slate-850 font-extrabold leading-tight">{tutorial.topic}</p>
+        <div className="p-3 md:p-4 rounded-2xl bg-indigo-50 border-2 border-slate-800 shadow-3xs space-y-0.5">
+          <span className="text-[8px] md:text-[10px] text-indigo-700 font-extrabold uppercase font-sans">Fokus Pembelajaran</span>
+          <p className="text-xs md:text-sm text-slate-850 font-extrabold leading-tight">{tutorial.topic}</p>
         </div>
 
         {/* Step-by-Step Instructions */}
         <div className="space-y-2">
-          <span className="text-[8px] text-slate-400 font-black uppercase tracking-wider block font-sans">LANGKAH BERMAIN</span>
-          <div className="space-y-2 text-[10.5px] font-bold text-slate-700 leading-relaxed max-h-56 overflow-y-auto pr-1">
+          <span className="text-[8px] md:text-[10px] text-slate-400 font-black uppercase tracking-wider block font-sans">LANGKAH BERMAIN</span>
+          <div className="space-y-2 md:space-y-3 text-[10.5px] md:text-xs font-bold text-slate-700 leading-relaxed max-h-56 md:max-h-72 overflow-y-auto pr-1">
             {tutorial.instructions.map((step, idx) => (
-              <div key={idx} className="flex gap-2.5 items-start">
-                <span className="w-5 h-5 rounded-full bg-slate-800 text-white font-mono text-[9px] font-black flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div key={idx} className="flex gap-2.5 md:gap-3 items-start">
+                <span className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-slate-800 text-white font-mono text-[9px] md:text-[11px] font-black flex items-center justify-center flex-shrink-0 mt-0.5">
                   {idx + 1}
                 </span>
                 <p className="flex-1 pt-0.5 text-slate-650">{step}</p>
@@ -134,9 +134,9 @@ const StageTutorialModal = ({ stageId, onClose }) => {
             sound.playClick();
             onClose();
           }}
-          className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 cursor-pointer active:translate-y-0.2 shadow-3xs"
+          className="w-full py-2.5 md:py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs md:text-sm flex items-center justify-center gap-2 cursor-pointer active:translate-y-0.2 shadow-3xs"
         >
-          <Play className="w-4 h-4 fill-white" />
+          <Play className="w-4 h-4 md:w-5 md:h-5 fill-white" />
           <span>PAHAM & MULAI BERMAIN</span>
         </button>
 

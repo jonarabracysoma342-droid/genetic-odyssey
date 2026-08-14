@@ -993,7 +993,7 @@ export const GenopediaPage = () => {
   ];
 
   return (
-    <div className="max-w-md mx-auto px-4 py-4 space-y-5 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
+    <div className="max-w-md md:max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-5 md:space-y-6 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
       
       {/* Background Decorator Blobs */}
       <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-sky-200/50 blur-3xl pointer-events-none z-0" />
@@ -1014,19 +1014,19 @@ export const GenopediaPage = () => {
                 navigateTo('main-menu');
               }
             }}
-            className="p-2 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:text-sky-600 transition shadow-2xs cursor-pointer"
+            className="p-2 md:p-2.5 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:text-sky-600 transition shadow-2xs cursor-pointer"
             title="Kembali"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-blue-50 text-blue-650 border border-blue-100 flex items-center justify-center flex-shrink-0">
-              <BookOpen className="w-5 h-5" />
+            <div className="p-2 md:p-2.5 rounded-2xl bg-blue-50 text-blue-650 border border-blue-100 flex items-center justify-center flex-shrink-0">
+              <BookOpen className="w-5 h-5 md:w-6 md:h-6" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-black">Materi Genopedia</h3>
-              <p className="text-[10px] text-black/60 font-bold">
+              <h3 className="text-base md:text-lg font-extrabold text-black">Materi Genopedia</h3>
+              <p className="text-[10px] md:text-xs text-black/60 font-bold">
                 Pusat referensi & pustaka ilmiah genetika
               </p>
             </div>
@@ -1054,40 +1054,40 @@ export const GenopediaPage = () => {
       </div>
 
       {/* ================= MAIN TAB HEADER NAVIGATION BAR (Materi | Decoder Istilah | Semantic Scholar) ================= */}
-      <div className="flex bg-white/80 backdrop-blur-md p-1.5 rounded-2xl border border-sky-100 shadow-2xs gap-1 relative z-10">
+      <div className="flex bg-white/80 backdrop-blur-md p-1.5 md:p-2 rounded-2xl border border-sky-100 shadow-2xs gap-1 md:gap-1.5 relative z-10">
         <button
           onClick={() => { stopSpeaking(); setMainTab('materi'); }}
-          className={`flex-1 py-2 px-2.5 rounded-xl text-[11px] font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2 md:py-2.5 px-2.5 md:px-3 rounded-xl text-[11px] md:text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
             mainTab === 'materi'
               ? 'bg-blue-600 text-white shadow-2xs'
               : 'text-slate-600 hover:text-black hover:bg-slate-50'
           }`}
         >
-          <BookOpen className="w-3.5 h-3.5" />
+          <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
           <span>Materi</span>
         </button>
 
         <button
           onClick={() => { stopSpeaking(); setMainTab('decoder'); }}
-          className={`flex-1 py-2 px-2.5 rounded-xl text-[11px] font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2 md:py-2.5 px-2.5 md:px-3 rounded-xl text-[11px] md:text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
             mainTab === 'decoder'
               ? 'bg-indigo-600 text-white shadow-2xs'
               : 'text-slate-600 hover:text-black hover:bg-slate-50'
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5" />
+          <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
           <span>Decoder Istilah</span>
         </button>
 
         <button
           onClick={() => { stopSpeaking(); setMainTab('scholar'); }}
-          className={`flex-1 py-2 px-2.5 rounded-xl text-[11px] font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 py-2 md:py-2.5 px-2.5 md:px-3 rounded-xl text-[11px] md:text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
             mainTab === 'scholar'
               ? 'bg-emerald-600 text-white shadow-2xs'
               : 'text-slate-600 hover:text-black hover:bg-slate-50'
           }`}
         >
-          <GraduationCap className="w-3.5 h-3.5" />
+          <GraduationCap className="w-3.5 h-3.5 md:w-4 md:h-4" />
           <span>Semantic Scholar</span>
         </button>
       </div>

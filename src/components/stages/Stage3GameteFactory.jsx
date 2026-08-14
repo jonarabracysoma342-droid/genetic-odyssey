@@ -141,7 +141,7 @@ export const Stage3GameteFactory = () => {
   };
 
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 text-left justify-between">
+    <div className="w-full h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left justify-between">
       
       {/* Retro parchment paper lines overlay for desk vibe */}
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] z-0" />
