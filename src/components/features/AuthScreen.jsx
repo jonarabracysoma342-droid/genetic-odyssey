@@ -51,10 +51,11 @@ export const AuthScreen = ({ onAuthSuccess }) => {
       const userDoc = querySnapshot.docs[0];
       const userData = userDoc.data();
 
-      if (
-        !userData.school ||
-        userData.school.trim().toLowerCase() !== recoverySchool.trim().toLowerCase()
-      ) {
+      const cleanString = (str) => (str || '').replace(/\s+/g, '').toLowerCase();
+      const storedSchool = cleanString(userData.school);
+      const inputSchool = cleanString(recoverySchool);
+
+      if (!userData.school || storedSchool !== inputSchool) {
         sound.playWrong();
         setErrorMsg('Validasi gagal: Asal sekolah tidak cocok dengan data terdaftar.');
         setLoading(false);
