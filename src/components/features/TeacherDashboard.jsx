@@ -724,24 +724,36 @@ export const TeacherDashboard = () => {
 
       {/* Group Selector Pill Bar */}
       <div className="bg-white border-2 border-slate-800 rounded-3xl p-4 md:p-6 shadow-[4px_4px_0px_#1e293b] space-y-3 md:space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h3 className="text-[10px] md:text-xs font-black text-slate-850 uppercase tracking-wider flex items-center gap-1.5">
             <Users className="w-4 h-4 md:w-5 md:h-5 text-indigo-650" /> Kelompok Kelas Anda ({teacherGroups.length})
           </h3>
-          <button
-            onClick={handleCreateDemoClass}
-            disabled={loading}
-            className="px-2.5 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-650 text-white font-black text-[8px] border-2 border-slate-800 rounded-lg shadow-3xs cursor-pointer flex items-center gap-1 active:translate-y-0.2"
-          >
-            <Sparkles className="w-3.5 h-3.5 fill-white stroke-none animate-pulse" />
-            <span>BUAT KELAS DEMO (FAKE)</span>
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={handleCreateDemoClass}
+              disabled={loading}
+              className="px-2.5 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-650 text-white font-black text-[8px] border-2 border-slate-800 rounded-lg shadow-3xs cursor-pointer flex items-center gap-1 active:translate-y-0.2"
+            >
+              <Sparkles className="w-3.5 h-3.5 fill-white stroke-none animate-pulse" />
+              <span>BUAT KELAS DEMO (FAKE)</span>
+            </button>
+            <button
+              onClick={() => {
+                sound.playClick();
+                setActiveTab('my_classes');
+              }}
+              className="px-2.5 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-black text-[8px] border-2 border-slate-800 rounded-lg shadow-3xs cursor-pointer flex items-center gap-1 active:translate-y-0.2"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[3px]" />
+              <span>BUAT KELAS RIIL</span>
+            </button>
+          </div>
           {selectedGroup && (
-            <span className="text-[8px] font-black text-indigo-650 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-lg">
+            <span className="text-[8px] font-black text-indigo-650 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-lg self-start sm:self-auto">
               Kode Kelas: {selectedGroup.groupId}
             </span>
           )}
-        </div>
+        </div> </div>
 
         {teacherGroups.length === 0 ? (
           <p className="text-[9px] font-bold text-slate-400">Belum ada kelompok kelas yang terdaftar. Buka tab "Kelas Saya" untuk membuat baru.</p>
