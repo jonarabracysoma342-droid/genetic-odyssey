@@ -753,7 +753,7 @@ export const TeacherDashboard = () => {
               Kode Kelas: {selectedGroup.groupId}
             </span>
           )}
-        </div> </div>
+        </div>
 
         {teacherGroups.length === 0 ? (
           <p className="text-[9px] font-bold text-slate-400">Belum ada kelompok kelas yang terdaftar. Buka tab "Kelas Saya" untuk membuat baru.</p>
