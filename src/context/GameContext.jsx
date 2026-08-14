@@ -53,16 +53,37 @@ export const GameProvider = ({ children }) => {
           console.error("Error fetching user profile from Firestore:", err);
         }
       } else {
-        setCurrentUser(null);
-        setUserRole('siswa');
-        setUserName('');
-        setGroupId('');
-        setUserProgress(INITIAL_PROGRESS);
+        // Only clear if the current session is not a guest session
+        setCurrentUser(prev => {
+          if (prev && prev.isGuest) return prev;
+          
+          setUserRole('siswa');
+          setUserName('');
+          setGroupId('');
+          setUserProgress(INITIAL_PROGRESS);
+          return null;
+        });
       }
       setAuthLoading(false);
     });
     return () => unsubscribe();
   }, []);
+
+  const loginAsGuest = () => {
+    sound.playClick();
+    const guestUser = {
+      uid: 'guest_' + Date.now(),
+      email: 'guest@odyssey.com',
+      displayName: 'Tamu Odyssey',
+      isGuest: true
+    };
+    setCurrentUser(guestUser);
+    setUserRole('siswa');
+    setUserName('Tamu Odyssey');
+    setGroupId('');
+    setUserProgress(INITIAL_PROGRESS);
+    setActiveView('main-menu');
+  };
 
   // Modal Visibility States
   const [isGenopediaOpen, setIsGenopediaOpen] = useState(false);
@@ -293,6 +314,7 @@ export const GameProvider = ({ children }) => {
         setGroupId,
         authLoading,
         handleLogout,
+        loginAsGuest,
 
         // Custom modal helper functions
         customModal,
