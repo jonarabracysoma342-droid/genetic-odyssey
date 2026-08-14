@@ -304,7 +304,7 @@ export const MainMenu = () => {
             Modul Pembelajaran
           </h3>
 
-          <div className="space-y-4 md:space-y-5 overflow-y-auto max-h-[75vh] pr-1 pb-6">
+          <div className="space-y-4 md:space-y-5 md:overflow-y-auto md:max-h-[75vh] pr-1 pb-6">
           {filteredSections.map((sec, idx) => {
             const isLeft = sec.layout === 'left';
             return (
