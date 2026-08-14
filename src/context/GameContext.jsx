@@ -69,6 +69,11 @@ export const GameProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+  // Force sign out on initial mount so user always lands on the login page (as requested by user)
+  useEffect(() => {
+    signOut(auth).catch(err => console.error("Error signing out on mount:", err));
+  }, []);
+
   const loginAsGuest = () => {
     sound.playClick();
     const guestUser = {
