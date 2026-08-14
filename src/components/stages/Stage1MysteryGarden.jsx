@@ -271,7 +271,7 @@ export const Stage1MysteryGarden = () => {
   };
 
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-slate-900 select-none p-4 md:p-8">
+    <div className="w-full h-screen relative overflow-hidden bg-slate-900 select-none p-0 md:p-8">
       
       {/* Dynamic swaying animation for GBA-style organic garden aesthetic */}
       <style>{`

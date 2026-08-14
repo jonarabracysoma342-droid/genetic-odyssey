@@ -229,7 +229,7 @@ export const StudentDashboard = () => {
     const totalQuestions = activeQuiz.questions.length;
 
     return (
-      <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left">
+      <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-0 md:p-8 text-left">
         {/* HUD Top Bar */}
         <div className="w-full p-3 md:p-5 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-4 md:mb-6 flex-shrink-0">
           <div className="flex items-center gap-2 md:gap-3">
