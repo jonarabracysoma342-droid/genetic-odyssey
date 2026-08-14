@@ -1,12 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { GameProvider, useGame } from './context/GameContext';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
-import { MainMenu } from './components/map/MainMenu';
-import { AdventureMap } from './components/map/AdventureMap';
-import { StageContainer } from './components/stages/StageContainer';
-import { HotsQuiz } from './components/features/HotsQuiz';
-import { GenopediaPage } from './components/features/GenopediaPage';
 import { BioBotDrawer } from './components/features/BioBotDrawer';
 import { TeacherReportModal } from './components/features/TeacherReportModal';
 import { LeaderboardModal } from './components/features/LeaderboardModal';
@@ -14,7 +9,15 @@ import { SettingsModal } from './components/features/SettingsModal';
 
 // Firebase Auth & Group Dashboard imports
 import { AuthScreen } from './components/features/AuthScreen';
-import { GroupDashboard } from './components/features/GroupDashboard';
+
+// Lazy load all secondary features to drastically reduce initial login bundle size (PageSpeed optimization)
+const MainMenu = lazy(() => import('./components/map/MainMenu').then(module => ({ default: module.MainMenu })));
+const AdventureMap = lazy(() => import('./components/map/AdventureMap').then(module => ({ default: module.AdventureMap })));
+const StageContainer = lazy(() => import('./components/stages/StageContainer').then(module => ({ default: module.StageContainer })));
+const HotsQuiz = lazy(() => import('./components/features/HotsQuiz').then(module => ({ default: module.HotsQuiz })));
+const GenopediaPage = lazy(() => import('./components/features/GenopediaPage').then(module => ({ default: module.GenopediaPage })));
+const GroupDashboard = lazy(() => import('./components/features/GroupDashboard').then(module => ({ default: module.GroupDashboard })));
+
 import { 
   Brain, 
   AlertCircle, 
@@ -167,12 +170,21 @@ const GameMainContent = () => {
 
   return (
     <main className="w-full pb-20">
-      {activeView === 'main-menu' && <MainMenu />}
-      {activeView === 'map' && <AdventureMap />}
-      {activeView === 'stage' && <StageContainer />}
-      {activeView === 'group-dashboard' && <GroupDashboard />}
-      {activeView === 'hots-quiz' && <HotsQuiz />}
-      {activeView === 'genopedia' && <GenopediaPage />}
+      <Suspense fallback={
+        <div className="flex items-center justify-center p-12">
+          <div className="text-center space-y-2 animate-pulse text-left">
+            <div className="w-8 h-8 rounded-full border-4 border-indigo-650 border-t-transparent animate-spin mx-auto"></div>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Memuat Halaman...</span>
+          </div>
+        </div>
+      }>
+        {activeView === 'main-menu' && <MainMenu />}
+        {activeView === 'map' && <AdventureMap />}
+        {activeView === 'stage' && <StageContainer />}
+        {activeView === 'group-dashboard' && <GroupDashboard />}
+        {activeView === 'hots-quiz' && <HotsQuiz />}
+        {activeView === 'genopedia' && <GenopediaPage />}
+      </Suspense>
     </main>
   );
 };
