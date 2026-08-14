@@ -71,7 +71,7 @@ export const MainMenu = () => {
   const categories = [
     { 
       label: 'Kurikulum', 
-      img: '/assets/cat_curriculum_icon.png', 
+      img: '/assets/cat_curriculum_icon.webp', 
       action: () => { 
         setTeacherReportActiveTab('identity'); 
         setIsTeacherReportOpen(true); 
@@ -84,12 +84,12 @@ export const MainMenu = () => {
     },
     { 
       label: 'Genopedia', 
-      img: '/assets/cat_genopedia_icon.png', 
+      img: '/assets/cat_genopedia_icon.webp', 
       action: () => navigateTo('genopedia') 
     },
     { 
       label: 'Peta Stage', 
-      img: '/assets/cat_map_icon.png', 
+      img: '/assets/cat_map_icon.webp', 
       action: () => navigateTo('map') 
     },
     { 
@@ -99,12 +99,12 @@ export const MainMenu = () => {
     },
     { 
       label: 'BioBot AI', 
-      img: '/assets/biobot_mascot.png', 
+      img: '/assets/biobot_mascot.webp', 
       action: () => setIsBioBotOpen(true) 
     },
     { 
       label: 'Leaderboard', 
-      img: '/assets/cat_leaderboard_icon.png', 
+      img: '/assets/cat_leaderboard_icon.webp', 
       action: () => setIsLeaderboardOpen(true) 
     },
   ];
@@ -118,7 +118,7 @@ export const MainMenu = () => {
       title: 'Modul Ajar & Proyek P5',
       desc: 'Pelajari identitas modul, Capaian Pembelajaran (CP), Tujuan Pembelajaran (TP), serta proyek P5 yang diintegrasikan ke dalam game.',
       linkText: 'Buka Detail Kurikulum',
-      img: '/assets/cat_curriculum_icon.png',
+      img: '/assets/cat_curriculum_icon.webp',
       action: () => { 
         setTeacherReportActiveTab('identity'); 
         setIsTeacherReportOpen(true); 
@@ -132,7 +132,7 @@ export const MainMenu = () => {
       title: 'Dashboard Kelas & Guru',
       desc: 'Masuk ke ruang kelas Anda untuk mengakses materi pembelajaran khusus dari guru, mengerjakan kuis kelas, dan melihat papan peringkat kelas.',
       linkText: 'Buka Dashboard Kelas',
-      img: '/assets/cat_curriculum_icon.png',
+      img: '/assets/cat_curriculum_icon.webp',
       action: () => navigateTo('group-dashboard'),
       layout: 'right'
     },
@@ -143,7 +143,7 @@ export const MainMenu = () => {
       title: 'Kamus & Pewarisan Sifat',
       desc: 'Pelajari kamus lengkap istilah genetika mulai dari sifat dominan-resesif, genotipe, fenotipe, alel, hingga Hukum Mendel.',
       linkText: 'Buka Ensiklopedia',
-      img: '/assets/cat_genopedia_icon.png',
+      img: '/assets/cat_genopedia_icon.webp',
       action: () => navigateTo('genopedia'),
       layout: 'left'
     },
@@ -154,7 +154,7 @@ export const MainMenu = () => {
       title: 'Petualangan Mendel',
       desc: 'Jelajahi alur cerita petualangan interaktif dari Rumah Mendel hingga Hall of Genetics. Selesaikan 6 stage belajar yang seru!',
       linkText: 'Jelajahi Peta Game',
-      img: '/assets/cat_map_icon.png',
+      img: '/assets/cat_map_icon.webp',
       action: () => navigateTo('map'),
       layout: 'right'
     },
@@ -165,7 +165,7 @@ export const MainMenu = () => {
       title: 'Kuis Evaluasi HOTS',
       desc: 'Uji kemampuan analisis konsep persilangan dan Hukum Mendel kamu melalui pertanyaan HOTS tingkat tinggi.',
       linkText: 'Mulai Kuis HOTS',
-      img: '/assets/cat_virtuallab_icon.png',
+      img: '/assets/cat_virtuallab_icon.webp',
       action: () => navigateTo('hots-quiz'),
       layout: 'left'
     },
@@ -176,7 +176,7 @@ export const MainMenu = () => {
       title: 'Tanya BioBot Cerdas',
       desc: 'Butuh petunjuk menyelesaikan misi stage? Konsultasikan kesulitan belajarmu dengan asisten AI biologi pintar kapan saja.',
       linkText: 'Tanya BioBot',
-      img: '/assets/biobot_mascot.png',
+      img: '/assets/biobot_mascot.webp',
       action: () => setIsBioBotOpen(true),
       layout: 'right'
     },
@@ -187,7 +187,7 @@ export const MainMenu = () => {
       title: 'Papan Peringkat Siswa',
       desc: 'Lihat siapa saja siswa yang memuncaki papan skor dan memiliki koleksi bintang terbanyak di Genetic Odyssey.',
       linkText: 'Lihat Peringkat',
-      img: '/assets/cat_leaderboard_icon.png',
+      img: '/assets/cat_leaderboard_icon.webp',
       action: () => setIsLeaderboardOpen(true),
       layout: 'left'
     }
@@ -290,7 +290,7 @@ export const MainMenu = () => {
 
             {/* Right Character PNG Graphic */}
             <img
-              src="/assets/mendel_avatar.png"
+              src="/assets/mendel_avatar.webp"
               alt="Mendel Character"
               className="absolute -right-3 -bottom-4 w-36 h-36 md:w-44 md:h-44 object-contain pointer-events-none drop-shadow-md"
             />

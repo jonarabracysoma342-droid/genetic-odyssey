@@ -148,7 +148,7 @@ export const BossBattleDrChaos = () => {
               {/* Illustrated Dr. Chaos Avatar */}
               <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl bg-gradient-to-br from-rose-600 via-purple-700 to-slate-900 p-1 flex-shrink-0 shadow-xl shadow-rose-500/30 border-2 border-rose-400">
                 <img 
-                  src="/assets/dr_chaos_avatar.png" 
+                  src="/assets/dr_chaos_avatar.webp" 
                   alt="Dr Chaos Avatar" 
                   className="w-full h-full object-contain drop-shadow-md"
                 />
@@ -266,7 +266,7 @@ export const BossBattleDrChaos = () => {
           {/* Illustrated Mendel Expert Gold Medal Badge */}
           <div className="relative w-36 h-36 mx-auto">
             <img 
-              src="/assets/mendel_expert_badge.png" 
+              src="/assets/mendel_expert_badge.webp" 
               alt="Mendel Expert Badge" 
               className="w-full h-full object-contain drop-shadow-2xl float-anim"
             />

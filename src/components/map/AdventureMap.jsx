@@ -17,14 +17,14 @@ import {
 } from 'lucide-react';
 
 const STAGE_ILLUSTRATIONS = {
-  1: '/assets/stage1_garden_illustration.png',
-  2: '/assets/sub_mendel_peas.png',
-  3: '/assets/subtopic_process.png',
-  4: '/assets/genopedia_punnett2x2.png',
-  5: '/assets/subtopic_result.png',
-  6: '/assets/genopedia_punnett4x4.png',
-  7: '/assets/genopedia_law1.png',
-  8: '/assets/stage8_boss_illustration.png'
+  1: '/assets/stage1_garden_illustration.webp',
+  2: '/assets/sub_mendel_peas.webp',
+  3: '/assets/subtopic_process.webp',
+  4: '/assets/genopedia_punnett2x2.webp',
+  5: '/assets/subtopic_result.webp',
+  6: '/assets/genopedia_punnett4x4.webp',
+  7: '/assets/genopedia_law1.webp',
+  8: '/assets/stage8_boss_illustration.webp'
 };
 
 export const AdventureMap = () => {
@@ -113,7 +113,7 @@ export const AdventureMap = () => {
         <div className="flex items-center gap-3.5 md:gap-4 pt-2.5 border-t-2 border-slate-100">
           <div className="relative flex-shrink-0">
             <img 
-              src="/assets/mendel_avatar.png" 
+              src="/assets/mendel_avatar.webp" 
               alt="Gregor Mendel" 
               className="w-14 h-14 md:w-18 md:h-18 object-contain drop-shadow-md"
             />
@@ -254,7 +254,7 @@ export const AdventureMap = () => {
                 {/* Stage Illustration Box */}
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white border-2 border-slate-800 flex items-center justify-center p-1.5 md:p-2 flex-shrink-0 overflow-hidden shadow-3xs">
                   <img
-                    src={STAGE_ILLUSTRATIONS[stage.id] || '/assets/cat_genopedia_icon.png'}
+                    src={STAGE_ILLUSTRATIONS[stage.id] || '/assets/cat_genopedia_icon.webp'}
                     alt={stage.title}
                     className="w-full h-full object-contain"
                     draggable="false"
@@ -322,7 +322,7 @@ export const AdventureMap = () => {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-white border-2 border-slate-800 p-1.5 flex items-center justify-center flex-shrink-0 shadow-3xs">
                   <img 
-                    src={STAGE_ILLUSTRATIONS[activePreviewStage.id] || '/assets/cat_genopedia_icon.png'} 
+                    src={STAGE_ILLUSTRATIONS[activePreviewStage.id] || '/assets/cat_genopedia_icon.webp'} 
                     alt={activePreviewStage.title}
                     className="w-full h-full object-contain"
                   />

@@ -335,7 +335,7 @@ const subDihybridGametesSvg = wrapSvg(`
   </g>
 `);
 
-// 7. genopedia_punnett4x4.png -> Let's make `genopedia_punnett4x4.svg`
+// 7. genopedia_punnett4x4.webp -> Let's make `genopedia_punnett4x4.svg`
 const genopediaPunnett4x4Svg = wrapSvg(`
   <text x="200" y="30" fill="#f8fafc" font-family="Arial, sans-serif" font-weight="bold" font-size="15" text-anchor="middle">
     Punnett Square Dihibrid 4x4 (16 Kotak Combinations)

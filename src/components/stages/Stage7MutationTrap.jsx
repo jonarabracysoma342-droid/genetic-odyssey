@@ -161,7 +161,7 @@ export const Stage7MutationTrap = () => {
             {/* Right Side Mutation Monster Graphic (Matching Frame 9 Monster Mascot) */}
             <div className="glass-panel p-5 rounded-3xl border-2 border-emerald-500/40 bg-slate-900/90 text-center space-y-3">
               <img 
-                src="/assets/mutation_monster.png" 
+                src="/assets/mutation_monster.webp" 
                 alt="Mutation Monster Mascot" 
                 className="w-32 h-32 sm:w-40 sm:h-40 object-contain mx-auto drop-shadow-lg float-anim"
               />

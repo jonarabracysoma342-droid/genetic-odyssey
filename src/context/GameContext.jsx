@@ -229,6 +229,7 @@ export const GameProvider = ({ children }) => {
     showConfirm("Apakah Anda yakin ingin keluar dari akun?", async () => {
       try {
         await signOut(auth);
+        setCurrentUser(null);
         setUserProgress(INITIAL_PROGRESS);
         setTeacherLogs([]);
         setActiveView('main-menu');

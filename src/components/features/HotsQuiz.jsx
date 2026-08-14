@@ -22,26 +22,26 @@ import {
 // Tailored PNG illustrations component for all 20 questions
 const QuestionIllustration = ({ id }) => {
   const images = {
-    1: '/assets/hots_q1_mendel.png',
-    2: '/assets/hots_q2_hama.png',
-    3: '/assets/sub_punnett2x2_steps.png',
-    4: '/assets/sub_genotype_phenotype.png',
-    5: '/assets/hots_q5_chromosome.png',
-    6: '/assets/hots_q6_intermediet.png',
-    7: '/assets/sub_monohybrid_schema.png',
-    8: '/assets/genopedia_law2.png',
-    9: '/assets/sub_law1_concept.png',
-    10: '/assets/subtopic_theory.png',
-    11: '/assets/genopedia_concept.png',
-    12: '/assets/subtopic_result.png',
-    13: '/assets/subtopic_process.png',
-    14: '/assets/genopedia_punnett2x2.png',
-    15: '/assets/sub_mendel_goal.png',
-    16: '/assets/cat_curriculum_icon.png',
-    17: '/assets/hots_q17_letal.png',
-    18: '/assets/subtopic_theory.png',
-    19: '/assets/genopedia_punnett4x4.png',
-    20: '/assets/stage1_garden_illustration.png'
+    1: '/assets/hots_q1_mendel.webp',
+    2: '/assets/hots_q2_hama.webp',
+    3: '/assets/sub_punnett2x2_steps.webp',
+    4: '/assets/sub_genotype_phenotype.webp',
+    5: '/assets/hots_q5_chromosome.webp',
+    6: '/assets/hots_q6_intermediet.webp',
+    7: '/assets/sub_monohybrid_schema.webp',
+    8: '/assets/genopedia_law2.webp',
+    9: '/assets/sub_law1_concept.webp',
+    10: '/assets/subtopic_theory.webp',
+    11: '/assets/genopedia_concept.webp',
+    12: '/assets/subtopic_result.webp',
+    13: '/assets/subtopic_process.webp',
+    14: '/assets/genopedia_punnett2x2.webp',
+    15: '/assets/sub_mendel_goal.webp',
+    16: '/assets/cat_curriculum_icon.webp',
+    17: '/assets/hots_q17_letal.webp',
+    18: '/assets/subtopic_theory.webp',
+    19: '/assets/genopedia_punnett4x4.webp',
+    20: '/assets/stage1_garden_illustration.webp'
   };
 
   const src = images[id];

@@ -404,7 +404,7 @@ export const Stage6DihybridAdventure = () => {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-blue-50 border-2 border-slate-800 p-0.5 flex items-center justify-center flex-shrink-0 overflow-hidden">
               <img 
-                src="/assets/rumah_mendel_banner.png" 
+                src="/assets/rumah_mendel_banner.webp" 
                 alt="Genetics Lab Banner" 
                 className="w-full h-full object-contain"
               />
@@ -847,7 +847,7 @@ export const Stage6DihybridAdventure = () => {
           <div className="p-6 rounded-3xl text-center space-y-4 max-w-xs w-full border-2 border-slate-800 bg-white shadow-2xl relative z-50 animate-scale-up">
             <div className="w-16 h-16 rounded-2xl bg-blue-50 border-2 border-slate-800 p-1 flex items-center justify-center mx-auto shadow-xs overflow-hidden">
               <img 
-                src="/assets/rumah_mendel_banner.png" 
+                src="/assets/rumah_mendel_banner.webp" 
                 alt="Victory Stage 6" 
                 className="w-full h-full object-contain"
               />

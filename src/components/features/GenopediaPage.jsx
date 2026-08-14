@@ -360,7 +360,7 @@ export const GenopediaPage = () => {
       icon: Award,
       illustration: (
         <img 
-          src="/assets/genopedia_mendel.png" 
+          src="/assets/genopedia_mendel.webp" 
           alt="Gregor Mendel" 
           className="h-24 w-auto object-contain mt-2 group-hover:scale-105 transition duration-300" 
         />
@@ -371,7 +371,7 @@ export const GenopediaPage = () => {
           icon: User,
           illustration: (
             <img 
-              src="/assets/sub_mendel_bio.png" 
+              src="/assets/sub_mendel_bio.webp" 
               alt="Biografi Gregor Mendel" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -391,7 +391,7 @@ export const GenopediaPage = () => {
           icon: Leaf,
           illustration: (
             <img 
-              src="/assets/sub_mendel_peas.png" 
+              src="/assets/sub_mendel_peas.webp" 
               alt="Tanaman Kacang Ercis" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -417,7 +417,7 @@ export const GenopediaPage = () => {
           icon: Target,
           illustration: (
             <img 
-              src="/assets/sub_mendel_goal.png" 
+              src="/assets/sub_mendel_goal.webp" 
               alt="Tujuan Percobaan Mendel" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -442,7 +442,7 @@ export const GenopediaPage = () => {
       icon: FileText,
       illustration: (
         <img 
-          src="/assets/genopedia_concept.png" 
+          src="/assets/genopedia_concept.webp" 
           alt="Konsep Dasar" 
           className="h-24 w-auto object-contain mt-2 group-hover:scale-105 transition duration-300" 
         />
@@ -453,7 +453,7 @@ export const GenopediaPage = () => {
           icon: Dna,
           illustration: (
             <img 
-              src="/assets/sub_gen_alel.png" 
+              src="/assets/sub_gen_alel.webp" 
               alt="Kromosom dan Gen" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -480,7 +480,7 @@ export const GenopediaPage = () => {
           icon: Eye,
           illustration: (
             <img 
-              src="/assets/sub_genotype_phenotype.png" 
+              src="/assets/sub_genotype_phenotype.webp" 
               alt="Genotipe dan Fenotipe DNA" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -507,7 +507,7 @@ export const GenopediaPage = () => {
           icon: Sparkles,
           illustration: (
             <img 
-              src="/assets/sub_dominant_recessive.png" 
+              src="/assets/sub_dominant_recessive.webp" 
               alt="Dominan dan Resesif" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -533,7 +533,7 @@ export const GenopediaPage = () => {
       icon: Dna,
       illustration: (
         <img 
-          src="/assets/genopedia_law1.png" 
+          src="/assets/genopedia_law1.webp" 
           alt="Hukum Mendel 1" 
           className="h-24 w-auto object-contain mt-2 group-hover:scale-105 transition duration-300" 
         />
@@ -544,7 +544,7 @@ export const GenopediaPage = () => {
           icon: BookOpen,
           illustration: (
             <img 
-              src="/assets/sub_law1_concept.png" 
+              src="/assets/sub_law1_concept.webp" 
               alt="Hukum Segregasi" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -564,7 +564,7 @@ export const GenopediaPage = () => {
           icon: Shuffle,
           illustration: (
             <img 
-              src="/assets/subtopic_process.png" 
+              src="/assets/subtopic_process.webp" 
               alt="Pemisahan Alel Gamet" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -588,7 +588,7 @@ export const GenopediaPage = () => {
           icon: GridIcon,
           illustration: (
             <img 
-              src="/assets/sub_monohybrid_schema.png" 
+              src="/assets/sub_monohybrid_schema.webp" 
               alt="Bagan Skema Monohibrid" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />
@@ -617,7 +617,7 @@ export const GenopediaPage = () => {
       icon: GridIcon,
       illustration: (
         <img 
-          src="/assets/genopedia_punnett2x2.png" 
+          src="/assets/genopedia_punnett2x2.webp" 
           alt="Punnett 2x2" 
           className="h-24 w-auto object-contain mt-2 group-hover:scale-105 transition duration-300" 
         />
@@ -628,7 +628,7 @@ export const GenopediaPage = () => {
           icon: FileText,
           illustration: (
             <img 
-              src="/assets/sub_punnett2x2_steps.png" 
+              src="/assets/sub_punnett2x2_steps.webp" 
               alt="Cara Menyusun Diagram" 
               className="h-20 w-auto object-contain group-hover:scale-105 transition duration-300" 
             />

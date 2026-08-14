@@ -305,7 +305,7 @@ export const Stage1MysteryGarden = () => {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-100 p-0.5 flex items-center justify-center flex-shrink-0 overflow-hidden">
               <img 
-                src="/assets/rumah_mendel_banner.png" 
+                src="/assets/rumah_mendel_banner.webp" 
                 alt="Rumah Mendel Banner PNG" 
                 className="w-full h-full object-contain"
               />
@@ -379,7 +379,7 @@ export const Stage1MysteryGarden = () => {
               <div className="p-2.5 space-y-2 text-left animate-fade-in">
                 <div className="flex items-start gap-1.5">
                   <img 
-                    src="/assets/mendel_avatar.png" 
+                    src="/assets/mendel_avatar.webp" 
                     alt="Gregor Mendel" 
                     className="w-7 h-7 object-contain flex-shrink-0 drop-shadow-3xs"
                   />
@@ -525,7 +525,7 @@ export const Stage1MysteryGarden = () => {
           <div className="p-6 rounded-3xl text-center space-y-5 max-w-xs w-full border border-sky-100 bg-white shadow-2xl relative z-50 animate-scale-up">
             <div className="w-20 h-20 rounded-2xl bg-blue-50 border border-blue-100 p-1 flex items-center justify-center mx-auto shadow-xs overflow-hidden">
               <img 
-                src="/assets/rumah_mendel_banner.png" 
+                src="/assets/rumah_mendel_banner.webp" 
                 alt="Victory Rumah Mendel PNG" 
                 className="w-full h-full object-contain"
               />

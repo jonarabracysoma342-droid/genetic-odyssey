@@ -27,7 +27,7 @@ export const Header = () => {
           <div className="relative">
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-sky-500 to-sky-400 p-0.5 shadow-md shadow-sky-500/20">
               <img 
-                src="/assets/mendel_avatar.png" 
+                src="/assets/mendel_avatar.webp" 
                 alt="User Avatar" 
                 className="w-full h-full object-contain rounded-full bg-white"
               />

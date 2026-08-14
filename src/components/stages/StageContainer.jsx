@@ -12,7 +12,7 @@ import { Stage6DihybridAdventure } from './Stage6DihybridAdventure';
 const STAGE_TUTORIALS = {
   1: {
     title: 'Taman Misteri (C1 - Mengingat)',
-    illustration: '/assets/stage1_garden_illustration.png',
+    illustration: '/assets/stage1_garden_illustration.webp',
     topic: 'Pengenalan Sifat Fisik (Fenotipe)',
     instructions: [
       'Baca instruksi misi di bagian atas untuk mengetahui sifat tanaman yang dicari.',
@@ -23,7 +23,7 @@ const STAGE_TUTORIALS = {
   },
   2: {
     title: 'Penyusun Gen (C2 - Memahami)',
-    illustration: '/assets/sub_mendel_peas.png',
+    illustration: '/assets/sub_mendel_peas.webp',
     topic: 'Genotipe & Alel Dominan/Resesif',
     instructions: [
       'Perhatikan deskripsi sifat fisik (fenotipe) yang diminta di kartu tengah.',
@@ -34,7 +34,7 @@ const STAGE_TUTORIALS = {
   },
   3: {
     title: 'Pabrik Gamet (C3 - Menerapkan)',
-    illustration: '/assets/subtopic_process.png',
+    illustration: '/assets/subtopic_process.webp',
     topic: 'Hukum Segregasi & Pembentukan Gamet',
     instructions: [
       'Amati genotipe induk diploid yang muncul di atas corong mesin segregasi.',
@@ -45,7 +45,7 @@ const STAGE_TUTORIALS = {
   },
   4: {
     title: 'Laboratorium Punnett (C4 - Menganalisis)',
-    illustration: '/assets/genopedia_punnett2x2.png',
+    illustration: '/assets/genopedia_punnett2x2.webp',
     topic: 'Persilangan Monohibrid & Punnett Square',
     instructions: [
       'Perhatikan alel gamet jantan (atas) dan betina (samping) pada papan catur Punnett.',
@@ -56,7 +56,7 @@ const STAGE_TUTORIALS = {
   },
   5: {
     title: 'Tantangan Panen (C5 - Evaluasi)',
-    illustration: '/assets/subtopic_result.png',
+    illustration: '/assets/subtopic_result.webp',
     topic: 'Prediksi Fenotipe & Rasio Persilangan',
     instructions: [
       'Analisis rasio teoritis Hukum Mendel (3:1) untuk persilangan monohibrid dominan penuh.',
@@ -67,7 +67,7 @@ const STAGE_TUTORIALS = {
   },
   6: {
     title: 'Petualangan Dihibrid (C6 - Menciptakan)',
-    illustration: '/assets/genopedia_punnett4x4.png',
+    illustration: '/assets/genopedia_punnett4x4.webp',
     topic: 'Persilangan Dihibrid (2 Sifat Beda)',
     instructions: [
       'Rancang persilangan dua sifat beda (dihibrid) dengan memadukan alel-alel gamet induk.',
@@ -91,7 +91,7 @@ const StageTutorialModal = ({ stageId, onClose }) => {
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border-2 border-slate-800 p-1.5 md:p-2 flex items-center justify-center flex-shrink-0 shadow-3xs">
               <img 
-                src={tutorial.illustration || '/assets/cat_genopedia_icon.png'} 
+                src={tutorial.illustration || '/assets/cat_genopedia_icon.webp'} 
                 alt={tutorial.title}
                 className="w-full h-full object-contain animate-pulse"
               />
