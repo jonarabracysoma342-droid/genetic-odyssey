@@ -240,7 +240,7 @@ export const AuthScreen = ({ onAuthSuccess }) => {
                 <input
                   type="email"
                   required
-                  placeholder="nama@sekolah.sch.id"
+                  placeholder="username@gmail.com"
                   value={recoveryEmail}
                   onChange={(e) => setRecoveryEmail(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-[10px] font-bold border-2 border-slate-800 rounded-xl outline-none placeholder-slate-400 focus:border-indigo-600 transition"
@@ -319,7 +319,7 @@ export const AuthScreen = ({ onAuthSuccess }) => {
                 <input
                   type="email"
                   required
-                  placeholder="nama@sekolah.sch.id"
+                  placeholder="username@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-[10px] font-bold border-2 border-slate-800 rounded-xl outline-none placeholder-slate-400 focus:border-indigo-600 transition"
