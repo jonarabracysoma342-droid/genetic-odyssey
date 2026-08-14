@@ -238,9 +238,6 @@ const AppShell = () => {
   }
 
   const getContainerMaxWidth = () => {
-    if (activeView === 'map' || activeView === 'stage') {
-      return 'w-full max-w-md';
-    }
     return 'w-full max-w-7xl';
   };
 
