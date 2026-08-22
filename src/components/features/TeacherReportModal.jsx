@@ -136,7 +136,7 @@ export const TeacherReportModal = () => {
 
               {/* Card 5: Sarana Prasarana */}
               <div className="p-4 rounded-3xl bg-slate-50/50 border border-slate-100 flex items-center gap-4 hover:shadow-xs transition duration-300">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-650 border border-emerald-100 flex items-center justify-center flex-shrink-0">
                   <Monitor className="w-6 h-6" />
                 </div>
                 <div className="space-y-0.5 text-left">
@@ -185,7 +185,7 @@ export const TeacherReportModal = () => {
               <div className="space-y-1 text-left flex-1">
                 <span className="text-[9px] font-extrabold text-indigo-700 tracking-widest uppercase">Capaian Pembelajaran (CP) - Fase F</span>
                 <p className="text-xs text-black leading-relaxed font-bold">
-                  "Peserta didik memiliki kemampuan menganalisis proses pewarisan sifat mendel (monohibrid dan dihibrid), memahami struktur DNA, gen, alel, serta menerapkan konsep segregasi dan asortasi bebas dalam memecahkan masalah genetika sederhana."
+                  "Pada akhir fase F, peserta didik memiliki kemampuan mendeskripsikan struktur sel serta bioproses yang terjadi seperti transpor membran dan pembelahan sel; menganalisis keterkaitan struktur organ pada sistem organ dengan fungsinya serta kelainan atau gangguan yang muncul pada sistem organ tersebut; memahami fungsi enzim dan mengenal proses metabolisme yang terjadi dalam tubuh; serta memiliki kemampuan menerapkan konsep pewarisan sifat, pertumbuhan dan perkembangan, mengevaluasi gagasan baru mengenai evolusi, dan inovasi teknologi biologi."
                 </p>
               </div>
             </div>
@@ -193,7 +193,7 @@ export const TeacherReportModal = () => {
             {/* Tujuan Pembelajaran List */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-indigo-600" />
+                <Target className="w-5 h-5 text-indigo-650" />
                 <h4 className="font-extrabold text-sm text-black">Tujuan Pembelajaran (TP) Media</h4>
               </div>
 
@@ -228,7 +228,7 @@ export const TeacherReportModal = () => {
         {activeTab === 'p5' && (
           <div className="space-y-4 py-1 animate-fade-in">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-emerald-600" />
+              <Sparkles className="w-5 h-5 text-emerald-650" />
               <h4 className="font-extrabold text-sm text-black">Projek Penguatan Profil Pelajar Pancasila (P5)</h4>
             </div>
 
