@@ -8,17 +8,21 @@ import {
   Search, 
   Trophy, 
   Megaphone, 
-  Award,
-  CheckCircle2,
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  HelpCircle,
-  XCircle,
-  ArrowRight,
-  Star,
-  X,
-  ClipboardList
+  Award, 
+  CheckCircle2, 
+  BookOpen, 
+  ChevronLeft, 
+  ChevronRight, 
+  HelpCircle, 
+  XCircle, 
+  ArrowRight, 
+  Star, 
+  X, 
+  ClipboardList,
+  MessageSquare,
+  Send,
+  User,
+  Clock
 } from 'lucide-react';
 
 export const StudentDashboard = () => {
@@ -34,8 +38,10 @@ export const StudentDashboard = () => {
   // Custom Quiz Scores state (synchronized locally for instant updates)
   const [customQuizScores, setCustomQuizScores] = useState({});
 
-  // Material details modal state
+  // Material details & Q&A comments modal state
   const [activeMaterialModal, setActiveMaterialModal] = useState(null);
+  const [commentInput, setCommentInput] = useState('');
+  const [submittingComment, setSubmittingComment] = useState(false);
 
   // Custom Quiz taking states
   const [activeQuiz, setActiveQuiz] = useState(null);
@@ -218,6 +224,60 @@ export const StudentDashboard = () => {
       setMessage({ text: 'Gagal mengirim nilai kuis.', type: 'error' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmitMaterialComment = async (e) => {
+    e.preventDefault();
+    if (!commentInput.trim() || !activeMaterialModal || !groupId) return;
+
+    sound.playClick();
+    setSubmittingComment(true);
+
+    const newComment = {
+      id: 'comm_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+      authorUid: currentUser?.uid || 'anon',
+      authorName: userName || currentUser?.displayName || 'Siswa',
+      authorRole: 'siswa',
+      text: commentInput.trim(),
+      createdAt: new Date().toISOString(),
+      replies: []
+    };
+
+    try {
+      const updatedMaterials = (studentGroupInfo.materials || []).map(mat => {
+        if (mat.id === activeMaterialModal.id) {
+          const currentComments = mat.comments || [];
+          return {
+            ...mat,
+            comments: [...currentComments, newComment]
+          };
+        }
+        return mat;
+      });
+
+      await updateDoc(doc(db, 'groups', groupId), {
+        materials: updatedMaterials
+      });
+
+      sound.playCorrect();
+      setCommentInput('');
+      
+      // Update local state immediately
+      setActiveMaterialModal(prev => ({
+        ...prev,
+        comments: [...(prev.comments || []), newComment]
+      }));
+      setStudentGroupInfo(prev => ({
+        ...prev,
+        materials: updatedMaterials
+      }));
+    } catch (err) {
+      sound.playWrong();
+      console.error("Error submitting material comment:", err);
+      showAlert("Gagal mengirim pertanyaan. Silakan coba kembali.");
+    } finally {
+      setSubmittingComment(false);
     }
   };
 
@@ -607,18 +667,19 @@ export const StudentDashboard = () => {
         </div>
       )}
 
-      {/* DETAIL MATERI MODAL */}
+      {/* DETAIL MATERI & DISKUSI TANYA JAWAB MODAL */}
       {activeMaterialModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white border-[3px] border-slate-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-[8px_8px_0px_#1e293b] flex flex-col max-h-[80vh] animate-scale-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in text-left">
+          <div className="bg-white border-[3px] border-slate-800 rounded-3xl w-full max-w-md overflow-hidden shadow-[8px_8px_0px_#1e293b] flex flex-col max-h-[88vh] animate-scale-up">
             
-            <div className="p-4 bg-indigo-50 border-b-[3px] border-slate-800 flex justify-between items-center">
+            {/* Modal Header */}
+            <div className="p-4 bg-indigo-50 border-b-[3px] border-slate-800 flex justify-between items-center flex-shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-indigo-150 border-2 border-slate-800 flex items-center justify-center">
                   <BookOpen className="w-4.5 h-4.5 text-indigo-755" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-slate-855 uppercase leading-none font-sans">Materi Belajar</h4>
+                  <h4 className="text-[11px] font-black text-slate-855 uppercase leading-none font-sans">Materi Belajar & Diskusi</h4>
                   <span className="text-[7.5px] font-bold text-slate-500 block mt-1">Hukum Mendel & Genetika</span>
                 </div>
               </div>
@@ -630,31 +691,120 @@ export const StudentDashboard = () => {
               </button>
             </div>
 
-            <div className="p-4 overflow-y-auto space-y-3.5 flex-1 text-left">
-              <h3 className="text-[12px] font-black text-slate-855 leading-tight">{activeMaterialModal.title}</h3>
-              <p className="text-[9.5px] font-medium text-slate-600 leading-relaxed whitespace-pre-wrap">{activeMaterialModal.content}</p>
+            {/* Modal Scroll Content */}
+            <div className="p-4 overflow-y-auto space-y-4 flex-1 text-left">
               
-              {activeMaterialModal.url && (
-                <div className="p-3 border border-indigo-200 bg-indigo-50/30 rounded-xl space-y-1">
-                  <span className="text-[7.5px] font-black text-indigo-755 uppercase tracking-wide block">Tautan Belajar Eksternal</span>
-                  <a 
-                    href={activeMaterialModal.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="text-[9px] font-bold text-indigo-650 hover:underline truncate block"
-                  >
-                    🔗 {activeMaterialModal.url}
-                  </a>
+              {/* Material Text */}
+              <div className="space-y-2 border-b-2 border-slate-100 pb-3">
+                <h3 className="text-sm font-black text-slate-900 leading-tight">{activeMaterialModal.title}</h3>
+                <p className="text-[10px] font-medium text-slate-700 leading-relaxed whitespace-pre-wrap">{activeMaterialModal.content}</p>
+                
+                {activeMaterialModal.url && (
+                  <div className="p-2.5 border border-indigo-200 bg-indigo-50/40 rounded-xl space-y-1">
+                    <span className="text-[7.5px] font-black text-indigo-700 uppercase tracking-wide block">Tautan Belajar Eksternal</span>
+                    <a 
+                      href={activeMaterialModal.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-[9px] font-bold text-indigo-650 hover:underline truncate block"
+                    >
+                      🔗 {activeMaterialModal.url}
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* Discussion / Q&A Thread Section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-indigo-600" /> Tanya Jawab Materi ({(activeMaterialModal.comments || []).length})
+                  </h4>
+                  <span className="text-[8px] font-bold text-slate-400">Tanya langsung ke guru</span>
                 </div>
-              )}
+
+                {/* Comments List */}
+                {(!activeMaterialModal.comments || activeMaterialModal.comments.length === 0) ? (
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-center">
+                    <p className="text-[9.5px] font-medium text-slate-500">
+                      Belum ada pertanyaan. Jika ada konsep yang belum dipahami, tanyakan di bawah ini!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {activeMaterialModal.comments.map((comm) => (
+                      <div key={comm.id} className="p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl space-y-1.5 shadow-2xs">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-black text-slate-900">{comm.authorName}</span>
+                            <span className={`px-1.5 py-0.2 rounded text-[7px] font-black uppercase ${
+                              comm.authorRole === 'guru' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800'
+                            }`}>
+                              {comm.authorRole === 'guru' ? 'Guru' : 'Siswa'}
+                            </span>
+                          </div>
+                          <span className="text-[7.5px] font-bold text-slate-400">
+                            {comm.createdAt ? new Date(comm.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''}
+                          </span>
+                        </div>
+                        <p className="text-[9.5px] font-medium text-slate-700 leading-relaxed">{comm.text}</p>
+                        
+                        {/* Nested Replies */}
+                        {comm.replies && comm.replies.length > 0 && (
+                          <div className="pl-2.5 border-l-2 border-indigo-400 space-y-1.5 pt-1.5 mt-1.5">
+                            {comm.replies.map(rep => (
+                              <div key={rep.id} className="p-2 bg-indigo-50/90 border border-indigo-200 rounded-xl space-y-0.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[9px] font-black text-indigo-950">{rep.authorName}</span>
+                                  <span className="px-1 py-0.2 rounded text-[6.5px] font-black bg-indigo-200 text-indigo-900 uppercase">
+                                    {rep.authorRole === 'guru' ? '👨‍🏫 Guru' : 'Siswa'}
+                                  </span>
+                                </div>
+                                <p className="text-[9px] font-medium text-slate-800 leading-relaxed">{rep.text}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Question Input Form */}
+                <form onSubmit={handleSubmitMaterialComment} className="pt-2 border-t border-slate-200 space-y-2">
+                  <span className="text-[8px] font-black text-indigo-700 uppercase tracking-wider block">
+                    Belum Paham? Tanyakan ke Guru:
+                  </span>
+                  <div className="flex gap-1.5">
+                    <input
+                      type="text"
+                      value={commentInput}
+                      onChange={(e) => setCommentInput(e.target.value)}
+                      placeholder="Tulis pertanyaanmu di sini..."
+                      className="flex-1 px-3 py-2 text-[9.5px] font-bold bg-white border-2 border-slate-800 rounded-xl placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-3xs"
+                    />
+                    <button
+                      type="submit"
+                      disabled={submittingComment || !commentInput.trim()}
+                      className="px-3.5 py-2 bg-indigo-650 hover:bg-indigo-700 text-white font-black text-[9px] border-2 border-slate-800 rounded-xl shadow-3xs flex items-center gap-1 cursor-pointer disabled:opacity-50 active:translate-y-0.5 active:shadow-none transition"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      <span>{submittingComment ? '...' : 'KIRIM'}</span>
+                    </button>
+                  </div>
+                </form>
+
+              </div>
+
             </div>
 
+            {/* Modal Footer */}
             <div className="p-3 bg-slate-50 border-t-2 border-slate-800 flex justify-end">
               <button
                 onClick={() => setActiveMaterialModal(null)}
-                className="px-4 py-1.5 bg-indigo-655 hover:bg-indigo-700 text-white font-black text-[9px] border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black text-[9px] border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
               >
-                TUTUP MATERI
+                TUTUP
               </button>
             </div>
 

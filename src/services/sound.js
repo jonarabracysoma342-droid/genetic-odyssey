@@ -8,12 +8,17 @@ class SoundService {
     this.musicEnabled = true;
     this.isBgmPlaying = false;
     this.bgmAudio = null;
-    this.currentTrackId = localStorage.getItem('genetic_odyssey_bgm_track') || 'spring_in_my_step';
+    this.currentTrackId = localStorage.getItem('genetic_odyssey_bgm_track') || 'ambient_calm';
+    this.synthInterval = null;
+    this.synthOscillators = [];
   }
 
   getTrackPath(trackId) {
     if (trackId === 'monody') {
       return '/audio/thefatrat_monody.mp3';
+    }
+    if (trackId === 'ambient_calm') {
+      return 'ambient_calm';
     }
     return '/audio/spring_in_my_step_official.mp3';
   }
@@ -29,7 +34,7 @@ class SoundService {
       this.audioCtx.resume();
     }
 
-    if (!this.bgmAudio) {
+    if (!this.bgmAudio && this.currentTrackId !== 'ambient_calm') {
       this.bgmAudio = new Audio(this.getTrackPath(this.currentTrackId));
       this.bgmAudio.loop = true;
       this.bgmAudio.volume = 0.15;
@@ -153,7 +158,7 @@ class SoundService {
       const startTime = this.audioCtx.currentTime;
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
-      
+
       osc.type = 'sine';
       osc.frequency.setValueAtTime(2200, startTime);
       osc.frequency.exponentialRampToValueAtTime(3800, startTime + 0.06);
@@ -189,10 +194,15 @@ class SoundService {
 
     if (this.bgmAudio) {
       this.bgmAudio.pause();
+      this.bgmAudio = null;
     }
-    this.bgmAudio = new Audio(this.getTrackPath(trackId));
-    this.bgmAudio.loop = true;
-    this.bgmAudio.volume = 0.15;
+    this.stopSynthBgm();
+
+    if (trackId !== 'ambient_calm') {
+      this.bgmAudio = new Audio(this.getTrackPath(trackId));
+      this.bgmAudio.loop = true;
+      this.bgmAudio.volume = 0.15;
+    }
 
     if (this.musicEnabled) {
       this.startBgm();
@@ -204,13 +214,21 @@ class SoundService {
     this.init();
     this.isBgmPlaying = true;
 
-    if (this.bgmAudio) {
-      this.bgmAudio.volume = 0.15;
-      const playPromise = this.bgmAudio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(err => {
-          console.warn("BGM play prevented by browser autoplay policy. Waiting for user interaction:", err);
-        });
+    if (this.currentTrackId === 'ambient_calm') {
+      if (this.bgmAudio) {
+        this.bgmAudio.pause();
+      }
+      this.startSynthBgm();
+    } else {
+      this.stopSynthBgm();
+      if (this.bgmAudio) {
+        this.bgmAudio.volume = 0.15;
+        const playPromise = this.bgmAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.warn("BGM play prevented by browser autoplay policy. Waiting for user interaction:", err);
+          });
+        }
       }
     }
   }
@@ -219,6 +237,135 @@ class SoundService {
     this.isBgmPlaying = false;
     if (this.bgmAudio) {
       this.bgmAudio.pause();
+    }
+    this.stopSynthBgm();
+  }
+
+  // =================== GENERATIVE SYNTH BGM ===================
+  startSynthBgm() {
+    this.stopSynthBgm();
+    this.init();
+    if (!this.audioCtx) return;
+
+    try {
+      // Warm Gain
+      this.synthGain = this.audioCtx.createGain();
+      this.synthGain.gain.setValueAtTime(0.04, this.audioCtx.currentTime);
+
+      // Warm lowpass filter (removes high harshness)
+      this.synthFilter = this.audioCtx.createBiquadFilter();
+      this.synthFilter.type = 'lowpass';
+      this.synthFilter.frequency.setValueAtTime(650, this.audioCtx.currentTime);
+
+      // Spooky / Calm spacious delay
+      this.synthDelay = this.audioCtx.createDelay(2.0);
+      this.synthDelay.delayTime.setValueAtTime(0.8, this.audioCtx.currentTime);
+
+      this.synthDelayGain = this.audioCtx.createGain();
+      this.synthDelayGain.gain.setValueAtTime(0.4, this.audioCtx.currentTime);
+
+      // Connect nodes
+      this.synthGain.connect(this.synthFilter);
+      this.synthFilter.connect(this.audioCtx.destination);
+
+      // Echo feedback routing
+      this.synthGain.connect(this.synthDelay);
+      this.synthDelay.connect(this.synthDelayGain);
+      this.synthDelayGain.connect(this.synthDelay);
+      this.synthDelayGain.connect(this.synthFilter);
+
+      const baseScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+      const pads = [
+        [130.81, 164.81, 196.00, 246.94], // Cmaj7
+        [174.61, 220.00, 261.63, 329.63], // Fmaj7
+        [110.00, 146.83, 164.81, 196.00], // Am9
+        [164.81, 196.00, 246.94, 293.66]  // Em7
+      ];
+
+      let step = 0;
+      
+      const playStep = () => {
+        if (!this.audioCtx || this.audioCtx.state === 'closed' || !this.isBgmPlaying) return;
+        const now = this.audioCtx.currentTime;
+
+        // Play ambient pad chords every 8 seconds
+        if (step % 2 === 0) {
+          const chord = pads[Math.floor(step / 2) % pads.length];
+          chord.forEach(freq => {
+            try {
+              const osc = this.audioCtx.createOscillator();
+              const noteGain = this.audioCtx.createGain();
+
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(freq, now);
+
+              noteGain.gain.setValueAtTime(0, now);
+              noteGain.gain.linearRampToValueAtTime(0.015, now + 3.0);
+              noteGain.gain.setValueAtTime(0.015, now + 5.0);
+              noteGain.gain.exponentialRampToValueAtTime(0.0001, now + 8.0);
+
+              osc.connect(noteGain);
+              noteGain.connect(this.synthGain);
+
+              osc.start(now);
+              osc.stop(now + 8.0);
+
+              this.synthOscillators.push(osc);
+              setTimeout(() => {
+                this.synthOscillators = this.synthOscillators.filter(o => o !== osc);
+              }, 9000);
+            } catch (e) {}
+          });
+        }
+
+        // Play gentle bell sound every 4 seconds
+        try {
+          const bellFreq = baseScale[Math.floor(Math.random() * baseScale.length)] * 2;
+          const bellOsc = this.audioCtx.createOscillator();
+          const bellGain = this.audioCtx.createGain();
+
+          bellOsc.type = 'sine';
+          bellOsc.frequency.setValueAtTime(bellFreq, now);
+
+          bellGain.gain.setValueAtTime(0, now);
+          bellGain.gain.linearRampToValueAtTime(0.02, now + 0.2);
+          bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
+
+          bellOsc.connect(bellGain);
+          bellGain.connect(this.synthGain);
+
+          bellOsc.start(now);
+          bellOsc.stop(now + 4.0);
+
+          this.synthOscillators.push(bellOsc);
+          setTimeout(() => {
+            this.synthOscillators = this.synthOscillators.filter(o => o !== bellOsc);
+          }, 5000);
+        } catch (e) {}
+
+        step++;
+      };
+
+      playStep();
+      this.synthInterval = setInterval(playStep, 4000);
+
+    } catch (err) {
+      console.warn("Synth BGM failed to start", err);
+    }
+  }
+
+  stopSynthBgm() {
+    if (this.synthInterval) {
+      clearInterval(this.synthInterval);
+      this.synthInterval = null;
+    }
+    if (this.synthOscillators && this.synthOscillators.length > 0) {
+      this.synthOscillators.forEach(osc => {
+        try {
+          osc.stop();
+        } catch (e) {}
+      });
+      this.synthOscillators = [];
     }
   }
 }

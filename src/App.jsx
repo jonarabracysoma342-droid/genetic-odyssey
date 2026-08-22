@@ -6,6 +6,7 @@ import { BioBotDrawer } from './components/features/BioBotDrawer';
 import { TeacherReportModal } from './components/features/TeacherReportModal';
 import { LeaderboardModal } from './components/features/LeaderboardModal';
 import { SettingsModal } from './components/features/SettingsModal';
+import { DeveloperFeedbackModal } from './components/features/DeveloperFeedbackModal';
 
 // Firebase Auth & Group Dashboard imports
 import { AuthScreen } from './components/features/AuthScreen';
@@ -295,6 +296,7 @@ const AppShell = () => {
       <TeacherReportModal />
       <LeaderboardModal />
       <SettingsModal />
+      <DeveloperFeedbackModal />
       <CustomGlobalModal />
 
     </div>

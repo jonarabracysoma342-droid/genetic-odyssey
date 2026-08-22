@@ -308,11 +308,11 @@ export const BossBattleDrChaos = () => {
               MAIN LAGI
             </button>
             <button
-              onClick={() => navigateTo('virtual-lab')}
-              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black text-xs shadow-lg flex items-center justify-center gap-2"
+              onClick={() => navigateTo('hots-quiz')}
+              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black text-xs shadow-lg flex items-center justify-center gap-2 animate-pulse"
             >
               <Sparkles className="w-4 h-4" />
-              <span>LANJUT KE VIRTUAL LAB</span>
+              <span>MULAI KUIS HOTS</span>
             </button>
           </div>
         </div>

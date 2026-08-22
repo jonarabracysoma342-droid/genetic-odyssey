@@ -8,7 +8,7 @@ import {
 import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { useGame } from '../../context/GameContext';
 import { sound } from '../../services/sound';
-import { Brain, Star, Mail, Lock, User, CheckCircle2, AlertCircle, HelpCircle, GraduationCap, ArrowLeft } from 'lucide-react';
+import { Star, Mail, Lock, User, CheckCircle2, AlertCircle, GraduationCap, ArrowLeft } from 'lucide-react';
 
 export const AuthScreen = ({ onAuthSuccess }) => {
   const { loginAsGuest } = useGame();
@@ -197,9 +197,13 @@ export const AuthScreen = ({ onAuthSuccess }) => {
         )}
 
         {/* Title Mascot */}
-        <div className="text-center space-y-1.5">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-slate-800 p-2 flex items-center justify-center mx-auto shadow-3xs">
-            <Brain className="w-6 h-6 text-indigo-650" />
+        <div className="text-center space-y-2">
+          <div className="w-24 h-24 bg-white border-2 border-slate-800 rounded-3xl p-1 flex items-center justify-center mx-auto shadow-3xs overflow-hidden">
+            <img 
+              src="/assets/step_logo.png" 
+              alt="STEP Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
             <span className="text-[7.5px] font-black text-indigo-700 uppercase tracking-widest font-sans block">

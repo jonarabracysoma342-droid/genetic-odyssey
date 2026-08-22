@@ -7,7 +7,8 @@ import {
   Play,
   ArrowRight,
   GraduationCap,
-  Brain
+  Brain,
+  MessageSquare
 } from 'lucide-react';
 
 // ScrollReveal Component using Intersection Observer for fade-in/out on scroll
@@ -62,7 +63,8 @@ export const MainMenu = () => {
     setIsBioBotOpen, 
     setIsLeaderboardOpen,
     setIsTeacherReportOpen,
-    setTeacherReportActiveTab
+    setTeacherReportActiveTab,
+    setIsFeedbackOpen
   } = useGame();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,7 +72,7 @@ export const MainMenu = () => {
   // 6 Categories in specific requested order (Curriculum -> Material -> Map -> Lab -> AI -> Leaderboard)
   const categories = [
     { 
-      label: 'Kurikulum', 
+      label: 'Identitas Media', 
       img: '/assets/cat_curriculum_icon.webp', 
       action: () => { 
         setTeacherReportActiveTab('identity'); 
@@ -107,6 +109,11 @@ export const MainMenu = () => {
       img: '/assets/cat_leaderboard_icon.webp', 
       action: () => setIsLeaderboardOpen(true) 
     },
+    { 
+      label: 'Saran Dev', 
+      icon: MessageSquare, 
+      action: () => setIsFeedbackOpen(true) 
+    },
   ];
 
   // 7 Modules in Alternating MNTN Layout Style with new requested order
@@ -115,9 +122,9 @@ export const MainMenu = () => {
       id: 'kurikulum',
       num: '01',
       tag: 'KURIKULUM MERDEKA',
-      title: 'Modul Ajar & Proyek P5',
-      desc: 'Pelajari identitas modul, Capaian Pembelajaran (CP), Tujuan Pembelajaran (TP), serta proyek P5 yang diintegrasikan ke dalam game.',
-      linkText: 'Buka Detail Kurikulum',
+      title: 'Identitas Media Pembelajaran',
+      desc: 'Pelajari identitas media ini, materi biologi pewarisan sifat (Hukum Mendel, monohibrid, dihibrid, intermediet, letal) yang dicakup, serta alokasi waktu.',
+      linkText: 'Buka Identitas Media',
       img: '/assets/cat_curriculum_icon.webp',
       action: () => { 
         setTeacherReportActiveTab('identity'); 
@@ -190,6 +197,17 @@ export const MainMenu = () => {
       img: '/assets/cat_leaderboard_icon.webp',
       action: () => setIsLeaderboardOpen(true),
       layout: 'left'
+    },
+    {
+      id: 'feedback',
+      num: '08',
+      tag: 'SUARA PENGGUNA',
+      title: 'Saran untuk Pengembang',
+      desc: 'Punya ide fitur baru, laporan bug, atau usulan materi tambahan? Sampaikan penilaian dan masukan Anda langsung ke pengembang.',
+      linkText: 'Beri Masukan & Saran',
+      img: '/assets/cat_curriculum_icon.webp',
+      action: () => setIsFeedbackOpen(true),
+      layout: 'right'
     }
   ];
 

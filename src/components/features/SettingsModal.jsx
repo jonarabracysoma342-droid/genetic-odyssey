@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { Settings, Volume2, VolumeX, Music, RotateCcw, LogOut, Check, Unlock } from 'lucide-react';
+import { Settings, Volume2, VolumeX, Music, RotateCcw, LogOut, Check, Unlock, MessageSquare } from 'lucide-react';
 import { sound } from '../../services/sound';
 
 const OFFICIAL_TRACKS = [
+  { id: 'ambient_calm', name: 'Lullaby of Pea Ercis (Kalem & Pelan)', desc: 'Generative ambient synth instrumental (Relaxing & Peaceful)' },
   { id: 'spring_in_my_step', name: 'Spring In My Step - Silent Partner', desc: 'Ukulele & siulan ceria santai (Relaxed & Happy)' },
   { id: 'monody', name: 'TheFatRat - Monody (feat. Laura Brehm)', desc: 'Energetic gaming EDM track (High Energy)' }
 ];
@@ -21,11 +22,12 @@ export const SettingsModal = () => {
     currentUser,
     userRole,
     userName,
-    handleLogout
+    handleLogout,
+    setIsFeedbackOpen
   } = useGame();
 
   const [activeTrack, setActiveTrack] = useState(
-    localStorage.getItem('genetic_odyssey_bgm_track') || 'spring_in_my_step'
+    localStorage.getItem('genetic_odyssey_bgm_track') || 'ambient_calm'
   );
 
   if (!isSettingsOpen) return null;
@@ -151,8 +153,23 @@ export const SettingsModal = () => {
             </div>
           )}
 
+          {/* Feedback & Suggestions Button */}
+          <div className="pt-2">
+            <button
+              onClick={() => {
+                sound.playClick();
+                setIsSettingsOpen(false);
+                setIsFeedbackOpen(true);
+              }}
+              className="w-full py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 text-amber-900 font-extrabold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-3xs"
+            >
+              <MessageSquare className="w-4 h-4 text-amber-600" />
+              <span>BERI KRITIK & SARAN UNTUK PENGEMBANG</span>
+            </button>
+          </div>
+
           {/* Unlock All Stages Button */}
-          <div className="pt-4 border-t border-slate-100 space-y-2">
+          <div className="pt-2 border-t border-slate-100 space-y-2">
             <button
               onClick={() => {
                 unlockAllStages();

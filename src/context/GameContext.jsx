@@ -97,6 +97,7 @@ export const GameProvider = ({ children }) => {
   const [teacherReportActiveTab, setTeacherReportActiveTab] = useState('identity');
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   // Modals for sub-components (promoted to game context for scroll-locking)
   const [activePreviewStage, setActivePreviewStage] = useState(null);
@@ -153,11 +154,15 @@ export const GameProvider = ({ children }) => {
   useEffect(() => {
     if (bgmOn) {
       sound.startBgm();
+    } else {
+      sound.stopBgm();
     }
     const handleFirstUserClick = () => {
       sound.init();
-      if (bgmOn) {
+      if (sound.musicEnabled) {
         sound.startBgm();
+      } else {
+        sound.stopBgm();
       }
     };
     document.addEventListener('click', handleFirstUserClick, { once: true });
@@ -305,6 +310,8 @@ export const GameProvider = ({ children }) => {
         setIsLeaderboardOpen,
         isSettingsOpen,
         setIsSettingsOpen,
+        isFeedbackOpen,
+        setIsFeedbackOpen,
         soundOn,
         toggleSound,
         bgmOn,

@@ -32,31 +32,33 @@ import {
   Download,
   Printer,
   Search,
-  Book,
-  Activity,
-  Lightbulb,
-  FileDown
+  Book, 
+  Activity, 
+  Lightbulb, 
+  FileDown,
+  MessageSquare
 } from 'lucide-react';
 
+// Topics map for AI quiz generation
 const AI_QUESTION_POOL = {
   'monohibrid': [
     {
       id: 'm1',
-      question: "Jika tanaman kacang ercis berbiji bulat heterozigot (Bb) disilangkan dengan sesamanya, berapa persentase peluang munculnya keturunan berbiji keriput?",
+      question: "Jika tanaman ercis berbiji bulat (BB) disilangkan dengan berbiji kisut (bb), bagaimana fenotipe seluruh keturunan F1?",
       options: [
-        { key: 'A', text: '25%' },
-        { key: 'B', text: '50%' },
-        { key: 'C', text: '75%' },
-        { key: 'D', text: '0%' }
+        { key: 'A', text: '100% Berbiji bulat' },
+        { key: 'B', text: '50% Bulat, 50% Kisut' },
+        { key: 'C', text: '100% Berbiji kisut' },
+        { key: 'D', text: '75% Bulat, 25% Kisut' }
       ],
       answer: 'A',
-      explanation: "Persilangan Bb x Bb menghasilkan BB, Bb, Bb, bb. Keturunan homozigot resesif (bb - keriput) adalah 1 dari 4, yaitu 25%."
+      explanation: "Karena alel bulat (B) dominan penuh terhadap alel kisut (b), persilangan parental homozigot dominan dan resesif menghasilkan F1 bergenotipe Bb (100% fenotipe bulat)."
     },
     {
       id: 'm2',
-      question: "Menurut Hukum Segregasi Mendel (Hukum I), pemisahan pasangan alel secara bebas terjadi pada saat...",
+      question: "Pemisahan pasangan alel secara bebas pada Hukum I Mendel (Segregasi) terjadi pada tahap bioproses apa?",
       options: [
-        { key: 'A', text: 'Mitosis sel somatik' },
+        { key: 'A', text: 'Pembelahan mitosis' },
         { key: 'B', text: 'Pembentukan gamet (meiosis)' },
         { key: 'C', text: 'Proses fertilisasi' },
         { key: 'D', text: 'Perkembangan embrio' }
@@ -139,6 +141,12 @@ export const TeacherDashboard = () => {
   const [materialTitle, setMaterialTitle] = useState('');
   const [materialContent, setMaterialContent] = useState('');
   const [materialUrl, setMaterialUrl] = useState('');
+
+  // Material Q&A Discussion states for teacher
+  const [activeTeacherDiscussionMaterial, setActiveTeacherDiscussionMaterial] = useState(null);
+  const [activeReplyingCommentId, setActiveReplyingCommentId] = useState(null);
+  const [teacherReplyText, setTeacherReplyText] = useState('');
+  const [submittingTeacherReply, setSubmittingTeacherReply] = useState(false);
 
   // Quiz Builder states
   const [quizTitle, setQuizTitle] = useState('');
@@ -523,6 +531,86 @@ export const TeacherDashboard = () => {
         console.error(err);
       } finally {
         setLoading(false);
+      }
+    });
+  };
+
+  const handleSendTeacherReply = async (commentId) => {
+    if (!teacherReplyText.trim() || !activeTeacherDiscussionMaterial || !selectedGroup) return;
+    sound.playClick();
+    setSubmittingTeacherReply(true);
+
+    const newReply = {
+      id: 'rep_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+      authorUid: currentUser?.uid || 'teacher_uid',
+      authorName: userName || currentUser?.displayName || 'Guru',
+      authorRole: 'guru',
+      text: teacherReplyText.trim(),
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      const updatedMaterials = (selectedGroup.materials || []).map(mat => {
+        if (mat.id === activeTeacherDiscussionMaterial.id) {
+          const updatedComments = (mat.comments || []).map(c => {
+            if (c.id === commentId) {
+              return {
+                ...c,
+                replies: [...(c.replies || []), newReply]
+              };
+            }
+            return c;
+          });
+          return { ...mat, comments: updatedComments };
+        }
+        return mat;
+      });
+
+      await updateDoc(doc(db, 'groups', selectedGroup.groupId), {
+        materials: updatedMaterials
+      });
+
+      sound.playCorrect();
+      setTeacherReplyText('');
+      setActiveReplyingCommentId(null);
+
+      // Update local states
+      const currentMat = updatedMaterials.find(m => m.id === activeTeacherDiscussionMaterial.id);
+      setActiveTeacherDiscussionMaterial(currentMat);
+      setSelectedGroup(prev => ({ ...prev, materials: updatedMaterials }));
+      setMessage({ text: 'Balasan guru berhasil dikirim!', type: 'success' });
+    } catch (err) {
+      sound.playWrong();
+      console.error("Error replying as teacher:", err);
+      showAlert("Gagal mengirim balasan guru.");
+    } finally {
+      setSubmittingTeacherReply(false);
+    }
+  };
+
+  const handleDeleteComment = (commentId) => {
+    if (!selectedGroup || !activeTeacherDiscussionMaterial) return;
+    showConfirm("Hapus pertanyaan/komentar siswa ini?", async () => {
+      sound.playClick();
+      try {
+        const updatedMaterials = (selectedGroup.materials || []).map(mat => {
+          if (mat.id === activeTeacherDiscussionMaterial.id) {
+            const updatedComments = (mat.comments || []).filter(c => c.id !== commentId);
+            return { ...mat, comments: updatedComments };
+          }
+          return mat;
+        });
+        await updateDoc(doc(db, 'groups', selectedGroup.groupId), {
+          materials: updatedMaterials
+        });
+        sound.playCorrect();
+        const currentMat = updatedMaterials.find(m => m.id === activeTeacherDiscussionMaterial.id);
+        setActiveTeacherDiscussionMaterial(currentMat);
+        setSelectedGroup(prev => ({ ...prev, materials: updatedMaterials }));
+        setMessage({ text: "Komentar berhasil dihapus!", type: 'success' });
+      } catch (err) {
+        sound.playWrong();
+        console.error(err);
       }
     });
   };
@@ -1542,25 +1630,55 @@ export const TeacherDashboard = () => {
                   <p className="text-[9.5px] font-bold text-slate-400 py-3 text-center">Belum ada materi dibagikan.</p>
                 ) : (
                   <div className="space-y-3">
-                    {selectedGroup.materials.map(mat => (
-                      <div key={mat.id} className="p-3 border-2 border-slate-800 rounded-2xl bg-slate-50 text-left relative shadow-3xs">
-                        <div className="flex justify-between items-start">
-                          <h4 className="text-[10px] font-black text-slate-850 leading-tight pr-6">{mat.title}</h4>
-                          <button
-                            onClick={() => handleDeleteMaterial(mat.id)}
-                            className="absolute top-2.5 right-2.5 text-slate-400 hover:text-rose-650 cursor-pointer"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                    {selectedGroup.materials.map(mat => {
+                      const commentsCount = (mat.comments || []).length;
+                      return (
+                        <div key={mat.id} className="p-3 border-2 border-slate-800 rounded-2xl bg-slate-50 text-left relative shadow-3xs space-y-2">
+                          <div className="flex justify-between items-start">
+                            <h4 className="text-[10px] font-black text-slate-850 leading-tight pr-6">{mat.title}</h4>
+                            <button
+                              onClick={() => handleDeleteMaterial(mat.id)}
+                              className="text-slate-400 hover:text-rose-650 cursor-pointer"
+                              title="Hapus Materi"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <p className="text-[9px] font-bold text-slate-600 leading-relaxed whitespace-pre-wrap">{mat.content}</p>
+                          {mat.url && (
+                            <a href={mat.url} target="_blank" rel="noreferrer" className="text-[8px] font-black text-indigo-650 hover:underline block">
+                              🔗 Baca Selengkapnya: {mat.url}
+                            </a>
+                          )}
+                          
+                          {/* Discussion / Q&A Button for Teacher */}
+                          <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                sound.playClick();
+                                setActiveTeacherDiscussionMaterial(mat);
+                                setActiveReplyingCommentId(null);
+                                setTeacherReplyText('');
+                              }}
+                              className={`px-3 py-1.5 rounded-xl border-2 text-[8.5px] font-black flex items-center gap-1.5 cursor-pointer shadow-3xs transition ${
+                                commentsCount > 0 
+                                  ? 'bg-indigo-650 text-white border-slate-800 hover:bg-indigo-700' 
+                                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+                              }`}
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <span>Forum Tanya Jawab ({commentsCount} Pertanyaan)</span>
+                            </button>
+                            {commentsCount > 0 && (
+                              <span className="text-[7.5px] font-black text-indigo-650 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
+                                💬 Butuh tanggapan
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <p className="text-[9px] font-bold text-slate-600 leading-relaxed mt-1 whitespace-pre-wrap">{mat.content}</p>
-                        {mat.url && (
-                          <a href={mat.url} target="_blank" rel="noreferrer" className="text-[8px] font-black text-indigo-650 hover:underline block mt-1">
-                            🔗 Baca Selengkapnya: {mat.url}
-                          </a>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -1914,6 +2032,190 @@ export const TeacherDashboard = () => {
                 TUTUP REVIEW
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TEACHER MATERIAL Q&A DISCUSSION MODAL */}
+      {activeTeacherDiscussionMaterial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in text-left">
+          <div className="bg-white border-[3px] border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-[8px_8px_0px_#1e293b] flex flex-col max-h-[88vh] animate-scale-up">
+            
+            {/* Modal Header */}
+            <div className="p-4 bg-indigo-50 border-b-[3px] border-slate-800 flex justify-between items-center flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-150 border-2 border-slate-800 flex items-center justify-center">
+                  <MessageSquare className="w-4.5 h-4.5 text-indigo-700" />
+                </div>
+                <div>
+                  <h4 className="text-[11px] font-black text-slate-855 uppercase leading-none font-sans">
+                    Forum Tanya Jawab & Diskusi
+                  </h4>
+                  <span className="text-[8px] font-bold text-slate-500 block mt-1 truncate max-w-[260px]">
+                    {activeTeacherDiscussionMaterial.title}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setActiveTeacherDiscussionMaterial(null);
+                  setActiveReplyingCommentId(null);
+                }}
+                className="p-1 rounded-lg border-2 border-slate-800 bg-white hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+              >
+                <X className="w-4.5 h-4.5 stroke-[3px]" />
+              </button>
+            </div>
+
+            {/* Scrollable Comments List */}
+            <div className="p-4 overflow-y-auto space-y-4 flex-1">
+              
+              {/* Material Overview Banner */}
+              <div className="p-3 bg-slate-50 border-2 border-slate-800 rounded-2xl space-y-1">
+                <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-widest block">Ringkasan Materi</span>
+                <p className="text-[9.5px] font-medium text-slate-700 leading-relaxed whitespace-pre-wrap">
+                  {activeTeacherDiscussionMaterial.content}
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-black text-slate-700 uppercase tracking-wider">
+                    Daftar Pertanyaan Siswa ({(activeTeacherDiscussionMaterial.comments || []).length})
+                  </span>
+                  <span className="text-[7.5px] font-bold text-slate-400">
+                    Klik "Balas" untuk memberikan penjelasan guru
+                  </span>
+                </div>
+
+                {(!activeTeacherDiscussionMaterial.comments || activeTeacherDiscussionMaterial.comments.length === 0) ? (
+                  <div className="p-6 border-2 border-dashed border-slate-300 rounded-2xl text-center space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400">Belum ada pertanyaan dari siswa pada materi ini.</p>
+                    <span className="text-[8px] font-medium text-slate-400">Pertanyaan yang diajukan siswa di kelas akan muncul di sini.</span>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {activeTeacherDiscussionMaterial.comments.map((comm) => (
+                      <div key={comm.id} className="p-3.5 bg-white border-2 border-slate-800 rounded-2xl space-y-2 shadow-2xs">
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-black text-slate-900">{comm.authorName}</span>
+                            <span className="px-1.5 py-0.2 rounded text-[7px] font-black bg-emerald-100 text-emerald-800 uppercase">
+                              {comm.authorRole === 'guru' ? 'Guru' : 'Siswa'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[7.5px] font-bold text-slate-400">
+                              {comm.createdAt ? new Date(comm.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''}
+                            </span>
+                            <button
+                              onClick={() => handleDeleteComment(comm.id)}
+                              className="text-slate-300 hover:text-rose-600 transition cursor-pointer p-0.5"
+                              title="Hapus Pertanyaan"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <p className="text-[10px] font-bold text-slate-800 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                          {comm.text}
+                        </p>
+
+                        {/* Existing Replies List */}
+                        {comm.replies && comm.replies.length > 0 && (
+                          <div className="pl-3 border-l-2 border-indigo-400 space-y-2 pt-1">
+                            {comm.replies.map(rep => (
+                              <div key={rep.id} className="p-2.5 bg-indigo-50/90 border border-indigo-200 rounded-xl space-y-0.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[9px] font-black text-indigo-950">{rep.authorName}</span>
+                                  <span className="px-1.5 py-0.2 rounded text-[6.5px] font-black bg-indigo-200 text-indigo-900 uppercase">
+                                    👨‍🏫 Jawaban Guru
+                                  </span>
+                                  <span className="text-[7px] text-slate-400 ml-auto">
+                                    {rep.createdAt ? new Date(rep.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''}
+                                  </span>
+                                </div>
+                                <p className="text-[9.5px] font-medium text-slate-800 leading-relaxed">{rep.text}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Reply Form */}
+                        {activeReplyingCommentId === comm.id ? (
+                          <div className="pt-2 space-y-2 border-t border-slate-200">
+                            <textarea
+                              rows={2}
+                              value={teacherReplyText}
+                              onChange={(e) => setTeacherReplyText(e.target.value)}
+                              placeholder="Tulis penjelasan/jawaban guru untuk pertanyaan ini..."
+                              className="w-full p-2.5 text-[9.5px] font-bold border-2 border-slate-800 rounded-xl bg-indigo-50/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                            />
+                            <div className="flex justify-end gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setActiveReplyingCommentId(null);
+                                  setTeacherReplyText('');
+                                }}
+                                className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[8.5px] font-black rounded-lg border border-slate-300 cursor-pointer"
+                              >
+                                Batal
+                              </button>
+                              <button
+                                type="button"
+                                disabled={submittingTeacherReply || !teacherReplyText.trim()}
+                                onClick={() => handleSendTeacherReply(comm.id)}
+                                className="px-3.5 py-1 bg-indigo-650 hover:bg-indigo-700 text-white text-[8.5px] font-black rounded-lg border-2 border-slate-800 flex items-center gap-1 shadow-3xs cursor-pointer disabled:opacity-50"
+                              >
+                                <Send className="w-3 h-3" />
+                                <span>{submittingTeacherReply ? 'Mengirim...' : 'Kirim Jawaban Guru'}</span>
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="pt-1 flex justify-end">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                sound.playClick();
+                                setActiveReplyingCommentId(comm.id);
+                                setTeacherReplyText('');
+                              }}
+                              className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[8px] font-black rounded-lg border border-indigo-200 flex items-center gap-1 cursor-pointer transition shadow-3xs"
+                            >
+                              <MessageSquare className="w-3 h-3 text-indigo-600" />
+                              <span>Jawab Pertanyaan</span>
+                            </button>
+                          </div>
+                        )}
+
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 bg-slate-50 border-t-2 border-slate-800 flex justify-end">
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setActiveTeacherDiscussionMaterial(null);
+                  setActiveReplyingCommentId(null);
+                }}
+                className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black text-[9px] border-2 border-slate-800 rounded-xl cursor-pointer"
+              >
+                TUTUP FORUM
+              </button>
+            </div>
+
           </div>
         </div>
       )}

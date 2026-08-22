@@ -14,8 +14,8 @@ export const Header = () => {
     setIsTeacherReportOpen, 
     setTeacherReportActiveTab,
     setIsSettingsOpen, 
-    soundOn, 
-    toggleSound 
+    bgmOn, 
+    toggleBgm 
   } = useGame();
 
   return (
@@ -54,13 +54,13 @@ export const Header = () => {
             <span className="text-xs font-black text-amber-800 font-mono">{totalStars} ★</span>
           </div>
 
-          {/* Audio FX Toggle */}
+          {/* Audio BGM Toggle */}
           <button
-            onClick={toggleSound}
-            className={`p-1.5 rounded-full text-xs transition ${soundOn ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-400'}`}
-            title={soundOn ? "Mute SFX" : "Aktifkan SFX"}
+            onClick={toggleBgm}
+            className={`p-1.5 rounded-full text-xs transition ${bgmOn ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-400'}`}
+            title={bgmOn ? "Mute BGM" : "Aktifkan BGM"}
           >
-            {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            {bgmOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </button>
 
           {/* Notification Bell */}
