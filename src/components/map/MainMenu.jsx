@@ -147,9 +147,9 @@ export const MainMenu = () => {
       id: 'genopedia',
       num: '03',
       tag: 'GENOPEDIA (MATERI)',
-      title: 'Kamus & Pewarisan Sifat',
+      title: 'Materi Belajar & Kamus',
       desc: 'Pelajari kamus lengkap istilah genetika mulai dari sifat dominan-resesif, genotipe, fenotipe, alel, hingga Hukum Mendel.',
-      linkText: 'Buka Ensiklopedia',
+      linkText: 'Buka Materi Belajar',
       img: '/assets/cat_genopedia_icon.webp',
       action: () => navigateTo('genopedia'),
       layout: 'left'
