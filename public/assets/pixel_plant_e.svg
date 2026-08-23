@@ -62,30 +62,46 @@
     <rect x="9" y="6" width="2" height="1" fill="#eab308" />
   </g>
 
-  <!-- Wrinkled Seeds (3 yellow bumpy shapes on the ground) -->
-  <g transform="translate(28, 41)">
-    <!-- Seed 1 (Bumpy) -->
-    <rect x="0" y="2" width="3" height="3" fill="#ca8a04" />
-    <rect x="0" y="2" width="1" height="1" fill="#854d0e" />
-    <rect x="2" y="2" width="1" height="1" fill="#854d0e" />
-    <rect x="0" y="4" width="1" height="1" fill="#854d0e" />
-    <rect x="2" y="4" width="1" height="1" fill="#854d0e" />
-    <rect x="1" y="3" width="1" height="1" fill="#fef08a" />
-    
-    <!-- Seed 2 (Bumpy) -->
-    <rect x="4" y="3" width="3" height="3" fill="#ca8a04" />
-    <rect x="4" y="3" width="1" height="1" fill="#854d0e" />
-    <rect x="6" y="3" width="1" height="1" fill="#854d0e" />
-    <rect x="4" y="5" width="1" height="1" fill="#854d0e" />
-    <rect x="6" y="5" width="1" height="1" fill="#854d0e" />
-    <rect x="5" y="4" width="1" height="1" fill="#fef08a" />
-    
-    <!-- Seed 3 (Bumpy) -->
-    <rect x="2" y="4" width="3" height="3" fill="#ca8a04" />
-    <rect x="2" y="4" width="1" height="1" fill="#854d0e" />
-    <rect x="4" y="4" width="1" height="1" fill="#854d0e" />
-    <rect x="2" y="6" width="1" height="1" fill="#854d0e" />
-    <rect x="4" y="6" width="1" height="1" fill="#854d0e" />
-    <rect x="3" y="5" width="1" height="1" fill="#fef08a" />
+  <!-- Wrinkled Seeds (3 yellow jagged/bergerigi shapes) -->
+  <g transform="translate(28, 40)">
+    <!-- Seed 1 (Jagged 5x5) -->
+    <g transform="translate(0, 0)" fill="#ca8a04">
+      <rect x="1" y="1" width="3" height="3" />
+      <rect x="0" y="0" width="1" height="1" />
+      <rect x="4" y="0" width="1" height="1" />
+      <rect x="0" y="4" width="1" height="1" />
+      <rect x="4" y="4" width="1" height="1" />
+      <rect x="2" y="0" width="1" height="1" />
+      <rect x="2" y="4" width="1" height="1" />
+      <rect x="0" y="2" width="1" height="1" />
+      <rect x="4" y="2" width="1" height="1" />
+      <rect x="2" y="2" width="1" height="1" fill="#fef08a" />
+    </g>
+    <!-- Seed 2 (Jagged 5x5) -->
+    <g transform="translate(5, 1)" fill="#ca8a04">
+      <rect x="1" y="1" width="3" height="3" />
+      <rect x="0" y="0" width="1" height="1" />
+      <rect x="4" y="0" width="1" height="1" />
+      <rect x="0" y="4" width="1" height="1" />
+      <rect x="4" y="4" width="1" height="1" />
+      <rect x="2" y="0" width="1" height="1" />
+      <rect x="2" y="4" width="1" height="1" />
+      <rect x="0" y="2" width="1" height="1" />
+      <rect x="4" y="2" width="1" height="1" />
+      <rect x="2" y="2" width="1" height="1" fill="#fef08a" />
+    </g>
+    <!-- Seed 3 (Jagged 5x5) -->
+    <g transform="translate(2, 3)" fill="#ca8a04">
+      <rect x="1" y="1" width="3" height="3" />
+      <rect x="0" y="0" width="1" height="1" />
+      <rect x="4" y="0" width="1" height="1" />
+      <rect x="0" y="4" width="1" height="1" />
+      <rect x="4" y="4" width="1" height="1" />
+      <rect x="2" y="0" width="1" height="1" />
+      <rect x="2" y="4" width="1" height="1" />
+      <rect x="0" y="2" width="1" height="1" />
+      <rect x="4" y="2" width="1" height="1" />
+      <rect x="2" y="2" width="1" height="1" fill="#fef08a" />
+    </g>
   </g>
 </svg>

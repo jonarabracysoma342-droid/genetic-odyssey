@@ -62,13 +62,22 @@
     <rect x="9" y="6" width="2" height="1" fill="#eab308" />
   </g>
 
-  <!-- Round Seeds (3 yellow dots on the ground) -->
+  <!-- Round Seeds (3 smooth dots) -->
   <g transform="translate(28, 41)">
-    <rect x="0" y="2" width="3" height="3" fill="#ca8a04" />
-    <rect x="1" y="3" width="1" height="1" fill="#fef08a" />
-    <rect x="4" y="3" width="3" height="3" fill="#ca8a04" />
-    <rect x="5" y="4" width="1" height="1" fill="#fef08a" />
-    <rect x="2" y="4" width="3" height="3" fill="#ca8a04" />
-    <rect x="3" y="5" width="1" height="1" fill="#fef08a" />
+    <!-- Seed 1 -->
+    <g transform="translate(0, 2)">
+      <rect x="0" y="0" width="3" height="3" rx="1.2" fill="#ca8a04" />
+      <rect x="1" y="1" width="1" height="1" fill="#fef08a" />
+    </g>
+    <!-- Seed 2 -->
+    <g transform="translate(4, 3)">
+      <rect x="0" y="0" width="3" height="3" rx="1.2" fill="#ca8a04" />
+      <rect x="1" y="1" width="1" height="1" fill="#fef08a" />
+    </g>
+    <!-- Seed 3 -->
+    <g transform="translate(2, 4)">
+      <rect x="0" y="0" width="3" height="3" rx="1.2" fill="#ca8a04" />
+      <rect x="1" y="1" width="1" height="1" fill="#fef08a" />
+    </g>
   </g>
 </svg>
