@@ -259,7 +259,7 @@ export const TeacherReportModal = () => {
                 <div className="space-y-1.5">
                   <h5 className="font-extrabold text-black text-xs sm:text-sm uppercase tracking-wide">2. Mandiri</h5>
                   <p className="text-[10px] sm:text-[11px] text-black leading-relaxed font-bold">
-                    Siswa menguji pemahaman secara mandiri dengan menyelesaikan 8 stage level permainan, memantau kemajuan, dan mengevaluasi hasil belajar lewat kuis secara mandiri.
+                    Siswa menguji pemahaman secara mandiri dengan menyelesaikan 6 stage level permainan, memantau kemajuan, dan mengevaluasi hasil belajar lewat kuis secara mandiri.
                   </p>
                 </div>
               </div>
