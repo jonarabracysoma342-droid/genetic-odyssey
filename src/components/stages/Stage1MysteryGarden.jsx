@@ -144,6 +144,7 @@ export const Stage1MysteryGarden = () => {
   const [stageCompleted, setStageCompleted] = useState(false);
   const [score, setScore] = useState(0);
   const [isMissionExpanded, setIsMissionExpanded] = useState(true);
+  const [isLegendExpanded, setIsLegendExpanded] = useState(true);
   const [lives, setLives] = useState(3);
   const [gameOver, setGameOver] = useState(false);
 
@@ -394,6 +395,82 @@ export const Stage1MysteryGarden = () => {
                 <p className="text-[8px] font-bold text-indigo-900 bg-indigo-50/50 p-2 rounded-lg border border-indigo-100/50 leading-normal">
                   💡 {mission.explanation}
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* Retractable Symbol Legend Card on Left */}
+          {!isLegendExpanded ? (
+            <button 
+              onClick={() => setIsLegendExpanded(true)}
+              className="absolute top-20 left-4 w-9 h-9 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-md flex items-center justify-center cursor-pointer text-indigo-700 hover:text-indigo-800 transition z-30 font-black text-sm animate-bounce"
+              title="Tampilkan Legenda"
+            >
+              🏷️
+            </button>
+          ) : (
+            <div className="absolute top-20 left-4 w-52 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl shadow-md z-30 transition-all duration-300 overflow-hidden select-none">
+              {/* Card Header */}
+              <div 
+                onClick={() => setIsLegendExpanded(false)}
+                className="flex items-center justify-between px-2.5 py-2 bg-slate-50/80 border-b border-slate-100 cursor-pointer hover:bg-slate-100/80 transition"
+              >
+                <span className="text-[8px] font-black text-indigo-700 tracking-wider font-sans uppercase">
+                  🏷️ LEGENDA SIMBOL
+                </span>
+                <button className="text-slate-500 hover:text-indigo-650 font-extrabold text-[7.5px] focus:outline-none">
+                  Sembunyikan
+                </button>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-2.5 space-y-2.5 text-left text-[9px] font-bold text-black/80 animate-fade-in leading-relaxed">
+                {/* Flower Color */}
+                <div className="space-y-1">
+                  <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-wider block">Warna Bunga</span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <div className="flex items-center gap-1 bg-purple-50 border border-purple-100 p-1 rounded-lg">
+                      <span className="text-[10px]">🌸</span>
+                      <span className="font-extrabold text-[8px] text-purple-700">Ungu</span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-slate-50 border border-slate-100 p-1 rounded-lg">
+                      <span className="text-[10px]">💮</span>
+                      <span className="font-extrabold text-[8px] text-slate-600">Putih</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pod Color */}
+                <div className="space-y-1">
+                  <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-wider block">Warna Polong</span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-100 p-1 rounded-lg">
+                      <span className="text-[10px]">🫛</span>
+                      <span className="font-extrabold text-[8px] text-emerald-700">Hijau</span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-amber-50 border border-amber-100 p-1 rounded-lg">
+                      <span className="text-[10px]">💛</span>
+                      <span className="font-extrabold text-[8px] text-amber-700">Kuning</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seed Shape */}
+                <div className="space-y-1">
+                  <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-wider block">Bentuk Biji (Di Tanah)</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-1.5 py-1 rounded-lg">
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-600 border border-emerald-700 flex-shrink-0" />
+                      <span className="font-extrabold text-[8px] text-slate-700">Bulat (Mulus)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-1.5 py-1 rounded-lg">
+                      <div className="w-2.5 h-2.5 bg-emerald-600 flex-shrink-0 flex items-center justify-center relative" style={{ clipPath: 'polygon(50% 0%, 80% 20%, 100% 50%, 80% 80%, 50% 100%, 20% 80%, 0% 50%, 20% 20%)' }}>
+                        <div className="w-1.5 h-1.5 bg-emerald-800" style={{ clipPath: 'polygon(50% 0%, 80% 20%, 100% 50%, 80% 80%, 50% 100%, 20% 80%, 0% 50%, 20% 20%)' }} />
+                      </div>
+                      <span className="font-extrabold text-[8px] text-slate-700">Keriput (Bergerigi)</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
