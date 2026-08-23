@@ -29,7 +29,7 @@
   </g>
 
   <!-- Hanging Pea Pod (Terraria style shape) -->
-  <g transform="translate(10, 26)">
+  <g transform="translate(24, 26)">
     <!-- Stem connector -->
     <path d="M 0 0 Q -2 4 -1 6" fill="none" stroke="#15803d" stroke-width="1" />
     <!-- Pod Body -->
@@ -60,5 +60,15 @@
     
     <!-- Flower core / pistil -->
     <rect x="9" y="6" width="2" height="1" fill="#eab308" />
+  </g>
+
+  <!-- Round Seeds (3 green dots on the ground) -->
+  <g transform="translate(28, 41)">
+    <rect x="0" y="2" width="3" height="3" fill="#15803d" />
+    <rect x="1" y="3" width="1" height="1" fill="#86efac" />
+    <rect x="4" y="3" width="3" height="3" fill="#15803d" />
+    <rect x="5" y="4" width="1" height="1" fill="#86efac" />
+    <rect x="2" y="4" width="3" height="3" fill="#15803d" />
+    <rect x="3" y="5" width="1" height="1" fill="#86efac" />
   </g>
 </svg>

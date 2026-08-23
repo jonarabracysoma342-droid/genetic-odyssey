@@ -80,7 +80,7 @@ const PLANT_CARDS = [
     flowerColor: 'Ungu', 
     seedShape: 'Keriput', 
     podColor: 'Hijau', 
-    image: '/assets/pixel_plant_c.svg', 
+    image: '/assets/pixel_plant_f.svg', 
     imageBg: 'from-purple-100 via-fuchsia-50 to-emerald-100',
     flowerBadgeBg: 'bg-purple-600 text-white',
     seedBadgeBg: 'bg-amber-700 text-white',
