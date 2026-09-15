@@ -1,417 +1,500 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
+import { sound } from '../../services/sound';
+import { PixelValleyBackground } from '../common/PixelValleyBackground';
+import { PlayModeModal } from '../common/PlayModeModal';
 import { 
-  Search, 
+  Play, 
+  BookOpen, 
+  GraduationCap, 
+  Brain, 
+  FileText, 
+  Bot, 
+  Trophy, 
+  Settings, 
+  MessageSquare, 
+  LogOut, 
+  Volume2, 
+  VolumeX, 
+  Star, 
   Sparkles,
-  SlidersHorizontal,
-  Play,
-  ArrowRight,
-  GraduationCap,
-  Brain,
-  MessageSquare
+  X,
+  ChevronRight,
+  User
 } from 'lucide-react';
 
-// ScrollReveal Component using Intersection Observer for fade-in/out on scroll
-const ScrollReveal = ({ children, delay = 0 }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const domRef = useRef();
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsVisible(entry.isIntersecting);
-        });
-      },
-      {
-        threshold: 0.05,
-        rootMargin: '0px 0px -30px 0px'
-      }
-    );
-
-    const { current } = domRef;
-    if (current) {
-      observer.observe(current);
-    }
-
-    return () => {
-      if (current) {
-        observer.unobserve(current);
-      }
-    };
-  }, []);
-
-  return (
-    <div
-      ref={domRef}
-      className={`transition-all duration-700 ease-out transform ${
-        isVisible 
-          ? 'opacity-100 translate-y-0 scale-100' 
-          : 'opacity-0 translate-y-8 scale-[0.97]'
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
-
 export const MainMenu = () => {
+  const game = useGame() || {};
   const { 
-    navigateTo, 
-    setIsGenopediaOpen, 
-    setIsBioBotOpen, 
-    setIsLeaderboardOpen,
-    setIsTeacherReportOpen,
-    setTeacherReportActiveTab,
-    setIsFeedbackOpen
-  } = useGame();
-  
-  const [searchQuery, setSearchQuery] = useState('');
+    navigateTo = () => {}, 
+    userName = '', 
+    userRole = 'siswa', 
+    totalStars = 0,
+    bgmOn = true, 
+    toggleBgm = () => {},
+    setIsGenopediaOpen = () => {}, 
+    setIsBioBotOpen = () => {}, 
+    setIsLeaderboardOpen = () => {},
+    setIsTeacherReportOpen = () => {},
+    setTeacherReportActiveTab = () => {},
+    setIsFeedbackOpen = () => {},
+    setIsSettingsOpen = () => {},
+    handleLogout = () => {},
+    isLandscapeMobile = false
+  } = game;
 
-  // 6 Categories in specific requested order (Curriculum -> Material -> Map -> Lab -> AI -> Leaderboard)
-  const categories = [
-    { 
-      label: 'Identitas Media', 
-      img: '/assets/cat_curriculum_icon.webp', 
-      action: () => { 
-        setTeacherReportActiveTab('identity'); 
-        setIsTeacherReportOpen(true); 
-      } 
-    },
-    { 
-      label: 'Kelas', 
-      icon: GraduationCap, 
-      action: () => navigateTo('group-dashboard') 
-    },
-    { 
-      label: 'Genopedia', 
-      img: '/assets/cat_genopedia_icon.webp', 
-      action: () => navigateTo('genopedia') 
-    },
-    { 
-      label: 'Peta Stage', 
-      img: '/assets/cat_map_icon.webp', 
-      action: () => navigateTo('map') 
-    },
-    { 
-      label: 'Kuis HOTS', 
-      icon: Brain,
-      action: () => navigateTo('hots-quiz') 
-    },
-    { 
-      label: 'BioBot AI', 
-      img: '/assets/biobot_mascot.webp', 
-      action: () => setIsBioBotOpen(true) 
-    },
-    { 
-      label: 'Leaderboard', 
-      img: '/assets/cat_leaderboard_icon.webp', 
-      action: () => setIsLeaderboardOpen(true) 
-    },
-    { 
-      label: 'Saran Dev', 
-      icon: MessageSquare, 
-      action: () => setIsFeedbackOpen(true) 
-    },
-  ];
+  // Sub-hub modal state (to display the consolidated features)
+  const [activeHub, setActiveHub] = useState(null); // 'learn' | 'features' | null
+  const [isPlayModeModalOpen, setIsPlayModeModalOpen] = useState(false);
 
-  // 7 Modules in Alternating MNTN Layout Style with new requested order
-  const sections = [
-    {
-      id: 'kurikulum',
-      num: '01',
-      tag: 'KURIKULUM MERDEKA',
-      title: 'Identitas Media Pembelajaran',
-      desc: 'Pelajari identitas media ini, materi biologi pewarisan sifat (Hukum Mendel, monohibrid, dihibrid, intermediet, letal) yang dicakup, serta alokasi waktu.',
-      linkText: 'Buka Identitas Media',
-      img: '/assets/cat_curriculum_icon.webp',
-      action: () => { 
-        setTeacherReportActiveTab('identity'); 
-        setIsTeacherReportOpen(true); 
-      },
-      layout: 'left'
-    },
-    {
-      id: 'group-dashboard',
-      num: '02',
-      tag: 'KELAS ONLINE',
-      title: 'Dashboard Kelas & Guru',
-      desc: 'Masuk ke ruang kelas Anda untuk mengakses materi pembelajaran khusus dari guru, mengerjakan kuis kelas, dan melihat papan peringkat kelas.',
-      linkText: 'Buka Dashboard Kelas',
-      img: '/assets/cat_curriculum_icon.webp',
-      action: () => navigateTo('group-dashboard'),
-      layout: 'right'
-    },
-    {
-      id: 'genopedia',
-      num: '03',
-      tag: 'GENOPEDIA (MATERI)',
-      title: 'Materi Belajar & Kamus',
-      desc: 'Pelajari kamus lengkap istilah genetika mulai dari sifat dominan-resesif, genotipe, fenotipe, alel, hingga Hukum Mendel.',
-      linkText: 'Buka Materi Belajar',
-      img: '/assets/cat_genopedia_icon.webp',
-      action: () => navigateTo('genopedia'),
-      layout: 'left'
-    },
-    {
-      id: 'map',
-      num: '04',
-      tag: 'PETA PERMAINAN',
-      title: 'Petualangan Mendel',
-      desc: 'Jelajahi alur cerita petualangan interaktif dari Rumah Mendel hingga Hall of Genetics. Selesaikan 6 stage belajar yang seru!',
-      linkText: 'Jelajahi Peta Game',
-      img: '/assets/cat_map_icon.webp',
-      action: () => navigateTo('map'),
-      layout: 'right'
-    },
-    {
-      id: 'hots-quiz',
-      num: '05',
-      tag: 'EVALUASI MANDIRI',
-      title: 'Kuis Evaluasi HOTS',
-      desc: 'Uji kemampuan analisis konsep persilangan dan Hukum Mendel kamu melalui pertanyaan HOTS tingkat tinggi.',
-      linkText: 'Mulai Kuis HOTS',
-      img: '/assets/cat_virtuallab_icon.webp',
-      action: () => navigateTo('hots-quiz'),
-      layout: 'left'
-    },
-    {
-      id: 'biobot',
-      num: '06',
-      tag: 'ASISTEN AI',
-      title: 'Tanya BioBot Cerdas',
-      desc: 'Butuh petunjuk menyelesaikan misi stage? Konsultasikan kesulitan belajarmu dengan asisten AI biologi pintar kapan saja.',
-      linkText: 'Tanya BioBot',
-      img: '/assets/biobot_mascot.webp',
-      action: () => setIsBioBotOpen(true),
-      layout: 'right'
-    },
-    {
-      id: 'leaderboard',
-      num: '07',
-      tag: 'LEADERBOARD',
-      title: 'Papan Peringkat Siswa',
-      desc: 'Lihat siapa saja siswa yang memuncaki papan skor dan memiliki koleksi bintang terbanyak di Genetic Odyssey.',
-      linkText: 'Lihat Peringkat',
-      img: '/assets/cat_leaderboard_icon.webp',
-      action: () => setIsLeaderboardOpen(true),
-      layout: 'left'
-    },
-    {
-      id: 'feedback',
-      num: '08',
-      tag: 'SUARA PENGGUNA',
-      title: 'Saran untuk Pengembang',
-      desc: 'Punya ide fitur baru, laporan bug, atau usulan materi tambahan? Sampaikan penilaian dan masukan Anda langsung ke pengembang.',
-      linkText: 'Beri Masukan & Saran',
-      img: '/assets/cat_curriculum_icon.webp',
-      action: () => setIsFeedbackOpen(true),
-      layout: 'right'
+  const handlePlayClick = () => {
+    sound.playClick();
+    setIsPlayModeModalOpen(true);
+  };
+
+  const handleSelectPlayMode = (mode) => {
+    if (mode === 'rpg') {
+      // Putar video sinematik sebelum masuk ke dunia RPG
+      navigateTo('intro-video');
+    } else {
+      navigateTo('map');
     }
-  ];
+  };
 
-  const filteredSections = sections.filter(sec => 
-    sec.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sec.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sec.desc.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleLearnHubClick = () => {
+    sound.playClick();
+    setActiveHub('learn');
+  };
+
+  const handleFeaturesHubClick = () => {
+    sound.playClick();
+    setActiveHub('features');
+  };
+
+  const closeHub = () => {
+    sound.playClick();
+    setActiveHub(null);
+  };
 
   return (
-    <div className="w-full md:max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-5 md:space-y-6 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
+    <div className="relative w-full h-screen min-h-screen overflow-hidden flex flex-col justify-between select-none bg-[#74c2e8]">
       
-      {/* Aurora Background Blobs */}
-      <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-sky-200/50 blur-3xl pointer-events-none float-anim z-0" />
-      <div className="absolute top-1/2 -left-20 w-56 h-56 rounded-full bg-indigo-200/40 blur-3xl pointer-events-none float-anim z-0 animate-pulse duration-[8s]" />
-      <div className="absolute -bottom-10 right-10 w-44 h-44 rounded-full bg-amber-100/60 blur-3xl pointer-events-none float-anim z-0" />
+      {/* ================= DETAILED STARDEW VALLEY MENDEL BACKGROUND ================= */}
+      <PixelValleyBackground overlay="subtle" />
 
-      {/* Grid wrapper for Desktop Widescreen / Landscape layout */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative z-10">
+
+      {/* ================= TOP HUD & CONTROLS ================= */}
+      <div className={`relative z-10 w-full ${isLandscapeMobile ? 'px-3 pt-1.5' : 'px-4 md:px-8 pt-3 md:pt-5'} flex items-center justify-between`}>
         
-        {/* LEFT COLUMN: Search, Quick Actions, and Hero Banner */}
-        <div className="md:col-span-5 space-y-5 flex flex-col justify-start">
-          
-          {/* 1. SEARCH INPUT ROW */}
-          <div className="flex items-center gap-2 relative z-10">
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 md:w-5 md:h-5 absolute left-3.5 md:left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Cari modul, kamus, fitur..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 rounded-2xl bg-white/50 backdrop-blur-md border border-white/70 text-xs md:text-sm font-semibold text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white/80 transition shadow-2xs"
-              />
-            </div>
+        {/* User Info Badge (Pixel Style) */}
+        <div className={`flex items-center gap-2 bg-[#361706]/85 backdrop-blur-xs border-2 border-[#ca7c38] ${isLandscapeMobile ? 'px-2 py-1' : 'px-3 py-1.5'} rounded-lg shadow-[3px_3px_0_#1a0b03]`}>
+          <div className={`${isLandscapeMobile ? 'w-6 h-6 text-[10px]' : 'w-7 h-7 md:w-8 md:h-8 text-xs'} bg-[#ca7c38] border border-[#fbe4c8] rounded flex items-center justify-center font-pixel text-[#2b1103]`}>
+            {userName ? userName.charAt(0).toUpperCase() : '🧬'}
+          </div>
+          <div className="text-left">
+            <span className={`font-pixel ${isLandscapeMobile ? 'text-[7.5px]' : 'text-[8px] md:text-[10px]'} text-[#ffd699] block truncate max-w-[110px] md:max-w-[180px]`}>
+              {userName || 'SISWA'}
+            </span>
+            <span className={`font-pixel ${isLandscapeMobile ? 'text-[5.5px]' : 'text-[6px] md:text-[7px]'} text-[#86efac] block uppercase`}>
+              {userRole === 'guru' ? '👨‍🏫 GURU' : '🧬 PENELITI'}
+            </span>
+          </div>
+        </div>
 
-            <button 
-              onClick={() => navigateTo('map')}
-              className="w-11 h-11 md:w-13 md:h-13 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center shadow-md shadow-sky-500/20 flex-shrink-0 transition cursor-pointer hover:scale-105"
-              title="Buka Peta Game"
+        {/* Right Action Icons: Stars & Sound */}
+        <div className="flex items-center gap-2">
+          
+          {/* Total Stars Counter */}
+          <div className={`flex items-center gap-1.5 bg-[#361706]/85 border-2 border-[#ca7c38] ${isLandscapeMobile ? 'px-2 py-1' : 'px-3 py-1.5'} rounded-lg shadow-[3px_3px_0_#1a0b03]`}>
+            <Star className={`${isLandscapeMobile ? 'w-3 h-3' : 'w-3.5 h-3.5 md:w-4 md:h-4'} text-[#facc15] fill-[#facc15]`} />
+            <span className={`font-pixel ${isLandscapeMobile ? 'text-[8px]' : 'text-[9px] md:text-xs'} text-[#fef08a]`}>
+              {totalStars} ★
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+
+      {/* ================= CENTER TITLE & 3 WOODEN PLANK BUTTONS ================= */}
+      <div className={`relative z-10 w-full flex flex-col items-center justify-center px-4 ${isLandscapeMobile ? 'py-1 my-auto' : 'py-2 md:py-4 my-auto'}`}>
+        
+        {/* Animated Floating Title (No Box) */}
+        <div className={`text-center ${isLandscapeMobile ? 'mb-2 sm:mb-2.5' : 'mb-5 md:mb-7'} animate-pixel-title select-none`}>
+          <div className={`inline-flex items-center gap-1.5 ${isLandscapeMobile ? 'px-2 py-0.5 mb-1' : 'px-3 py-1 mb-1.5'} bg-[#361706]/85 border-2 border-[#ca7c38] rounded-full shadow-[2px_2px_0_#1a0b03]`}>
+            <Sparkles className={`${isLandscapeMobile ? 'w-2.5 h-2.5' : 'w-3 h-3'} text-[#fef08a] animate-pulse`} />
+            <span className={`font-pixel ${isLandscapeMobile ? 'text-[6px]' : 'text-[7px] md:text-[8px]'} text-[#ffd699] tracking-wider uppercase`}>
+              Laboratorium Persilangan Ercis
+            </span>
+          </div>
+          
+          <h1 className={`font-pixel ${isLandscapeMobile ? 'text-xl sm:text-2xl drop-shadow-[0_3px_0_#2b1103]' : 'text-2xl sm:text-3xl md:text-5xl drop-shadow-[0_5px_0_#2b1103]'} text-[#ffffff] tracking-wider uppercase filter leading-tight`}>
+            GENETIC ODYSSEY
+          </h1>
+          <p className={`font-pixel ${isLandscapeMobile ? 'text-[8px] mt-0.5 drop-shadow-[0_2px_0_#361706]' : 'text-[9px] sm:text-xs md:text-sm mt-1 drop-shadow-[0_3px_0_#361706]'} text-[#facc15] tracking-widest uppercase font-bold`}>
+            PETUALANGAN HUKUM MENDEL
+          </p>
+        </div>
+
+        {/* 3 CONSOLIDATED SOLID WOODEN PLANK BUTTONS (HORIZONTALLY BALANCED IN LANDSCAPE MOBILE) */}
+        <div className={`w-full ${isLandscapeMobile ? 'max-w-2xl flex-row items-center justify-center gap-2 px-1' : 'max-w-[280px] sm:max-w-[320px] md:max-w-[360px] flex-col gap-3 sm:gap-3.5'} flex z-10`}>
+          
+          {/* BUTTON 1: MAIN (PETUALANGAN MENDEL) */}
+          <div className="w-full animate-menu-slide-1 flex-1">
+            <button
+              onClick={handlePlayClick}
+              className={`w-full ${isLandscapeMobile ? 'py-2 px-2.5 rounded-lg border-2 shadow-[0_3px_0_#1a0b03]' : 'py-3 sm:py-3.5 px-4 rounded-xl border-4 shadow-[0_6px_0_#1a0b03,0_10px_16px_rgba(0,0,0,0.5)]'} bg-gradient-to-b from-[#f3ad62] via-[#ca7c38] to-[#99491a] border-[#2b1103] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_2px_0_#1a0b03] transition-all cursor-pointer relative group flex items-center justify-center`}
             >
-              <SlidersHorizontal className="w-5 h-5 md:w-6 md:h-6" />
+              {/* Left/Right Metal Rivet Studs */}
+              <div className={`absolute ${isLandscapeMobile ? 'left-1.5 w-1.5 h-1.5' : 'left-3 w-2.5 h-2.5'} top-1/2 -translate-y-1/2 rounded-full bg-[#fde047] border border-[#2b1103] shadow-inner`} />
+              <div className={`absolute ${isLandscapeMobile ? 'right-1.5 w-1.5 h-1.5' : 'right-3 w-2.5 h-2.5'} top-1/2 -translate-y-1/2 rounded-full bg-[#fde047] border border-[#2b1103] shadow-inner`} />
+
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Play className={`${isLandscapeMobile ? 'w-3.5 h-3.5' : 'w-4 h-4 sm:w-5 sm:h-5'} fill-[#2b1103] text-[#2b1103] group-hover:scale-110 transition-transform`} />
+                <span className={`font-pixel ${isLandscapeMobile ? 'text-[9.5px]' : 'text-xs sm:text-sm'} font-black tracking-widest uppercase text-[#2b1103] drop-shadow-[0_1px_0_rgba(255,240,200,0.7)]`}>
+                  MAIN
+                </span>
+              </div>
             </button>
           </div>
 
-          {/* 2. CATEGORY QUICK ACTION 3D PNG ILLUSTRATIONS ROW (4 columns wrap) */}
-          <div className="grid grid-cols-4 gap-2 md:gap-3 pt-1 relative z-10">
-            {categories.map((cat, idx) => (
-              <button
-                key={idx}
-                onClick={cat.action}
-                className="flex flex-col items-center gap-1.5 md:gap-2.5 group cursor-pointer"
-              >
-                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60 flex items-center justify-center p-1.5 md:p-2 shadow-2xs group-hover:scale-105 group-hover:bg-white/60 transition-all duration-250 overflow-hidden">
-                  {cat.icon ? (
-                    <cat.icon className="w-6 h-6 md:w-8 md:h-8 text-sky-600 stroke-[2.5]" />
-                  ) : (
-                    <img 
-                      src={cat.img} 
-                      alt={cat.label} 
-                      className="w-full h-full object-contain drop-shadow-xs"
-                    />
-                  )}
-                </div>
-                <span className="text-[9px] md:text-xs font-bold text-slate-700 tracking-tight text-center truncate w-full">
-                  {cat.label}
+          {/* BUTTON 2: ZONA BELAJAR & KELAS (LEARN HUB) */}
+          <div className="w-full animate-menu-slide-2 flex-1">
+            <button
+              onClick={handleLearnHubClick}
+              className={`w-full ${isLandscapeMobile ? 'py-2 px-2.5 rounded-lg border-2 shadow-[0_3px_0_#1a0b03]' : 'py-3 sm:py-3.5 px-4 rounded-xl border-4 shadow-[0_6px_0_#1a0b03,0_10px_16px_rgba(0,0,0,0.5)]'} bg-gradient-to-b from-[#f3ad62] via-[#ca7c38] to-[#99491a] border-[#2b1103] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_2px_0_#1a0b03] transition-all cursor-pointer relative group flex items-center justify-center`}
+            >
+              <div className={`absolute ${isLandscapeMobile ? 'left-1.5 w-1.5 h-1.5' : 'left-3 w-2.5 h-2.5'} top-1/2 -translate-y-1/2 rounded-full bg-[#fde047] border border-[#2b1103] shadow-inner`} />
+              <div className={`absolute ${isLandscapeMobile ? 'right-1.5 w-1.5 h-1.5' : 'right-3 w-2.5 h-2.5'} top-1/2 -translate-y-1/2 rounded-full bg-[#fde047] border border-[#2b1103] shadow-inner`} />
+
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <BookOpen className={`${isLandscapeMobile ? 'w-3.5 h-3.5' : 'w-4 h-4 sm:w-5 sm:h-5'} text-[#2b1103] stroke-[2.5] group-hover:scale-110 transition-transform`} />
+                <span className={`font-pixel ${isLandscapeMobile ? 'text-[9.5px]' : 'text-xs sm:text-sm'} font-black tracking-widest uppercase text-[#2b1103] drop-shadow-[0_1px_0_rgba(255,240,200,0.7)]`}>
+                  BELAJAR
                 </span>
-              </button>
-            ))}
+              </div>
+            </button>
           </div>
 
-          {/* 3. HERO PROMOTIONAL BANNER CARD (Glassmorphic Banner) */}
-          <div className="relative rounded-3xl bg-gradient-to-br from-sky-100/60 via-sky-50/45 to-blue-50/50 backdrop-blur-md border border-white/60 p-5 md:p-7 overflow-hidden shadow-2xs z-10 flex-1 flex flex-col justify-between min-h-[220px]">
-            <div className="relative z-10 max-w-[65%] space-y-2 md:space-y-3 text-left">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full bg-sky-200/60 text-sky-800 text-[10px] md:text-xs font-black uppercase tracking-wider">
-                <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-sky-600" /> Game Edukasi
-              </span>
+          {/* BUTTON 3: PENGATURAN & FITUR (OPTIONS & EXTRAS) */}
+          <div className="w-full animate-menu-slide-3 flex-1">
+            <button
+              onClick={handleFeaturesHubClick}
+              className={`w-full ${isLandscapeMobile ? 'py-2 px-2.5 rounded-lg border-2 shadow-[0_3px_0_#1a0b03]' : 'py-3 sm:py-3.5 px-4 rounded-xl border-4 shadow-[0_6px_0_#1a0b03,0_10px_16px_rgba(0,0,0,0.5)]'} bg-gradient-to-b from-[#f3ad62] via-[#ca7c38] to-[#99491a] border-[#2b1103] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_2px_0_#1a0b03] transition-all cursor-pointer relative group flex items-center justify-center`}
+            >
+              <div className={`absolute ${isLandscapeMobile ? 'left-1.5 w-1.5 h-1.5' : 'left-3 w-2.5 h-2.5'} top-1/2 -translate-y-1/2 rounded-full bg-[#fde047] border border-[#2b1103] shadow-inner`} />
+              <div className={`absolute ${isLandscapeMobile ? 'right-1.5 w-1.5 h-1.5' : 'right-3 w-2.5 h-2.5'} top-1/2 -translate-y-1/2 rounded-full bg-[#fde047] border border-[#2b1103] shadow-inner`} />
 
-              <h2 className="text-base md:text-xl font-black text-slate-900 leading-tight">
-                Jelajahi Gen. <br />
-                <span className="text-sky-600">Pecahkan Sifat.</span>
-              </h2>
-
-              <p className="text-[11px] md:text-sm text-slate-600 font-medium leading-relaxed">
-                Pelajari hukum Mendel & persilangan genetik secara interaktif.
-              </p>
-            </div>
-
-            <div className="relative z-10 pt-3 text-left">
-              <button
-                onClick={() => navigateTo('map')}
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-sky-655 hover:bg-sky-700 text-white font-extrabold text-xs md:text-sm shadow-md shadow-sky-500/30 flex items-center gap-1.5 transition cursor-pointer"
-              >
-                <Play className="w-3.5 h-3.5 md:w-4 md:h-4 fill-white stroke-none" />
-                <span>Mulai Petualangan</span>
-              </button>
-            </div>
-
-            {/* Right Character PNG Graphic */}
-            <img
-              src="/assets/mendel_avatar.webp"
-              alt="Mendel Character"
-              className="absolute -right-3 -bottom-4 w-36 h-36 md:w-44 md:h-44 object-contain pointer-events-none drop-shadow-md"
-            />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Settings className={`${isLandscapeMobile ? 'w-3.5 h-3.5' : 'w-4 h-4 sm:w-5 sm:h-5'} text-[#2b1103] stroke-[2.5] group-hover:scale-110 transition-transform`} />
+                <span className={`font-pixel ${isLandscapeMobile ? 'text-[9.5px]' : 'text-xs sm:text-sm'} font-black tracking-widest uppercase text-[#2b1103] drop-shadow-[0_1px_0_rgba(255,240,200,0.7)]`}>
+                  PENGATURAN
+                </span>
+              </div>
+            </button>
           </div>
 
         </div>
 
-        {/* RIGHT COLUMN: Modules list (takes 7 cols on md) */}
-        <div className="md:col-span-7 space-y-4 md:space-y-5 flex flex-col justify-start">
-          <h3 className="text-xs md:text-sm font-bold text-slate-400 tracking-wider uppercase pl-1 border-l-3 border-sky-500 text-left">
-            Modul Pembelajaran
-          </h3>
+      </div>
 
-          <div className="space-y-4 md:space-y-5 md:overflow-y-auto md:max-h-[75vh] pr-1 pb-6">
-          {filteredSections.map((sec, idx) => {
-            const isLeft = sec.layout === 'left';
-            return (
-              <ScrollReveal key={sec.id} delay={idx * 50}>
-                <div 
-                  onClick={sec.action}
-                  className="relative flex items-center justify-between gap-4 md:gap-5 group cursor-pointer p-4 md:p-5 transition-all duration-350 rounded-3xl bg-white/75 backdrop-blur-md border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:bg-white/90 hover:shadow-[0_12px_36px_rgba(2,132,199,0.12)] hover:scale-[1.01]"
-                >
-                  {/* Giant low-opacity background number */}
-                  <div className="absolute top-1 left-3 text-7xl md:text-8xl font-serif-display font-black text-slate-200/40 select-none pointer-events-none transition-all group-hover:text-slate-300/60 group-hover:scale-105 duration-300">
-                    {sec.num}
-                  </div>
-
-                  {isLeft ? (
-                    <>
-                      {/* Text Column (Left) */}
-                      <div className="flex-1 text-left space-y-1.5 md:space-y-2 z-10 pl-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-[1.5px] bg-amber-400" />
-                          <span className="text-[9px] md:text-[11px] font-bold text-amber-500 tracking-widest uppercase">
-                            {sec.tag}
-                          </span>
-                        </div>
-
-                        <h3 className="text-xs sm:text-sm md:text-base font-bold font-serif-display text-slate-900 tracking-wide leading-snug group-hover:text-sky-600 transition duration-300">
-                          {sec.title}
-                        </h3>
-
-                        <p className="text-[10px] md:text-xs text-slate-500 font-medium leading-relaxed">
-                          {sec.desc}
-                        </p>
-
-                        <div className="inline-flex items-center gap-1 text-[10px] md:text-xs font-extrabold text-sky-600 group-hover:translate-x-1 transition-transform duration-300 pt-0.5">
-                          <span>{sec.linkText}</span>
-                          <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
-                        </div>
-                      </div>
-
-                      {/* Image Column (Right) */}
-                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white border border-sky-100/75 flex items-center justify-center p-1.5 md:p-2 shadow-2xs overflow-hidden transition-transform duration-300 group-hover:scale-105 flex-shrink-0 z-10">
-                        <img 
-                          src={sec.img} 
-                          alt={sec.title} 
-                          className="w-[95%] h-[95%] object-contain float-anim"
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Image Column (Left) */}
-                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white border border-sky-100/75 flex items-center justify-center p-1.5 md:p-2 shadow-2xs overflow-hidden transition-transform duration-300 group-hover:scale-105 flex-shrink-0 z-10">
-                        <img 
-                          src={sec.img} 
-                          alt={sec.title} 
-                          className="w-[95%] h-[95%] object-contain float-anim"
-                        />
-                      </div>
-
-                      {/* Text Column (Right) */}
-                      <div className="flex-1 text-left space-y-1.5 md:space-y-2 z-10 pr-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-[1.5px] bg-amber-400" />
-                          <span className="text-[9px] md:text-[11px] font-bold text-amber-500 tracking-widest uppercase">
-                            {sec.tag}
-                          </span>
-                        </div>
-
-                        <h3 className="text-xs sm:text-sm md:text-base font-bold font-serif-display text-slate-900 tracking-wide leading-snug group-hover:text-sky-600 transition duration-300">
-                          {sec.title}
-                        </h3>
-
-                        <p className="text-[10px] md:text-xs text-slate-500 font-medium leading-relaxed">
-                          {sec.desc}
-                        </p>
-
-                        <div className="inline-flex items-center gap-1 text-[10px] md:text-xs font-extrabold text-sky-600 group-hover:translate-x-1 transition-transform duration-300 pt-0.5">
-                          <span>{sec.linkText}</span>
-                          <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </ScrollReveal>
-            );
-          })}
+      {/* ================= BOTTOM BAR CREDITS & FOOTER ================= */}
+      <div className={`relative z-10 w-full ${isLandscapeMobile ? 'px-3 pb-1.5' : 'px-4 pb-2 md:pb-3'} flex items-center justify-between`}>
+        <div className={`bg-[#2b1103]/85 border-2 border-[#ca7c38] ${isLandscapeMobile ? 'px-2 py-0.5 text-[6.5px]' : 'px-2.5 py-1 text-[7px] md:text-[8px]'} rounded-lg font-pixel text-[#fef08a] shadow-[2px_2px_0_#1a0b03]`}>
+          GENETIC ODYSSEY v2.0
+        </div>
+        <div className={`bg-[#2b1103]/85 border-2 border-[#ca7c38] ${isLandscapeMobile ? 'px-2 py-0.5 text-[6.5px]' : 'px-2.5 py-1 text-[7px] md:text-[8px]'} rounded-lg font-pixel text-[#fef08a] shadow-[2px_2px_0_#1a0b03]`}>
+          HUKUM PEWARISAN SIFAT MENDEL
         </div>
       </div>
+
+
+      {/* ================= MODAL SUB-HUB 1: BELAJAR & KELAS (LEARN) ================= */}
+      {activeHub === 'learn' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-xs animate-fade-in">
+          <div className={`relative w-full max-w-lg bg-[#fae8b6] border-4 border-[#361706] rounded-xl ${isLandscapeMobile ? 'max-h-[92vh] overflow-y-auto p-3 space-y-2' : 'p-4 md:p-6 space-y-4'} shadow-[6px_6px_0_#1a0b03] text-[#2b1103] modal-landscape-compact`}>
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b-2 border-[#361706] pb-2">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[#884318]" />
+                <h3 className="font-pixel text-xs md:text-sm text-[#361706] font-black uppercase">
+                  ZONA BELAJAR & KELAS
+                </h3>
+              </div>
+              <button
+                onClick={closeHub}
+                className="p-1 bg-[#df9b52] hover:bg-[#ca7c38] border-2 border-[#361706] rounded text-[#2b1103] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Hub Menu Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              
+              {/* Option A: Genopedia */}
+              <button
+                onClick={() => { closeHub(); navigateTo('genopedia'); }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  📖
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Genopedia
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Kamus & materi lengkap Hukum Mendel I & II.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option B: Kelas LMS */}
+              <button
+                onClick={() => { closeHub(); navigateTo('group-dashboard'); }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  🏫
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    {userRole === 'guru' ? 'Kelola Kelas' : 'Kelas Belajar'}
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Portal tugas, grup kelas, dan materi dari guru.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option C: Kuis HOTS */}
+              <button
+                onClick={() => { closeHub(); navigateTo('hots-quiz'); }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  🧠
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Kuis Evaluasi HOTS
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Uji pemahaman persilangan sifat & analisis gen.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option D: Identitas Media Kurikulum */}
+              <button
+                onClick={() => {
+                  closeHub();
+                  setTeacherReportActiveTab('identity');
+                  setIsTeacherReportOpen(true);
+                }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  📜
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Identitas Media
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Capaian Pembelajaran & Kurikulum Merdeka.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option E: Cerita Visual Novel Pengenalan */}
+              <button
+                onClick={() => {
+                  closeHub();
+                  navigateTo('intro-story');
+                }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#16a34a] border border-[#361706] flex items-center justify-center text-white flex-shrink-0 text-base">
+                  💬
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Dialog Pengenalan (Kak Nisa)
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Pengantar materi dan penjelasan panduan permainan.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option F: Video Prolog Sinematik */}
+              <button
+                onClick={() => {
+                  closeHub();
+                  navigateTo('intro-video');
+                }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#dc2626] border border-[#361706] flex items-center justify-center text-white flex-shrink-0 text-base">
+                  🎬
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Video Sinematik: Prolog 1865
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Tonton kembali video animasi kisah terlempar ke Kebun Biara.
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <div className="text-center pt-1">
+              <button
+                onClick={closeHub}
+                className="px-5 py-1.5 bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#361706] rounded-md font-pixel text-[9px] text-[#2b1103] uppercase font-black cursor-pointer shadow-[2px_2px_0_#2b1103] active:translate-y-0.5"
+              >
+                Tutup
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+
+      {/* ================= MODAL SUB-HUB 2: PENGATURAN & FITUR (OPTIONS) ================= */}
+      {activeHub === 'features' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-xs animate-fade-in">
+          <div className={`relative w-full max-w-lg bg-[#fae8b6] border-4 border-[#361706] rounded-xl ${isLandscapeMobile ? 'max-h-[92vh] overflow-y-auto p-3 space-y-2' : 'p-4 md:p-6 space-y-4'} shadow-[6px_6px_0_#1a0b03] text-[#2b1103] modal-landscape-compact`}>
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b-2 border-[#361706] pb-2">
+              <div className="flex items-center gap-2">
+                <Settings className="w-5 h-5 text-[#884318]" />
+                <h3 className="font-pixel text-xs md:text-sm text-[#361706] font-black uppercase">
+                  PENGATURAN & UTILITAS
+                </h3>
+              </div>
+              <button
+                onClick={closeHub}
+                className="p-1 bg-[#df9b52] hover:bg-[#ca7c38] border-2 border-[#361706] rounded text-[#2b1103] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Hub Menu Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              
+              {/* Option A: BioBot AI */}
+              <button
+                onClick={() => { closeHub(); setIsBioBotOpen(true); }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  🤖
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    BioBot Companion
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Tanya asisten AI cerdas seputar genetika.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option B: Leaderboard */}
+              <button
+                onClick={() => { closeHub(); setIsLeaderboardOpen(true); }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  🏆
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Leaderboard
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Papan peringkat bintang dan skor siswa.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option C: Audio & Game Settings */}
+              <button
+                onClick={() => { closeHub(); setIsSettingsOpen(true); }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  🎛️
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Pengaturan Game
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Atur audio, BGM, SFX, dan preferensi data.
+                  </p>
+                </div>
+              </button>
+
+              {/* Option D: Feedback & Saran */}
+              <button
+                onClick={() => { closeHub(); setIsFeedbackOpen(true); }}
+                className="flex items-start gap-3 p-3 bg-[#fff8e7] hover:bg-[#fde68a] border-2 border-[#361706] rounded-lg shadow-[2px_2px_0_#2b1103] text-left transition cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded bg-[#ca7c38] border border-[#361706] flex items-center justify-center text-white flex-shrink-0">
+                  💬
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[9px] md:text-[10px] text-[#361706] uppercase font-bold group-hover:text-[#884318]">
+                    Saran Pengembang
+                  </h4>
+                  <p className="text-[10px] text-[#543319] leading-tight mt-0.5">
+                    Kirim saran dan kritik fitur untuk aplikasi.
+                  </p>
+                </div>
+              </button>
+
+            </div>
+
+            {/* Logout Row */}
+            <div className="pt-2 border-t border-[#361706]/20 flex items-center justify-between">
+              <button
+                onClick={() => { closeHub(); handleLogout(); }}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded font-pixel text-[8px] uppercase border border-[#361706] shadow-xs cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Keluar Akun</span>
+              </button>
+
+              <button
+                onClick={closeHub}
+                className="px-5 py-1.5 bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#361706] rounded-md font-pixel text-[9px] text-[#2b1103] uppercase font-black cursor-pointer shadow-[2px_2px_0_#2b1103] active:translate-y-0.5"
+              >
+                Tutup
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Play Mode Selector Modal (Classic 8-Stage Map vs RPG Stardew Valley World) */}
+      <PlayModeModal
+        isOpen={isPlayModeModalOpen}
+        onClose={() => setIsPlayModeModalOpen(false)}
+        onSelectMode={handleSelectPlayMode}
+      />
+
     </div>
-  </div>
   );
 };
+
+export default MainMenu;

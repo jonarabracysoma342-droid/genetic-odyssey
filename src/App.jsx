@@ -10,14 +10,17 @@ import { DeveloperFeedbackModal } from './components/features/DeveloperFeedbackM
 
 // Firebase Auth & Group Dashboard imports
 import { AuthScreen } from './components/features/AuthScreen';
+import { MainMenu } from './components/map/MainMenu';
 
 // Lazy load all secondary features to drastically reduce initial login bundle size (PageSpeed optimization)
-const MainMenu = lazy(() => import('./components/map/MainMenu').then(module => ({ default: module.MainMenu })));
 const AdventureMap = lazy(() => import('./components/map/AdventureMap').then(module => ({ default: module.AdventureMap })));
 const StageContainer = lazy(() => import('./components/stages/StageContainer').then(module => ({ default: module.StageContainer })));
 const HotsQuiz = lazy(() => import('./components/features/HotsQuiz').then(module => ({ default: module.HotsQuiz })));
 const GenopediaPage = lazy(() => import('./components/features/GenopediaPage').then(module => ({ default: module.GenopediaPage })));
 const GroupDashboard = lazy(() => import('./components/features/GroupDashboard').then(module => ({ default: module.GroupDashboard })));
+const PixelRpgWorld = lazy(() => import('./components/rpg/PixelRpgWorld').then(module => ({ default: module.PixelRpgWorld })));
+import { IntroVisualNovel } from './components/features/IntroVisualNovel';
+import { IntroCutsceneVideo } from './components/features/IntroCutsceneVideo';
 
 import { 
   Brain, 
@@ -44,59 +47,57 @@ const DesktopSidebar = () => {
   } = useGame();
 
   const menuItems = [
-    { id: 'main-menu', label: 'Dashboard Utama', icon: Home, action: () => navigateTo('main-menu') },
-    { id: 'map', label: 'Peta Petualangan', icon: Map, action: () => navigateTo('map') },
-    { id: 'group-dashboard', label: userRole === 'guru' ? 'Kelola Kelas (LMS)' : 'Kelas Saya', icon: GraduationCap, action: () => navigateTo('group-dashboard') },
-    { id: 'hots-quiz', label: 'Evaluasi Kuis HOTS', icon: Brain, action: () => navigateTo('hots-quiz') },
-    { id: 'genopedia', label: 'Ensiklopedia Genopedia', icon: BookOpen, action: () => navigateTo('genopedia') },
+    { id: 'main-menu', label: 'Menu Utama', icon: Home, action: () => navigateTo('main-menu') },
+    { id: 'map', label: 'Play / Peta Game', icon: Map, action: () => navigateTo('map') },
+    { id: 'genopedia', label: 'Zona Belajar & Kelas', icon: BookOpen, action: () => navigateTo('genopedia') },
   ];
 
   return (
-    <aside className="w-72 bg-slate-900 border-r-3 border-slate-950 flex flex-col h-screen text-slate-100 p-5 justify-between z-30 select-none flex-shrink-0">
-      <div className="space-y-6">
+    <aside className="w-68 bg-[#221208] border-r-4 border-[#361706] flex flex-col h-screen text-[#ffd699] p-4 justify-between z-30 select-none flex-shrink-0 shadow-[4px_0_12px_rgba(0,0,0,0.4)]">
+      <div className="space-y-5">
         
         {/* Brand Header */}
-        <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-sky-600 to-indigo-650 rounded-2xl border-2 border-slate-950 shadow-3xs">
-          <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center font-black text-white text-lg">
+        <div className="flex items-center gap-2.5 p-2.5 bg-[#361706] rounded-xl border-2 border-[#ca7c38] shadow-[2px_2px_0_#1a0b03]">
+          <div className="w-9 h-9 rounded-lg bg-[#ca7c38] flex items-center justify-center font-pixel text-lg text-[#2b1103]">
             🧬
           </div>
           <div className="text-left">
-            <h1 className="text-sm font-black uppercase tracking-widest leading-none text-white">GENETIC</h1>
-            <span className="text-xs font-bold text-sky-200 tracking-wider">ODYSSEY</span>
+            <h1 className="text-[10px] font-pixel text-[#ffffff] uppercase tracking-wider leading-none">GENETIC</h1>
+            <span className="text-[8px] font-pixel text-[#facc15] tracking-widest block mt-1">ODYSSEY</span>
           </div>
         </div>
 
         {/* User Profile Info Card */}
-        <div className="p-4 border-2 border-slate-950 bg-slate-950/40 rounded-2xl flex items-center gap-3 shadow-3xs">
-          <div className="w-11 h-11 rounded-xl bg-indigo-900 border border-slate-800 flex items-center justify-center font-black text-indigo-200 text-base">
-            {userName ? userName.charAt(0).toUpperCase() : 'G'}
+        <div className="p-3 border-2 border-[#361706] bg-[#2d180a] rounded-xl flex items-center gap-2.5 shadow-sm">
+          <div className="w-9 h-9 rounded-lg bg-[#ca7c38] border border-[#fbe4c8] flex items-center justify-center font-pixel text-[#2b1103] text-sm">
+            {userName ? userName.charAt(0).toUpperCase() : '🧬'}
           </div>
-          <div className="text-left truncate max-w-[150px]">
-            <span className="text-xs font-black text-slate-100 block truncate">{userName}</span>
-            <span className="text-[9px] font-bold uppercase tracking-wider text-sky-400 mt-0.5 block leading-none">
-              {userRole === 'guru' ? '👨‍🏫 GURU' : '🧬 SISWA'}
+          <div className="text-left truncate max-w-[140px]">
+            <span className="text-[9px] font-pixel text-[#ffd699] block truncate">{userName || 'Siswa'}</span>
+            <span className="text-[7px] font-pixel text-[#86efac] mt-0.5 block leading-none uppercase">
+              {userRole === 'guru' ? '👨‍🏫 GURU' : '🧬 PENELITI'}
             </span>
           </div>
         </div>
 
-        {/* Navigation Link List */}
-        <nav className="space-y-1.5 text-left">
-          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block px-2 mb-2 font-sans">Menu Navigasi</span>
+        {/* Navigation Link List (3 Consolidated Main Choices) */}
+        <nav className="space-y-2 text-left">
+          <span className="text-[8px] font-pixel text-[#ffd699]/60 uppercase tracking-widest block px-1 mb-1">3 Menu Utama</span>
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activeView === item.id;
+            const isActive = activeView === item.id || (item.id === 'genopedia' && ['group-dashboard', 'hots-quiz', 'genopedia'].includes(activeView));
             return (
               <button
                 key={item.id}
                 onClick={() => { sound.playClick(); item.action(); }}
-                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border-2 cursor-pointer transition text-xs font-black uppercase ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border-2 cursor-pointer transition text-[9px] font-pixel uppercase ${
                   isActive
-                    ? 'bg-sky-600 border-slate-950 text-white shadow-3xs'
-                    : 'bg-transparent border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850'
+                    ? 'bg-[#ca7c38] border-[#361706] text-[#2b1103] shadow-[2px_2px_0_#1a0b03]'
+                    : 'bg-transparent border-transparent text-[#ffd699]/80 hover:text-white hover:bg-[#361706]'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-505'}`} />
-                <span>{item.label}</span>
+                <Icon className={`w-4 h-4 ${isActive ? 'text-[#2b1103]' : 'text-[#ffd699]'}`} />
+                <span className="truncate">{item.label}</span>
               </button>
             );
           })}
@@ -104,30 +105,30 @@ const DesktopSidebar = () => {
       </div>
 
       {/* Footer / System Utilities */}
-      <div className="space-y-1.5 border-t border-slate-800 pt-3">
-        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block px-2 mb-2 font-sans text-left">Utilitas Game</span>
+      <div className="space-y-1.5 border-t-2 border-[#361706] pt-3">
+        <span className="text-[8px] font-pixel text-[#ffd699]/60 uppercase tracking-widest block px-1 mb-1 text-left">Utilitas</span>
         
         <button
           onClick={() => { sound.playClick(); setIsLeaderboardOpen(true); }}
-          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-black uppercase text-slate-400 hover:text-slate-200 hover:bg-slate-850 border border-transparent hover:border-slate-800 transition cursor-pointer text-left"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[8px] font-pixel uppercase text-[#ffd699]/80 hover:text-[#facc15] hover:bg-[#361706] transition cursor-pointer text-left"
         >
-          <Trophy className="w-5 h-5 text-amber-500" />
+          <Trophy className="w-4 h-4 text-[#facc15]" />
           <span>LEADERBOARD</span>
         </button>
 
         <button
           onClick={() => { sound.playClick(); setIsSettingsOpen(true); }}
-          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-black uppercase text-slate-400 hover:text-slate-200 hover:bg-slate-850 border border-transparent hover:border-slate-800 transition cursor-pointer text-left"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[8px] font-pixel uppercase text-[#ffd699]/80 hover:text-white hover:bg-[#361706] transition cursor-pointer text-left"
         >
-          <Settings className="w-5 h-5 text-slate-400" />
+          <Settings className="w-4 h-4 text-[#ffd699]" />
           <span>PENGATURAN</span>
         </button>
 
         <button
           onClick={() => { sound.playClick(); handleLogout(); }}
-          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-black uppercase text-rose-400 hover:text-rose-300 hover:bg-slate-850 border border-transparent transition cursor-pointer text-left"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[8px] font-pixel uppercase text-rose-400 hover:text-rose-300 hover:bg-[#361706] transition cursor-pointer text-left"
         >
-          <LogOut className="w-5 h-5 text-rose-500" />
+          <LogOut className="w-4 h-4 text-rose-400" />
           <span>KELUAR AKUN</span>
         </button>
       </div>
@@ -167,25 +168,58 @@ const DesktopHeader = () => {
 };
 
 const GameMainContent = () => {
-  const { activeView } = useGame();
+  const { activeView, isTransitioning } = useGame();
 
   return (
-    <main className="w-full pb-20">
-      <Suspense fallback={
-        <div className="flex items-center justify-center p-12">
-          <div className="text-center space-y-2 animate-pulse text-left">
-            <div className="w-8 h-8 rounded-full border-4 border-indigo-650 border-t-transparent animate-spin mx-auto"></div>
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Memuat Halaman...</span>
-          </div>
-        </div>
-      }>
+    <main className="w-full min-h-screen h-screen p-0 m-0 overflow-y-auto relative bg-[#74c2e8]">
+      {/* 1.5s Pure Black Fade Transition Overlay */}
+      <div 
+        className={`fixed inset-0 pointer-events-none z-50 bg-black transition-opacity duration-750 ease-in-out ${
+          isTransitioning ? 'opacity-100' : 'opacity-0'
+        }`} 
+      />
+
+      {/* View Container */}
+      <div 
+        key={activeView} 
+        className={`w-full min-h-screen ${
+          isTransitioning ? 'opacity-0 transition-opacity duration-750' : 'opacity-100'
+        }`}
+      >
+        {activeView === 'intro-video' && <IntroCutsceneVideo />}
+        {activeView === 'intro-story' && <IntroVisualNovel />}
         {activeView === 'main-menu' && <MainMenu />}
-        {activeView === 'map' && <AdventureMap />}
-        {activeView === 'stage' && <StageContainer />}
-        {activeView === 'group-dashboard' && <GroupDashboard />}
-        {activeView === 'hots-quiz' && <HotsQuiz />}
-        {activeView === 'genopedia' && <GenopediaPage />}
-      </Suspense>
+        {activeView === 'map' && (
+          <Suspense fallback={<div className="w-full min-h-screen bg-[#74c2e8]" />}>
+            <AdventureMap />
+          </Suspense>
+        )}
+        {activeView === 'rpg-world' && (
+          <Suspense fallback={<div className="w-full min-h-screen bg-[#74c2e8]" />}>
+            <PixelRpgWorld />
+          </Suspense>
+        )}
+        {activeView === 'stage' && (
+          <Suspense fallback={<div className="w-full min-h-screen bg-[#74c2e8]" />}>
+            <StageContainer />
+          </Suspense>
+        )}
+        {activeView === 'group-dashboard' && (
+          <Suspense fallback={<div className="w-full min-h-screen bg-[#74c2e8]" />}>
+            <GroupDashboard />
+          </Suspense>
+        )}
+        {activeView === 'hots-quiz' && (
+          <Suspense fallback={<div className="w-full min-h-screen bg-[#74c2e8]" />}>
+            <HotsQuiz />
+          </Suspense>
+        )}
+        {activeView === 'genopedia' && (
+          <Suspense fallback={<div className="w-full min-h-screen bg-[#74c2e8]" />}>
+            <GenopediaPage />
+          </Suspense>
+        )}
+      </div>
     </main>
   );
 };
@@ -232,12 +266,12 @@ const AppShell = () => {
   // Loading screen during auth status check
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#faf6ee] flex items-center justify-center">
-        <div className="text-center space-y-3 animate-pulse">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-slate-800 p-2.5 flex items-center justify-center mx-auto">
-            <Brain className="w-6 h-6 text-indigo-650 animate-bounce" />
+      <div className="min-h-screen bg-[#74c2e8] flex items-center justify-center font-pixel text-[#2b1103]">
+        <div className="text-center space-y-3 bg-[#fae8b6] border-4 border-[#361706] p-6 rounded-xl shadow-[4px_4px_0_#1a0b03]">
+          <div className="w-12 h-12 rounded-lg bg-[#ca7c38] border-2 border-[#361706] flex items-center justify-center mx-auto text-2xl animate-bounce">
+            🧬
           </div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">
+          <span className="text-[10px] font-pixel text-[#361706] uppercase tracking-widest block">
             Memuat Data...
           </span>
         </div>
@@ -250,55 +284,17 @@ const AppShell = () => {
     return <AuthScreen />;
   }
 
-  const getContainerMaxWidth = () => {
-    return 'w-full max-w-7xl';
-  };
-
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-0 md:p-0 font-sans selection:bg-sky-500 selection:text-white w-full overflow-hidden">
-      
-      {/* 1. DESKTOP TATA LETAK SHELL (Visible only on md and above) */}
-      <div className="hidden md:flex w-full h-screen bg-slate-100 overflow-hidden relative">
-        {activeView !== 'stage' && <DesktopSidebar />}
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
-          {activeView !== 'stage' && <DesktopHeader />}
-          <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
-            <div className="flex justify-center w-full min-h-full">
-              <div className={getContainerMaxWidth()}>
-                <GameMainContent />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div id="app-shell-container" className="w-full min-h-screen h-screen bg-[#74c2e8] overflow-hidden overflow-y-auto flex flex-col font-sans select-none relative">
+      <GameMainContent />
 
-      {/* 2. MOBILE TATA LETAK SHELL (Visible only below md) */}
-      <div id="app-shell-container" className="w-full md:hidden min-h-screen bg-white flex flex-col relative overflow-hidden overflow-y-auto">
-        {/* Top Notch / Status Bar simulator for Desktop view */}
-        <div className="hidden sm:flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-bold text-slate-400 select-none bg-white z-50">
-          <span>9:41</span>
-          <div className="w-20 h-4 rounded-full bg-slate-900 mx-auto" />
-          <div className="flex items-center gap-1.5">
-            <span>5G</span>
-            <div className="w-4 h-2.5 rounded-xs border border-slate-400 p-0.5 flex items-center">
-              <div className="w-full h-full bg-slate-700 rounded-2xs" />
-            </div>
-          </div>
-        </div>
-
-        {activeView !== 'stage' && <Header />}
-        <GameMainContent />
-        {activeView !== 'stage' && <BottomNav />}
-      </div>
-
-      {/* Modals & Overlay Drawers (Always rendered globally for both layouts) */}
+      {/* Global Modals in Pixel Theme */}
       <BioBotDrawer />
       <TeacherReportModal />
       <LeaderboardModal />
       <SettingsModal />
       <DeveloperFeedbackModal />
       <CustomGlobalModal />
-
     </div>
   );
 };

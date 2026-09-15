@@ -7,15 +7,15 @@ import {
   CheckCircle2, 
   XCircle, 
   ArrowRight, 
-  Star,
-  RefreshCw,
-  ChevronLeft
+  Star, 
+  RefreshCw, 
+  ChevronLeft 
 } from 'lucide-react';
 
 const PUNNETT_MISSIONS = [
   {
     id: 1,
-    title: 'Misi 1: Warna Bunga (Pp × Pp)',
+    title: 'Misi 1: Monohibrid F2 Bunga Ungu (Pp × Pp)',
     traitName: 'Warna Bunga',
     parentGenotype1: 'Pp',
     parentGenotype2: 'Pp',
@@ -27,31 +27,46 @@ const PUNNETT_MISSIONS = [
       r2c1: 'Pp',
       r2c2: 'pp'
     },
-    guide: 'Persilangan warna bunga: Ungu (Pp) dikawinkan dengan Ungu (Pp).',
-    parent1Colors: { fill: '#c084fc', stroke: '#7e22ce' }, // purple-400
-    parent2Colors: { fill: '#ffffff', stroke: '#475569' }  // white
+    guide: 'Persilangan sesama F1 heterozigot: Ungu (Pp) × Ungu (Pp). Menghasilkan rasio fenotipe klasik 3 Ungu : 1 Putih.',
+    explanationRatio: 'Rasio Genotipe: 1 PP : 2 Pp : 1 pp | Rasio Fenotipe: 3 Ungu : 1 Putih (75% : 25%)'
   },
   {
     id: 2,
-    title: 'Misi 2: Bentuk Biji (Rr × Rr)',
+    title: 'Misi 2: Galur Murni Parental P1 (BB × bb)',
     traitName: 'Bentuk Biji',
-    parentGenotype1: 'Rr',
-    parentGenotype2: 'Rr',
-    allele1: 'R', // Dominant
-    allele2: 'r', // Recessive
+    parentGenotype1: 'BB',
+    parentGenotype2: 'bb',
+    allele1: 'B', // Dominant
+    allele2: 'b', // Recessive
     expectedGrid: {
-      r1c1: 'RR',
-      r1c2: 'Rr',
-      r2c1: 'Rr',
-      r2c2: 'rr'
+      r1c1: 'Bb',
+      r1c2: 'Bb',
+      r2c1: 'Bb',
+      r2c2: 'Bb'
     },
-    guide: 'Persilangan bentuk biji: Bulat (Rr) dikawinkan dengan Bulat (Rr).',
-    parent1Colors: { fill: '#facc15', stroke: '#ca8a04' }, // yellow
-    parent2Colors: { fill: '#86efac', stroke: '#166534' }  // green (wrinkled)
+    guide: 'Persilangan Parental awal: Galur murni Bulat (BB) disilangkan dengan Keriput (bb). Seluruh anakan F1 seragam Bulat Heterozigot!',
+    explanationRatio: 'Rasio Genotipe: 100% Bb | Rasio Fenotipe: 100% Biji Bulat (Keseragaman F1 Mendel)'
   },
   {
     id: 3,
-    title: 'Misi 3: Tinggi Tanaman (Tt × Tt)',
+    title: 'Misi 3: Uji Silang / Test Cross (Bb × bb)',
+    traitName: 'Bentuk Biji',
+    parentGenotype1: 'Bb',
+    parentGenotype2: 'bb',
+    allele1: 'B', // Dominant
+    allele2: 'b', // Recessive
+    expectedGrid: {
+      r1c1: 'Bb',
+      r1c2: 'bb',
+      r2c1: 'Bb',
+      r2c2: 'bb'
+    },
+    guide: 'Uji Silang (Test Cross): Tanaman bulat heterozigot (Bb) disilangkan dengan induk resesif (bb) untuk membuktikan kemurnian alel.',
+    explanationRatio: 'Rasio Genotipe: 2 Bb : 2 bb (1 : 1) | Rasio Fenotipe: 50% Bulat : 50% Keriput'
+  },
+  {
+    id: 4,
+    title: 'Misi 4: Monohibrid F2 Tinggi Batang (Tt × Tt)',
     traitName: 'Tinggi Tanaman',
     parentGenotype1: 'Tt',
     parentGenotype2: 'Tt',
@@ -63,9 +78,42 @@ const PUNNETT_MISSIONS = [
       r2c1: 'Tt',
       r2c2: 'tt'
     },
-    guide: 'Persilangan tinggi batang: Tinggi (Tt) dikawinkan dengan Tinggi (Tt).',
-    parent1Colors: { fill: '#22c55e', stroke: '#15803d' }, // green
-    parent2Colors: { fill: '#bbf7d0', stroke: '#166534' }  // pale green
+    guide: 'Persilangan monohibrid tinggi tanaman: Tinggi (Tt) × Tinggi (Tt) menghasilkan rasio 3 Tinggi : 1 Pendek.',
+    explanationRatio: 'Rasio Genotipe: 1 TT : 2 Tt : 1 tt | Rasio Fenotipe: 3 Batang Tinggi : 1 Batang Pendek'
+  },
+  {
+    id: 5,
+    title: 'Misi 5: Silang Balik / Backcross (Tt × TT)',
+    traitName: 'Tinggi Tanaman',
+    parentGenotype1: 'Tt',
+    parentGenotype2: 'TT',
+    allele1: 'T', // Dominant
+    allele2: 't', // Recessive
+    expectedGrid: {
+      r1c1: 'TT',
+      r1c2: 'TT',
+      r2c1: 'Tt',
+      r2c2: 'Tt'
+    },
+    guide: 'Silang Balik (Backcross): Menyilangkan anakan F1 (Tt) kembali dengan induk homozigot dominan (TT). Seluruh keturunan berfenotipe tinggi!',
+    explanationRatio: 'Rasio Genotipe: 2 TT : 2 Tt (1 : 1) | Rasio Fenotipe: 100% Batang Tinggi'
+  },
+  {
+    id: 6,
+    title: 'Misi 6: Monohibrid F2 Warna Polong (Gg × Gg)',
+    traitName: 'Warna Polong',
+    parentGenotype1: 'Gg',
+    parentGenotype2: 'Gg',
+    allele1: 'G', // Dominant (Hijau)
+    allele2: 'g', // Recessive (Kuning)
+    expectedGrid: {
+      r1c1: 'GG',
+      r1c2: 'Gg',
+      r2c1: 'Gg',
+      r2c2: 'gg'
+    },
+    guide: 'Persilangan warna polong: Hijau (Gg) disilangkan dengan sesamanya Hijau (Gg). Rasio fenotipe 3 Hijau : 1 Kuning.',
+    explanationRatio: 'Rasio Genotipe: 1 GG : 2 Gg : 1 gg | Rasio Fenotipe: 3 Polong Hijau : 1 Polong Kuning'
   }
 ];
 
@@ -136,7 +184,29 @@ const TraitIcon = ({ type, trait, size = 20 }) => {
     );
   }
 
+  if (trait === 'Warna Polong') {
+    const podColor = isDominant ? '#22c55e' : '#facc15';
+    const strokeColor = isDominant ? '#15803d' : '#ca8a04';
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block flex-shrink-0 animate-scale-up">
+        <path d="M4 14 C7 7 17 6 20 8 C18 14 9 17 4 14 Z" fill={podColor} stroke={strokeColor} strokeWidth="1.5" />
+        <circle cx="9" cy="11.5" r="1.5" fill={isDominant ? "#15803d" : "#ca8a04"} opacity="0.6" />
+        <circle cx="14" cy="10.5" r="1.5" fill={isDominant ? "#15803d" : "#ca8a04"} opacity="0.6" />
+      </svg>
+    );
+  }
+
   return null;
+};
+
+const getGenotypeLabel = (gen) => {
+  if (!gen) return 'Keturunan';
+  const a = gen[0];
+  const b = gen[1];
+  if (a === b) {
+    return a === a.toUpperCase() ? 'Homo Dominan' : 'Homo Resesif';
+  }
+  return 'Heterozigot';
 };
 
 const TestTube = ({ genotype, labelFormula, traitName, isActive, onClick }) => {
@@ -145,35 +215,35 @@ const TestTube = ({ genotype, labelFormula, traitName, isActive, onClick }) => {
   return (
     <div 
       onClick={onClick}
-      className={`flex flex-col items-center p-2 rounded-2xl border-2 transition-all cursor-pointer ${
+      className={`flex flex-col items-center p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer ${
         isActive 
           ? 'bg-amber-100/70 border-amber-500 scale-[1.03] shadow-md' 
           : 'bg-white/40 border-slate-200 hover:border-slate-400'
       }`}
     >
-      <span className="text-[7.5px] font-black text-slate-700 tracking-wider mb-2 text-center whitespace-normal leading-tight max-w-full min-h-6 flex items-center justify-center">
+      <span className="text-[7px] sm:text-[7.5px] font-black text-slate-700 tracking-wider mb-1 sm:mb-2 text-center whitespace-normal leading-tight max-w-full min-h-4 sm:min-h-6 flex items-center justify-center">
         {labelFormula}
       </span>
 
       {/* Test Tube Glass Graphic */}
-      <div className="w-11 h-22 border-2 border-slate-700 bg-white/30 rounded-b-full flex flex-col justify-end p-1 relative shadow-inner overflow-hidden mb-2">
+      <div className="w-9 sm:w-11 h-14 sm:h-22 border-2 border-slate-700 bg-white/30 rounded-b-full flex flex-col justify-end p-0.5 sm:p-1 relative shadow-inner overflow-hidden mb-1 sm:mb-2 test-tube-compact">
         {/* Tube Lip */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-slate-350 border-b border-slate-700 rounded-full" />
         
         {/* Flower or Content inside tube */}
         {hasFlower ? (
-          <div className="w-full h-14 flex items-center justify-center">
-            <TraitIcon type={genotype} trait={traitName} size={22} />
+          <div className="w-full h-9 sm:h-14 flex items-center justify-center">
+            <TraitIcon type={genotype} trait={traitName} size={18} />
           </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-300 font-mono font-black text-lg select-none">
+          <div className="w-full h-full flex items-center justify-center text-slate-300 font-mono font-black text-sm sm:text-lg select-none">
             ?
           </div>
         )}
       </div>
 
       {/* Genotype Slot Label */}
-      <div className={`px-2 py-1 rounded-lg border-2 font-mono font-black text-[10px] min-w-10 text-center shadow-[1.5px_1.5px_0px_#1e293b] ${
+      <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border-2 font-mono font-black text-[9px] sm:text-[10px] min-w-8 sm:min-w-10 text-center shadow-[1.5px_1.5px_0px_#1e293b] ${
         genotype 
           ? 'bg-white border-slate-800 text-slate-900' 
           : 'bg-slate-100 border-dashed border-slate-400 text-slate-400 shadow-none'
@@ -185,7 +255,7 @@ const TestTube = ({ genotype, labelFormula, traitName, isActive, onClick }) => {
 };
 
 export const Stage4PunnettLab = () => {
-  const { navigateTo, completeStage } = useGame();
+  const { navigateTo, completeStage, sourceWorldView } = useGame();
   const [missionIdx, setMissionIdx] = useState(0);
   const [grid, setGrid] = useState({
     r1c1: '',
@@ -228,7 +298,7 @@ export const Stage4PunnettLab = () => {
   };
 
   const handleVerifyGrid = () => {
-    // Normalize user entries (e.g. 'pP' -> 'Pp', 'rR' -> 'Rr', 'tT' -> 'Tt')
+    // Normalize user entries (e.g. 'pP' -> 'Pp')
     const normalizeCell = (v) => {
       if (!v) return '';
       const a = v[0];
@@ -249,13 +319,13 @@ export const Stage4PunnettLab = () => {
       sound.playCorrect();
       setFeedback({
         type: 'success',
-        message: `Misi ${missionIdx + 1} berhasil! Semua keturunan persilangan ${mission.traitName} diisi dengan benar.`
+        message: `Misi ${missionIdx + 1} berhasil! Semua keturunan persilangan ${mission.traitName} tepat. ${mission.explanationRatio}`
       });
       setScore(prev => prev + 100);
       setRoundCompleted(true);
 
-      // Play fanfare on final round completion
-      if (missionIdx === 2) {
+      // Play fanfare on final mission completion
+      if (missionIdx === PUNNETT_MISSIONS.length - 1) {
         setTimeout(() => {
           setStageCompleted(true);
           sound.playFanfare();
@@ -267,7 +337,7 @@ export const Stage4PunnettLab = () => {
       sound.playWrong();
       setFeedback({
         type: 'error',
-        message: 'Kombinasi persilangan belum tepat. Perhatikan alel induk pada masing-masing jalur!'
+        message: 'Kombinasi persilangan belum tepat. Perhatikan alel pada masing-masing jalur baris dan kolom!'
       });
     }
   };
@@ -281,19 +351,26 @@ export const Stage4PunnettLab = () => {
     setRoundCompleted(false);
   };
 
+  // Option cards for the current mission (Homozigot Dominan, Heterozigot, Homozigot Resesif)
+  const optionCards = [
+    `${mission.allele1}${mission.allele1}`,
+    `${mission.allele1}${mission.allele2}`,
+    `${mission.allele2}${mission.allele2}`
+  ];
+
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left justify-between">
+    <div className="w-full h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-2 sm:p-4 md:p-8 text-left justify-between overflow-y-auto stage-main-wrapper">
       
       {/* Retro parchment paper lines overlay */}
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] z-0" />
 
       {/* Floating Header Banner HUD */}
-      <div className="w-full p-3 rounded-2xl bg-white/90 border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-2">
+      <div className="w-full p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/90 border-2 border-slate-800 shadow-[3px_3px_0px_#1e293b] sm:shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-1 sm:mb-2 stage-header-hud">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigateTo('map')}
+            onClick={() => navigateTo(sourceWorldView === 'rpg-world' ? 'rpg-world' : 'map')}
             className="p-1.5 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-600 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
-            title="Kembali ke Peta"
+            title={sourceWorldView === 'rpg-world' ? "Kembali ke RPG Map" : "Kembali ke Peta"}
           >
             <ChevronLeft className="w-4 h-4 stroke-[3px]" />
           </button>
@@ -308,7 +385,7 @@ export const Stage4PunnettLab = () => {
             </div>
             <div>
               <span className="text-[7px] font-black text-indigo-700 uppercase tracking-widest font-sans block">
-                {stageInfo.location} &bull; STAGE 4
+                {stageInfo.location} &bull; STAGE 4 (Misi {missionIdx + 1}/{PUNNETT_MISSIONS.length})
               </span>
               <h2 className="text-[11px] sm:text-xs font-black text-black leading-tight">
                 {stageInfo.title} &mdash; {mission.traitName}
@@ -320,10 +397,11 @@ export const Stage4PunnettLab = () => {
         <div className="flex items-center gap-2">
           {/* Mission Progress Badges */}
           <div className="flex gap-1 mr-1">
-            {[0, 1, 2].map((idx) => (
+            {PUNNETT_MISSIONS.map((m, idx) => (
               <div 
-                key={idx}
-                className={`w-2.5 h-2.5 rounded-full border border-slate-800 ${
+                key={m.id}
+                title={m.title}
+                className={`w-2.5 h-2.5 rounded-full border border-slate-800 transition-colors ${
                   idx === missionIdx 
                     ? 'bg-amber-400' 
                     : idx < missionIdx 
@@ -342,68 +420,68 @@ export const Stage4PunnettLab = () => {
       </div>
 
       {!stageCompleted ? (
-        <div className="flex-1 flex flex-col justify-between relative z-10 py-1">
+        <div className="flex-1 flex flex-col justify-between relative z-10 py-0.5 sm:py-1 stage-workspace-compact">
           
           {/* Heading prompt */}
-          <div className="text-center space-y-0.5 my-1">
+          <div className="text-center space-y-0.5 my-0.5 sm:my-1">
             <h3 className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">
-              Seret gamet ke tabung reaksi untuk melakukan persilangan!
+              {mission.title}
             </h3>
-            <p className="text-[9px] font-bold text-slate-500">
+            <p className="text-[8.5px] sm:text-[9.5px] font-bold text-slate-600 max-w-xl mx-auto line-clamp-2">
               {mission.guide}
             </p>
           </div>
 
           {/* Induk Gametes Crossing Header Row */}
-          <div className="flex flex-row items-center justify-center gap-4 sm:gap-8 my-2 max-w-xl mx-auto w-full px-4">
-            {/* Induk 1 (Heterozigot) */}
-            <div className="p-2 sm:p-3 bg-white border-2 border-slate-800 rounded-xl shadow-[3px_3px_0px_#1e293b] flex flex-col items-center flex-1">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-[8px] sm:text-[9px] font-black text-slate-800">
+          <div className="flex flex-row items-center justify-center gap-2 sm:gap-8 my-1 sm:my-2 max-w-xl mx-auto w-full px-2 sm:px-4">
+            {/* Induk 1 */}
+            <div className="p-1.5 sm:p-3 bg-white border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_#1e293b] sm:shadow-[3px_3px_0px_#1e293b] flex flex-col items-center flex-1">
+              <div className="flex items-center gap-1 sm:gap-1.5 mb-1">
+                <span className="text-[7.5px] sm:text-[9px] font-black text-slate-800">
                   Induk 1 ({mission.parentGenotype1})
                 </span>
-                <TraitIcon type={mission.allele1} trait={mission.traitName} size={11} />
+                <TraitIcon type={mission.parentGenotype1} trait={mission.traitName} size={11} />
               </div>
-              <div className="flex gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
-                  <TraitIcon type={mission.allele1} trait={mission.traitName} size={18} />
-                  <span className="font-mono font-black text-[8px] text-slate-900 absolute -bottom-1.5 -right-1.5 bg-white border border-slate-800 rounded-full w-4 h-4 flex items-center justify-center shadow-3xs">
-                    {mission.allele1}
+              <div className="flex gap-2 sm:gap-3">
+                <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
+                  <TraitIcon type={mission.parentGenotype1[0]} trait={mission.traitName} size={14} />
+                  <span className="font-mono font-black text-[7px] sm:text-[8px] text-slate-900 absolute -bottom-1 -right-1 bg-white border border-slate-800 rounded-full w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center shadow-3xs">
+                    {mission.parentGenotype1[0]}
                   </span>
                 </div>
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
-                  <TraitIcon type={mission.allele2} trait={mission.traitName} size={18} />
-                  <span className="font-mono font-black text-[8px] text-slate-900 absolute -bottom-1.5 -right-1.5 bg-white border border-slate-800 rounded-full w-4 h-4 flex items-center justify-center shadow-3xs">
-                    {mission.allele2}
+                <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
+                  <TraitIcon type={mission.parentGenotype1[1]} trait={mission.traitName} size={14} />
+                  <span className="font-mono font-black text-[7px] sm:text-[8px] text-slate-900 absolute -bottom-1 -right-1 bg-white border border-slate-800 rounded-full w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center shadow-3xs">
+                    {mission.parentGenotype1[1]}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Wooden/Metallic Crossing X Symbol */}
-            <div className="text-slate-800 font-black text-xl select-none flex-shrink-0">
+            <div className="text-slate-800 font-black text-base sm:text-xl select-none flex-shrink-0">
               ✕
             </div>
 
-            {/* Induk 2 (Heterozigot) */}
-            <div className="p-2 sm:p-3 bg-white border-2 border-slate-800 rounded-xl shadow-[3px_3px_0px_#1e293b] flex flex-col items-center flex-1">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-[8px] sm:text-[9px] font-black text-slate-800">
+            {/* Induk 2 */}
+            <div className="p-1.5 sm:p-3 bg-white border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_#1e293b] sm:shadow-[3px_3px_0px_#1e293b] flex flex-col items-center flex-1">
+              <div className="flex items-center gap-1 sm:gap-1.5 mb-1">
+                <span className="text-[7.5px] sm:text-[9px] font-black text-slate-800">
                   Induk 2 ({mission.parentGenotype2})
                 </span>
-                <TraitIcon type={mission.allele1} trait={mission.traitName} size={11} />
+                <TraitIcon type={mission.parentGenotype2} trait={mission.traitName} size={11} />
               </div>
-              <div className="flex gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
-                  <TraitIcon type={mission.allele1} trait={mission.traitName} size={18} />
-                  <span className="font-mono font-black text-[8px] text-slate-900 absolute -bottom-1.5 -right-1.5 bg-white border border-slate-800 rounded-full w-4 h-4 flex items-center justify-center shadow-3xs">
-                    {mission.allele1}
+              <div className="flex gap-2 sm:gap-3">
+                <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
+                  <TraitIcon type={mission.parentGenotype2[0]} trait={mission.traitName} size={14} />
+                  <span className="font-mono font-black text-[7px] sm:text-[8px] text-slate-900 absolute -bottom-1 -right-1 bg-white border border-slate-800 rounded-full w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center shadow-3xs">
+                    {mission.parentGenotype2[0]}
                   </span>
                 </div>
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
-                  <TraitIcon type={mission.allele2} trait={mission.traitName} size={18} />
-                  <span className="font-mono font-black text-[8px] text-slate-900 absolute -bottom-1.5 -right-1.5 bg-white border border-slate-800 rounded-full w-4 h-4 flex items-center justify-center shadow-3xs">
-                    {mission.allele2}
+                <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative shadow-3xs bg-white">
+                  <TraitIcon type={mission.parentGenotype2[1]} trait={mission.traitName} size={14} />
+                  <span className="font-mono font-black text-[7px] sm:text-[8px] text-slate-900 absolute -bottom-1 -right-1 bg-white border border-slate-800 rounded-full w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center shadow-3xs">
+                    {mission.parentGenotype2[1]}
                   </span>
                 </div>
               </div>
@@ -411,35 +489,35 @@ export const Stage4PunnettLab = () => {
           </div>
 
           {/* Test Tubes Container (Hasil Keturunan) */}
-          <div className="my-2 text-center">
-            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">
-              Hasil Keturunan
+          <div className="my-1 sm:my-2 text-center">
+            <span className="text-[7.5px] sm:text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5 sm:mb-1">
+              Hasil Keturunan Tabung Reaksi (Papan Punnett)
             </span>
-            <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-xl mx-auto w-full px-2">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-4 max-w-xl mx-auto w-full px-1 sm:px-2">
               <TestTube 
                 genotype={grid.r1c1} 
-                labelFormula="Homo Dominan" 
+                labelFormula={getGenotypeLabel(mission.expectedGrid.r1c1)} 
                 traitName={mission.traitName}
                 isActive={activeSlot === 'r1c1'}
                 onClick={() => { sound.playClick(); if (!roundCompleted) setActiveSlot('r1c1'); }}
               />
               <TestTube 
                 genotype={grid.r1c2} 
-                labelFormula="Heterozigot" 
+                labelFormula={getGenotypeLabel(mission.expectedGrid.r1c2)} 
                 traitName={mission.traitName}
                 isActive={activeSlot === 'r1c2'}
                 onClick={() => { sound.playClick(); if (!roundCompleted) setActiveSlot('r1c2'); }}
               />
               <TestTube 
                 genotype={grid.r2c1} 
-                labelFormula="Heterozigot" 
+                labelFormula={getGenotypeLabel(mission.expectedGrid.r2c1)} 
                 traitName={mission.traitName}
                 isActive={activeSlot === 'r2c1'}
                 onClick={() => { sound.playClick(); if (!roundCompleted) setActiveSlot('r2c1'); }}
               />
               <TestTube 
                 genotype={grid.r2c2} 
-                labelFormula="Homo Resesif" 
+                labelFormula={getGenotypeLabel(mission.expectedGrid.r2c2)} 
                 traitName={mission.traitName}
                 isActive={activeSlot === 'r2c2'}
                 onClick={() => { sound.playClick(); if (!roundCompleted) setActiveSlot('r2c2'); }}
@@ -449,23 +527,19 @@ export const Stage4PunnettLab = () => {
 
           {/* Bottom Row: Option Selection Cards */}
           {!roundCompleted ? (
-            <div className="space-y-1.5 text-center my-1.5">
-              <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-widest block">
-                Pilih Genotipe Hasil Persilangan untuk Slot Aktif
+            <div className="space-y-1 sm:space-y-1.5 text-center my-1 sm:my-1.5">
+              <span className="text-[7px] sm:text-[7.5px] font-black text-slate-400 uppercase tracking-widest block">
+                Pilih Genotipe Hasil Persilangan untuk Kotak Aktif
               </span>
-              <div className="flex justify-center gap-3">
-                {[
-                  `${mission.allele1}${mission.allele1}`, 
-                  `${mission.allele1}${mission.allele2}`, 
-                  `${mission.allele2}${mission.allele2}`
-                ].map((gen) => (
+              <div className="flex justify-center gap-2 sm:gap-3">
+                {optionCards.map((gen) => (
                   <button
                     key={gen}
                     onClick={() => handleSelectOption(gen)}
-                    className="w-14 h-14 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-800 flex flex-col items-center justify-center p-1 shadow-[3px_3px_0px_#1e293b] hover:scale-105 active:scale-95 active:translate-y-0.5 active:shadow-[1.5px_1.5px_0px_#1e293b] transition-all cursor-pointer gap-1"
+                    className="w-11 sm:w-14 h-11 sm:h-14 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-800 flex flex-col items-center justify-center p-1 shadow-[2px_2px_0px_#1e293b] sm:shadow-[3px_3px_0px_#1e293b] hover:scale-105 active:scale-95 active:translate-y-0.5 transition-all cursor-pointer gap-0.5 sm:gap-1"
                   >
-                    <TraitIcon type={gen} trait={mission.traitName} size={16} />
-                    <span className="font-mono font-black text-xs leading-none">{gen}</span>
+                    <TraitIcon type={gen} trait={mission.traitName} size={14} />
+                    <span className="font-mono font-black text-[11px] sm:text-xs leading-none">{gen}</span>
                   </button>
                 ))}
 
@@ -478,24 +552,31 @@ export const Stage4PunnettLab = () => {
                       setFeedback(null);
                     }
                   }}
-                  className="w-14 h-14 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border-2 border-rose-500/80 flex flex-col items-center justify-center p-1 shadow-[3px_3px_0px_#be123c] hover:scale-105 active:scale-95 active:translate-y-0.5 active:shadow-[1.5px_1.5px_0px_#be123c] transition-all cursor-pointer gap-1"
-                  title="Hapus isi slot terpilih"
+                  className="w-11 sm:w-14 h-11 sm:h-14 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border-2 border-slate-800 flex flex-col items-center justify-center p-1 shadow-[2px_2px_0px_#1e293b] sm:shadow-[3px_3px_0px_#1e293b] hover:scale-105 active:scale-95 active:translate-y-0.5 transition-all cursor-pointer gap-0.5"
+                  title="Kosongkan Kotak Terpilih"
                 >
-                  <div className="w-4 h-4 flex items-center justify-center font-black text-sm leading-none">&times;</div>
-                  <span className="font-sans font-black text-[9px] uppercase leading-none">Hapus</span>
+                  <RefreshCw className="w-3.5 h-3.5 stroke-[2.5px]" />
+                  <span className="text-[7.5px] sm:text-[8px] font-black">HAPUS</span>
                 </button>
               </div>
             </div>
           ) : (
-            /* Next Mission transition card */
-            <div className="my-1.5 flex justify-center">
-              {missionIdx < 2 && (
+            /* Round Completed banner */
+            <div className="text-center my-2 animate-fade-in flex flex-col items-center gap-2">
+              <div className="px-4 py-2 bg-emerald-100 border-2 border-slate-800 rounded-xl shadow-[3px_3px_0px_#1e293b] flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                <span className="text-[10px] font-black text-emerald-900">
+                  Misi {missionIdx + 1} Berhasil Dituntaskan!
+                </span>
+              </div>
+
+              {missionIdx < PUNNETT_MISSIONS.length - 1 && (
                 <button
                   onClick={handleNextMission}
-                  className="px-8 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xs shadow-[4px_4px_0px_#14532d] hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2 border-2 border-slate-800"
+                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[11px] flex items-center justify-center gap-1.5 shadow-[3px_3px_0px_#1e293b] active:translate-y-0.5 transition-all cursor-pointer border-2 border-slate-800"
                 >
-                  <span>LANJUT KE MISI BERIKUTNYA</span>
-                  <ArrowRight className="w-4 h-4 stroke-[3px]" />
+                  <span>MISI SELANJUTNYA ({missionIdx + 2}/{PUNNETT_MISSIONS.length})</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               )}
             </div>
@@ -538,8 +619,8 @@ export const Stage4PunnettLab = () => {
         </div>
       ) : (
         /* Victory Screen */
-        <div className="absolute inset-0 z-40 bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="p-6 rounded-3xl text-center space-y-4 max-w-xs w-full border-2 border-slate-800 bg-white shadow-2xl relative z-50 animate-scale-up">
+        <div className="absolute inset-0 z-40 bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+          <div className="p-4 sm:p-6 rounded-3xl text-center space-y-2.5 sm:space-y-4 max-w-xs w-full border-2 border-slate-800 bg-white shadow-2xl relative z-50 animate-scale-up max-h-[96vh] overflow-y-auto">
             <div className="w-16 h-16 rounded-2xl bg-blue-50 border-2 border-slate-800 p-1 flex items-center justify-center mx-auto shadow-xs overflow-hidden">
               <img 
                 src="/assets/rumah_mendel_banner.webp" 
@@ -549,10 +630,10 @@ export const Stage4PunnettLab = () => {
             </div>
 
             <div className="space-y-1">
-              <span className="text-[8px] font-black text-indigo-700 uppercase tracking-widest font-sans">ROUND COMPLETED</span>
+              <span className="text-[8px] font-black text-indigo-700 uppercase tracking-widest font-sans">ALL MISSIONS COMPLETED</span>
               <h3 className="text-base font-black text-black">STAGE 4 SELESAI!</h3>
               <p className="text-[10px] text-black/85 font-bold leading-relaxed px-1">
-                Selamat! Kamu berhasil menguasai pembuatan <strong className="text-blue-600">Tabel Punnett Square Monohibrid</strong> untuk warna bunga, bentuk biji, dan tinggi tanaman.
+                Selamat! Kamu berhasil menuntaskan seluruh 6 persilangan monohibrid, galur murni P1, uji silang (test cross), dan silang balik (backcross). Kamu resmi menjadi <strong className="text-blue-600">Master Analis Punnett</strong>!
               </p>
             </div>
 
@@ -563,24 +644,36 @@ export const Stage4PunnettLab = () => {
             </div>
 
             <div className="p-2.5 bg-amber-500/10 border-2 border-slate-800 rounded-xl text-amber-900 text-[10px] font-black shadow-[3px_3px_0px_#1e293b]">
-              🏆 Lencana Diperoleh: Ahli Punnett
+              🏆 Lencana Diperoleh: Master Analis Punnett
             </div>
 
-            <div className="flex gap-2 justify-center pt-1.5">
-              <button
-                onClick={() => navigateTo('map')}
-                className="px-4 py-2 rounded-xl bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-700 font-bold text-[10px] shadow-3xs cursor-pointer flex-1"
-              >
-                PETA STAGE
-              </button>
-              <button
-                onClick={() => navigateTo('stage', 5)}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[10px] flex items-center justify-center gap-1 shadow-3xs cursor-pointer flex-1"
-              >
-                <span>STAGE 5</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            {sourceWorldView === 'rpg-world' ? (
+              <div className="flex justify-center pt-1.5">
+                <button
+                  onClick={() => navigateTo('rpg-world')}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-pixel text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:translate-y-0.5 transition cursor-pointer border-2 border-slate-800"
+                >
+                  <span>LANJUTKAN</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2 justify-center pt-1.5">
+                <button
+                  onClick={() => navigateTo('map')}
+                  className="px-4 py-2 rounded-xl bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-700 font-bold text-[10px] shadow-3xs cursor-pointer flex-1"
+                >
+                  PETA STAGE
+                </button>
+                <button
+                  onClick={() => navigateTo('stage', 5)}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[10px] flex items-center justify-center gap-1 shadow-3xs cursor-pointer flex-1"
+                >
+                  <span>STAGE 5</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

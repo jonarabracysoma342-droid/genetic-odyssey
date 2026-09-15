@@ -4,6 +4,7 @@ import { sound } from '../../services/sound';
 import { db } from '../../services/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import confetti from 'canvas-confetti';
+import { PixelValleyBackground } from '../common/PixelValleyBackground';
 import { 
   Brain, 
   ChevronLeft, 
@@ -509,43 +510,40 @@ export const HotsQuiz = () => {
   // VIEW 1: QUIZ SELECTOR SCREEN
   if (activeQuizType === null) {
     return (
-      <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left">
-        {/* Parchment background */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] z-0" />
+      <div className="w-full min-h-screen relative overflow-x-hidden bg-[#74c2e8] select-none flex flex-col p-4 md:p-8 text-left">
         
-        {/* Header HUD */}
-        <div className="w-full p-4 md:p-5 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-3 z-30 relative mb-5 flex-shrink-0">
+        {/* Detailed Stardew Valley Background */}
+        <PixelValleyBackground overlay="medium" />
+        
+        {/* Header HUD (Pixel Wooden Plank) */}
+        <div className="w-full p-3 md:p-4 rounded-xl bg-[#fae8b6] border-4 border-[#361706] shadow-[4px_4px_0_#1a0b03] flex items-center justify-between gap-3 z-30 relative mb-4 flex-shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigateTo('main-menu')}
-              className="p-1.5 md:p-2 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-655 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
+              className="px-3 py-2 rounded-lg bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#361706] text-[#2b1103] font-pixel text-[8px] md:text-[9px] uppercase transition shadow-[2px_2px_0_#2b1103] cursor-pointer flex-shrink-0 active:translate-y-0.5 flex items-center gap-1.5"
             >
-              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 stroke-[3px]" />
+              <ChevronLeft className="w-4 h-4 stroke-[3px]" />
+              <span>MENU</span>
             </button>
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-purple-50 border-2 border-slate-800 p-1.5 md:p-2 flex items-center justify-center">
-                <Brain className="w-5 h-5 md:w-6 md:h-6 text-purple-650" />
-              </div>
-              <div>
-                <span className="text-[7.5px] md:text-[10px] font-black text-purple-700 uppercase tracking-widest block">MENU EVALUASI</span>
-                <h2 className="text-sm md:text-base font-black text-black leading-tight">Evaluasi Kuis Biologi</h2>
-              </div>
+            <div>
+              <span className="text-[7px] md:text-[8px] font-pixel text-[#884318] uppercase tracking-widest block">EVALUASI MANDIRI</span>
+              <h2 className="text-xs md:text-sm font-pixel text-[#361706] leading-tight mt-0.5 uppercase">Kuis Evaluasi HOTS</h2>
             </div>
           </div>
         </div>
 
-        <div className="space-y-4 md:space-y-5 z-10 relative overflow-y-auto max-h-[75vh] pr-1 pb-6">
+        <div className="space-y-4 z-10 relative overflow-y-auto max-h-[78vh] pr-1 pb-6">
           
           {/* Card Option 1: System Quiz */}
-          <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 md:p-6 shadow-[4px_4px_0px_#1e293b] space-y-3.5 md:space-y-4 hover:scale-[1.005] transition-all">
+          <div className="bg-[#fae8b6] border-4 border-[#361706] rounded-xl p-4 md:p-5 shadow-[4px_4px_0_#1a0b03] space-y-3 hover:brightness-105 transition-all text-[#2b1103]">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5 md:gap-3">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-indigo-50 border-2 border-slate-800 flex items-center justify-center p-2 flex-shrink-0">
-                  <Brain className="w-5 h-5 md:w-6 md:h-6 text-indigo-755" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-lg bg-[#ca7c38] border-2 border-[#361706] flex items-center justify-center p-1.5 flex-shrink-0 text-xl">
+                  🧠
                 </div>
                 <div>
-                  <h3 className="text-xs md:text-sm font-black text-slate-855 uppercase">1. KUIS EVALUASI HOTS</h3>
-                  <span className="text-[7.5px] md:text-[10px] font-black text-indigo-755 uppercase tracking-wide block mt-0.5">Kuis Sistem Mandiri</span>
+                  <h3 className="text-xs md:text-sm font-pixel text-[#361706] uppercase font-bold">1. KUIS EVALUASI HOTS</h3>
+                  <span className="text-[8px] font-pixel text-[#884318] uppercase tracking-wide block mt-0.5">Kuis Sistem Mandiri</span>
                 </div>
               </div>
               {userProgress?.hotsQuiz && (
@@ -567,61 +565,61 @@ export const HotsQuiz = () => {
           </div>
 
           {/* Card Option 2: Class Quizzes */}
-          <div className="bg-white border-2 border-slate-800 rounded-3xl p-5 md:p-6 shadow-[4px_4px_0px_#1e293b] space-y-4 md:space-y-5">
+          <div className="bg-[#fae8b6] border-4 border-[#361706] rounded-xl p-4 md:p-5 shadow-[4px_4px_0_#1a0b03] space-y-3 hover:brightness-105 transition-all text-[#2b1103]">
             <div className="flex items-center gap-2.5 md:gap-3">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-purple-50 border-2 border-slate-800 flex items-center justify-center p-2 flex-shrink-0">
-                <ClipboardList className="w-5 h-5 md:w-6 md:h-6 text-purple-655" />
+              <div className="w-10 h-10 rounded-lg bg-[#ca7c38] border-2 border-[#361706] flex items-center justify-center p-1.5 flex-shrink-0 text-xl">
+                📋
               </div>
               <div>
-                <h3 className="text-xs md:text-sm font-black text-slate-855 uppercase">2. KUIS KUSTOM KELAS</h3>
-                <span className="text-[7.5px] md:text-[10px] font-black text-purple-700 uppercase tracking-wide block mt-0.5">Tugas Khusus Guru</span>
+                <h3 className="text-xs md:text-sm font-pixel text-[#361706] uppercase font-bold">2. KUIS KUSTOM KELAS</h3>
+                <span className="text-[8px] font-pixel text-[#884318] uppercase tracking-wide block mt-0.5">Tugas Khusus Guru</span>
               </div>
             </div>
 
             {!groupId ? (
-              <div className="p-4 border-2 border-dashed border-slate-350 rounded-2xl bg-amber-50/50 space-y-2 text-center">
-                <AlertCircle className="w-6 h-6 text-amber-600 mx-auto" />
-                <p className="text-[9.5px] font-bold text-amber-900 leading-normal max-w-[240px] mx-auto">
+              <div className="p-4 border-2 border-[#361706] rounded-xl bg-[#fff8e7] space-y-2 text-center">
+                <AlertCircle className="w-6 h-6 text-[#884318] mx-auto" />
+                <p className="text-[9.5px] font-bold text-[#543319] leading-normal max-w-[280px] mx-auto">
                   Anda belum bergabung ke kelompok kelas manapun. Bergabunglah terlebih dahulu di tab "Kelas" agar dapat mengakses kuis khusus dari guru Anda.
                 </p>
                 <button
                   onClick={() => navigateTo('group-dashboard')}
-                  className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-white border-2 border-slate-800 rounded-xl text-[8.5px] font-black shadow-3xs cursor-pointer active:translate-y-0.2"
+                  className="px-4 py-1.5 bg-[#ca7c38] hover:bg-[#df9b52] text-[#2b1103] border-2 border-[#361706] rounded-lg text-[8.5px] font-pixel uppercase font-bold shadow-xs cursor-pointer active:translate-y-0.5"
                 >
                   GABUNG KELAS SEKARANG
                 </button>
               </div>
             ) : (
               <div className="space-y-3">
-                <p className="text-[9.5px] font-medium text-slate-600 leading-relaxed">
+                <p className="text-[9.5px] font-bold text-[#543319] leading-relaxed">
                   Kerjakan lembar kerja kuis yang dibuat dan dibagikan secara instan oleh guru kelas Anda di ruang kelas online.
                 </p>
 
                 {loading ? (
-                  <p className="text-[9px] font-bold text-slate-400 text-center animate-pulse py-2">Memuat daftar kuis kelas...</p>
+                  <p className="text-[9px] font-pixel text-[#884318] text-center animate-pulse py-2">Memuat daftar kuis kelas...</p>
                 ) : classQuizzes.length === 0 ? (
-                  <p className="text-[9.5px] font-bold text-slate-400 py-4 text-center">Belum ada kuis kustom yang aktif di kelas Anda saat ini.</p>
+                  <p className="text-[9.5px] font-pixel text-[#884318] py-4 text-center">Belum ada kuis kustom yang aktif di kelas Anda saat ini.</p>
                 ) : (
                   <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
                     {classQuizzes.map((quiz) => {
                       const completed = userProgress?.customQuizzes?.[quiz.id];
 
                       return (
-                        <div key={quiz.id} className="p-3 border-2 border-slate-800 rounded-2xl bg-slate-50 flex items-center justify-between gap-3 shadow-3xs hover:bg-slate-100/50 transition">
+                        <div key={quiz.id} className="p-3 border-2 border-[#361706] rounded-xl bg-[#fff8e7] flex items-center justify-between gap-3 shadow-xs hover:brightness-105 transition text-[#2b1103]">
                           <div>
-                            <span className="text-[9.5px] font-black text-slate-855 block leading-tight">{quiz.title}</span>
-                            <span className="text-[8px] font-bold text-indigo-755 block mt-1">📝 Soal: {quiz.questions?.length || 0} butir</span>
+                            <span className="text-[9.5px] font-pixel text-[#361706] font-bold block leading-tight">{quiz.title}</span>
+                            <span className="text-[8px] font-pixel text-[#884318] block mt-1">📝 Soal: {quiz.questions?.length || 0} butir</span>
                           </div>
 
                           {completed ? (
-                            <div className="text-center px-3 py-1 bg-emerald-50 border border-emerald-450 rounded-xl min-w-[68px]">
-                              <span className="text-[6.5px] font-black text-emerald-800 uppercase block tracking-wider">SELESAI</span>
-                              <span className="text-[9.5px] font-black text-emerald-900 font-mono mt-0.5 block leading-none">Skor: {completed.score || 0}</span>
+                            <div className="text-center px-3 py-1 bg-[#86efac] border-2 border-[#166534] rounded-lg min-w-[68px]">
+                              <span className="text-[6.5px] font-pixel text-[#14532d] uppercase block font-bold">SELESAI</span>
+                              <span className="text-[9.5px] font-pixel text-[#14532d] font-bold mt-0.5 block leading-none">Skor: {completed.score || 0}</span>
                             </div>
                           ) : (
                             <button
                               onClick={() => handleStartClassQuiz(quiz)}
-                              className="px-3 py-1.5 bg-indigo-650 hover:bg-indigo-700 text-white font-black text-[8.5px] border-2 border-slate-800 rounded-xl shadow-3xs active:translate-y-0.2 active:shadow-none cursor-pointer transition flex items-center gap-1"
+                              className="px-3 py-1.5 bg-[#ca7c38] hover:bg-[#df9b52] text-[#2b1103] font-pixel text-[8px] font-bold border-2 border-[#361706] rounded-lg shadow-xs active:translate-y-0.5 cursor-pointer transition flex items-center gap-1"
                             >
                               <span>KERJAKAN</span>
                               <ArrowRight className="w-3 h-3 stroke-[2.5]" />
@@ -646,11 +644,12 @@ export const HotsQuiz = () => {
   const accuracyPercentage = qListSize > 0 ? Math.round((correctCount / qListSize) * 100) : 0;
 
   return (
-    <div className="w-full min-h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left">
-      {/* Parchment background */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] z-0" />
+    <div className="relative w-full min-h-screen overflow-x-hidden flex flex-col justify-between select-none bg-[#74c2e8] p-3 md:p-6 pb-28 text-left">
+      {/* Detailed Stardew Valley Background */}
+      <PixelValleyBackground overlay="medium" />
 
-      <div className="w-full p-3 md:p-5 rounded-2xl bg-white border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-3 md:mb-5 flex-shrink-0">
+      {/* Header HUD (Pixel Wooden Plank) */}
+      <div className="w-full p-3 md:p-4 rounded-xl bg-[#fae8b6] border-4 border-[#361706] shadow-[4px_4px_0_#1a0b03] flex items-center justify-between gap-2 z-30 relative mb-4 flex-shrink-0 text-[#2b1103]">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -659,87 +658,83 @@ export const HotsQuiz = () => {
                 setActiveQuizType(null);
               });
             }}
-            className="p-1.5 md:p-2 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-655 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
+            className="px-3 py-2 rounded-lg bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#361706] text-[#2b1103] font-pixel text-[8px] md:text-[9px] uppercase transition shadow-[2px_2px_0_#2b1103] cursor-pointer flex-shrink-0 active:translate-y-0.5 flex items-center gap-1.5"
             title="Kembali ke Pemilihan Kuis"
           >
-            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 stroke-[3px]" />
+            <ChevronLeft className="w-4 h-4 stroke-[3px]" />
+            <span>KEMBALI</span>
           </button>
           
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-purple-50 border-2 border-slate-800 p-1 md:p-1.5 flex items-center justify-center flex-shrink-0">
-              <Brain className="w-5 h-5 md:w-6 md:h-6 text-purple-650" />
-            </div>
-            <div>
-              <span className="text-[7px] md:text-[10px] font-black text-purple-700 uppercase tracking-widest block leading-none">
-                {activeQuizType === 'system' ? 'Kuis HOTS Sistem' : 'Kuis Kustom Guru'}
-              </span>
-              <h2 className="text-[11px] sm:text-xs md:text-sm font-black text-black leading-tight mt-1 max-w-[140px] md:max-w-[250px] truncate">
-                {activeQuizType === 'system' ? 'Evaluasi Mandiri' : selectedClassQuiz?.title}
-              </h2>
-            </div>
+          <div>
+            <span className="text-[7px] md:text-[8px] font-pixel text-[#884318] uppercase tracking-widest block leading-none">
+              {activeQuizType === 'system' ? 'Kuis HOTS Sistem' : 'Kuis Kustom Guru'}
+            </span>
+            <h2 className="text-[10px] md:text-xs font-pixel text-[#361706] leading-tight mt-1 max-w-[160px] md:max-w-[280px] truncate uppercase">
+              {activeQuizType === 'system' ? 'Evaluasi Mandiri' : selectedClassQuiz?.title}
+            </h2>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-amber-500/10 border-2 border-slate-800 px-3 md:px-4 py-1 md:py-1.5 rounded-xl shadow-3xs">
-          <Star className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-500 fill-amber-500" />
-          <span className="text-[9.5px] md:text-xs font-black text-amber-900 font-mono">
-            {activeQuizType === 'system' ? 'Skor: ' + score : 'Benar: ' + correctCount}
+        <div className="flex items-center gap-1.5 bg-[#361706] border-2 border-[#ca7c38] px-3 py-1.5 rounded-lg shadow-xs">
+          <Star className="w-3.5 h-3.5 text-[#facc15] fill-[#facc15]" />
+          <span className="text-[8px] md:text-[9px] font-pixel text-[#facc15]">
+            {activeQuizType === 'system' ? 'SKOR: ' + score : 'BENAR: ' + correctCount}
           </span>
         </div>
       </div>
 
       {!quizCompleted ? (
-        <div className="flex-1 flex flex-col justify-between relative z-10 py-1 overflow-y-auto space-y-4 md:space-y-5">
+        <div className="flex-1 flex flex-col justify-between relative z-10 py-1 space-y-4 max-w-2xl mx-auto w-full">
           
           {/* Question Card */}
-          <div className="bg-white border-2 border-slate-800 rounded-3xl p-4 sm:p-5 md:p-6 shadow-[4px_4px_0px_#1e293b] flex flex-col gap-3.5 md:gap-4 relative overflow-hidden flex-shrink-0">
+          <div className="bg-[#fae8b6] border-4 border-[#361706] rounded-xl p-4 md:p-6 shadow-[5px_5px_0_#1a0b03] flex flex-col gap-3 relative text-[#2b1103]">
             
             {/* Header info */}
-            <div className="border-b-2 border-slate-800 pb-2 flex justify-between items-center">
+            <div className="border-b-2 border-[#361706] pb-2 flex justify-between items-center">
               <div>
-                <span className="text-[7.5px] md:text-[10px] font-black text-purple-700 uppercase tracking-widest block font-sans">
+                <span className="text-[7.5px] md:text-[8px] font-pixel text-[#884318] uppercase tracking-widest block">
                   {currentQuestion.category || 'Evaluasi Pembelajaran'}
                 </span>
-                <h1 className="text-xs md:text-sm font-black text-slate-855 tracking-wide uppercase mt-0.5">
-                  Soal {currentIdx + 1} dari {questionsList.length}
+                <h1 className="text-[9px] md:text-xs font-pixel text-[#361706] tracking-wide uppercase mt-0.5">
+                  SOAL {currentIdx + 1} / {questionsList.length}
                 </h1>
               </div>
-              <div className="text-[9px] md:text-xs font-black text-slate-400 bg-slate-100 border border-slate-300 px-2.5 md:px-3 py-0.5 md:py-1 rounded-lg">
-                Pilihan Ganda
+              <div className="text-[8px] font-pixel text-[#facc15] bg-[#361706] px-2 py-0.5 rounded border border-[#ca7c38]">
+                PILIHAN GANDA
               </div>
             </div>
 
             {/* Question Text */}
-            <div className="p-3 md:p-4 bg-purple-500/5 border-2 border-slate-800 rounded-2xl text-[10px] md:text-sm font-bold text-slate-800 leading-relaxed text-left flex items-start gap-2 md:gap-3">
-              <HelpCircle className="w-4 h-4 md:w-5 md:h-5 text-purple-650 flex-shrink-0 mt-0.5" />
+            <div className="p-3 bg-[#fff8e7] border-2 border-[#361706] rounded-lg text-xs font-bold text-[#361706] leading-relaxed text-left flex items-start gap-2.5">
+              <HelpCircle className="w-4 h-4 text-[#884318] flex-shrink-0 mt-0.5" />
               <p>{currentQuestion.question}</p>
             </div>
 
-            {/* ILLUSTRATION AREA (Only for system quiz) */}
+            {/* ILLUSTRATION AREA */}
             {activeQuizType === 'system' && (
-              <div className="w-full flex justify-center animate-scale-up">
+              <div className="w-full flex justify-center bg-[#fff8e7] border-2 border-[#361706] rounded-lg p-2">
                 <QuestionIllustration id={currentQuestion.id} />
               </div>
             )}
 
             {/* Multiple choices */}
-            <div className="flex flex-col gap-1.5 md:gap-2">
+            <div className="flex flex-col gap-2">
               {currentQuestion.options.map((opt) => {
                 const isSelected = selectedKey === opt.key;
                 const isCorrect = opt.key === currentQuestion.answer;
                 const isLocked = selectedKey !== null;
 
-                let btnStyle = "bg-white border-slate-850 hover:bg-slate-50 text-slate-850";
+                let btnStyle = "bg-[#fff8e7] border-[#361706] hover:bg-[#fae8b6] text-[#361706]";
                 
                 if (isLocked) {
                   if (isSelected) {
                     btnStyle = isCorrect
-                      ? "bg-emerald-100 border-emerald-600 text-emerald-900 font-extrabold"
-                      : "bg-rose-100 border-rose-600 text-rose-900 font-extrabold animate-shake";
+                      ? "bg-[#86efac] border-[#166534] text-[#14532d] font-bold"
+                      : "bg-[#fca5a5] border-[#991b1b] text-[#7f1d1d] font-bold animate-shake";
                   } else if (isCorrect) {
-                    btnStyle = "bg-emerald-50 border-emerald-500 text-emerald-800 font-extrabold";
+                    btnStyle = "bg-[#bbf7d0] border-[#166534] text-[#14532d] font-bold";
                   } else {
-                    btnStyle = "bg-slate-50 border-slate-202 text-slate-400 opacity-60";
+                    btnStyle = "bg-[#fff8e7]/50 border-[#361706]/40 text-[#361706]/40";
                   }
                 }
 
@@ -748,9 +743,9 @@ export const HotsQuiz = () => {
                     key={opt.key}
                     onClick={() => handleSelectOption(opt.key)}
                     disabled={isLocked}
-                    className={"w-full p-2.5 md:p-3.5 rounded-2xl border-2 text-[9.5px] md:text-sm font-bold text-left shadow-3xs cursor-pointer flex items-start gap-2 md:gap-3 transition active:translate-y-0.5 active:shadow-none hover:scale-[1.005] " + btnStyle}
+                    className={`w-full p-2.5 md:p-3 rounded-lg border-2 text-[10px] md:text-xs font-bold text-left shadow-xs cursor-pointer flex items-start gap-2.5 transition active:translate-y-0.5 ${btnStyle}`}
                   >
-                    <span className="w-4.5 h-4.5 md:w-6 md:h-6 rounded-lg border-2 border-slate-850 flex items-center justify-center flex-shrink-0 text-[9.5px] md:text-xs font-black bg-white">
+                    <span className="w-5 h-5 rounded border border-[#361706] flex items-center justify-center flex-shrink-0 font-pixel text-[8px] bg-[#ca7c38] text-[#2b1103]">
                       {opt.key}
                     </span>
                     <p className="flex-1 leading-normal">{opt.text}</p>
@@ -759,46 +754,36 @@ export const HotsQuiz = () => {
               })}
             </div>
 
-            {/* Next / feedback actions panel */}
+            {/* Feedback / Next action */}
             {selectedKey && (
-              <div className="space-y-3 border-t border-slate-350 pt-3 animate-scale-up">
-                
-                {/* Visual Correction Alert */}
-                <div className={"p-2.5 md:p-4 rounded-xl border-2 border-slate-800 flex items-start gap-2.5 md:gap-3 text-[9px] md:text-xs font-bold shadow-[2px_2px_0px_#1e293b] text-left leading-normal " + (
+              <div className="space-y-3 border-t-2 border-[#361706]/20 pt-3 animate-scale-up">
+                <div className={`p-3 rounded-lg border-2 flex items-start gap-2 text-[10px] ${
                   selectedKey === currentQuestion.answer
-                    ? 'bg-emerald-100 text-emerald-850'
-                    : 'bg-rose-100 text-rose-850'
-                )}>
+                    ? 'bg-[#bbf7d0] border-[#166534] text-[#14532d]'
+                    : 'bg-[#fecaca] border-[#991b1b] text-[#7f1d1d]'
+                }`}>
                   {selectedKey === currentQuestion.answer ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="block text-[9.5px] font-black text-emerald-900">BENAR! JAWABAN TEPAT</strong>
-                        <p className="mt-0.5 whitespace-pre-line">{currentQuestion.explanation || 'Jawaban Anda tepat sekali.'}</p>
-                      </div>
-                    </>
+                    <CheckCircle2 className="w-4 h-4 text-[#166534] flex-shrink-0 mt-0.5" />
                   ) : (
-                    <>
-                      <XCircle className="w-4 h-4 text-rose-650 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="block text-[9.5px] font-black text-rose-900">KURANG TEPAT</strong>
-                        <p className="mt-0.5 whitespace-pre-line">{currentQuestion.explanation || 'Materi ini berkaitan dengan materi ajar dari guru. Silakan buka Genopedia kembali.'}</p>
-                      </div>
-                    </>
+                    <XCircle className="w-4 h-4 text-[#991b1b] flex-shrink-0 mt-0.5" />
                   )}
+                  <div>
+                    <strong className="block font-pixel text-[8px] uppercase">
+                      {selectedKey === currentQuestion.answer ? 'BENAR! JAWABAN TEPAT' : 'KURANG TEPAT'}
+                    </strong>
+                    <p className="mt-0.5">{currentQuestion.explanation || 'Pelajari materi ini kembali di Genopedia.'}</p>
+                  </div>
                 </div>
 
-                {/* Continue button */}
                 <div className="flex justify-end">
                   <button
                     onClick={handleNext}
-                    className="px-5 md:px-6 py-2 md:py-2.5 rounded-xl border-2 border-slate-800 bg-gradient-to-r from-purple-500 to-indigo-650 text-white font-black text-[9px] md:text-xs shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 cursor-pointer hover:scale-102"
+                    className="px-5 py-2.5 rounded-lg border-2 border-[#361706] bg-[#16a34a] hover:bg-[#22c55e] text-white font-pixel text-[8px] md:text-[9px] uppercase shadow-[2px_2px_0_#1a0b03] active:translate-y-0.5 transition cursor-pointer flex items-center gap-1.5"
                   >
-                    <span>{currentIdx < questionsList.length - 1 ? 'PERTANYAAN BERIKUTNYA' : 'LIHAT HASIL EVALUASI'}</span>
+                    <span>{currentIdx < questionsList.length - 1 ? 'SOAL BERIKUTNYA' : 'LIHAT HASIL'}</span>
                     <ArrowRight className="w-3.5 h-3.5 stroke-[3.5px]" />
                   </button>
                 </div>
-
               </div>
             )}
 
@@ -807,63 +792,55 @@ export const HotsQuiz = () => {
         </div>
       ) : (
         /* Summary / Score screen */
-        <div className="flex-1 flex items-center justify-center py-1">
-          <div className="p-6 rounded-3xl text-center space-y-4 max-w-sm w-full border-2 border-slate-800 bg-white shadow-[4px_4px_0px_#1e293b] relative z-50 animate-scale-up">
-            <div className="w-16 h-16 rounded-2xl bg-purple-50 border-2 border-slate-800 p-2.5 flex items-center justify-center mx-auto shadow-3xs">
-              <Trophy className="w-8 h-8 text-amber-500 fill-amber-500" />
+        <div className="flex-1 flex items-center justify-center py-2 relative z-20">
+          <div className="p-5 md:p-6 rounded-xl text-center space-y-4 max-w-sm w-full border-4 border-[#361706] bg-[#fae8b6] shadow-[6px_6px_0_#1a0b03] text-[#2b1103] animate-scale-up">
+            <div className="w-14 h-14 rounded-lg bg-[#ca7c38] border-2 border-[#361706] p-2 flex items-center justify-center mx-auto shadow-xs text-2xl">
+              🏆
             </div>
 
             <div className="space-y-1">
-              <span className="text-[8px] font-black text-purple-700 uppercase tracking-widest font-sans">EVALUASI SELESAI</span>
-              <h3 className="text-base font-black text-black">
+              <span className="font-pixel text-[8px] text-[#884318] uppercase tracking-widest block">EVALUASI SELESAI</span>
+              <h3 className="font-pixel text-xs md:text-sm text-[#361706] uppercase font-bold">
                 {activeQuizType === 'system' ? 'HASIL KUIS HOTS' : 'HASIL KUIS KELAS'}
               </h3>
-              <p className="text-[9.5px] text-slate-500 font-bold leading-relaxed px-1">
+              <p className="text-[9.5px] text-[#543319] leading-relaxed">
                 {activeQuizType === 'system'
-                  ? 'Kamu telah menyelesaikan 20 pertanyaan evaluasi kognitif (C1-C6) teori genetika Mendel dengan sukses!'
+                  ? 'Kamu telah menyelesaikan pertanyaan evaluasi kognitif teori genetika Mendel dengan sukses!'
                   : 'Kamu telah menyelesaikan kuis tugas kustom dari guru kelas Anda dengan sukses!'}
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 bg-slate-50 border border-slate-350 p-2.5 rounded-2xl text-[9px] font-bold text-slate-700">
-              <div className="border-r border-slate-205 py-1">
-                <span className="block text-[14px] font-black text-indigo-755">{correctCount} / {questionsList.length}</span>
-                <span className="block text-[7px] text-slate-400 uppercase font-black">BENAR</span>
+            <div className="grid grid-cols-2 gap-2 bg-[#fff8e7] border-2 border-[#361706] p-2.5 rounded-lg">
+              <div className="border-r border-[#361706]/30 py-1">
+                <span className="block font-pixel text-xs text-[#361706]">{correctCount} / {questionsList.length}</span>
+                <span className="block font-pixel text-[7px] text-[#884318] uppercase">BENAR</span>
               </div>
               <div className="py-1">
-                <span className="block text-[14px] font-black text-amber-600">
-                  {activeQuizType === 'system' ? score : accuracyPercentage}
+                <span className="block font-pixel text-xs text-[#16a34a]">
+                  {activeQuizType === 'system' ? score : accuracyPercentage + '%'}
                 </span>
-                <span className="block text-[7px] text-slate-400 uppercase font-black">
-                  {activeQuizType === 'system' ? 'SKOR AKHIR' : 'NILAI PERSEN (%)'}
+                <span className="block font-pixel text-[7px] text-[#884318] uppercase">
+                  {activeQuizType === 'system' ? 'SKOR AKHIR' : 'NILAI PERSEN'}
                 </span>
               </div>
             </div>
 
-            {/* Performance Grade Card */}
-            {activeQuizType === 'system' && (
-              <div className="p-3 bg-amber-500/10 border-2 border-slate-800 rounded-xl text-left space-y-1">
-                <span className="text-[9px] font-black text-amber-900 font-mono block">🏆 Lencana: {getQuizGrade().title}</span>
-                <p className="text-[8.5px] font-bold text-slate-650 leading-relaxed">{getQuizGrade().desc}</p>
-              </div>
-            )}
-
-            <div className="flex gap-2 justify-center pt-1.5">
+            <div className="flex gap-2 justify-center pt-1 border-t border-[#361706]/20">
               <button
                 onClick={handleReset}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-700 font-bold text-[9.5px] shadow-3xs cursor-pointer flex-1 flex items-center justify-center gap-1"
+                className="px-4 py-2 rounded-lg bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#361706] text-[#2b1103] font-pixel text-[8px] uppercase shadow-xs cursor-pointer flex-1 flex items-center justify-center gap-1"
               >
-                <RotateCcw className="w-3.5 h-3.5 stroke-[2.5px]" />
+                <RotateCcw className="w-3.5 h-3.5" />
                 <span>ULANGI</span>
               </button>
               
               <button
                 onClick={handleSubmitQuizResults}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-650 text-white font-extrabold text-[9.5px] flex items-center justify-center gap-1 shadow-3xs cursor-pointer flex-1 disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-[#16a34a] hover:bg-[#22c55e] text-white border-2 border-[#361706] font-pixel text-[8px] uppercase shadow-xs cursor-pointer flex-1 flex items-center justify-center gap-1 disabled:opacity-50"
               >
-                <span>{loading ? 'MENYIMPAN...' : 'SIMPAN & SELESAI'}</span>
+                <span>{loading ? 'MENYIMPAN...' : 'SIMPAN'}</span>
                 <CheckCircle2 className="w-3.5 h-3.5" />
               </button>
             </div>

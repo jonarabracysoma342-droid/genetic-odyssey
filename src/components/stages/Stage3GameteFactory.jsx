@@ -37,32 +37,56 @@ const FlowerIcon = ({ type, size = 20 }) => {
 const GAMETE_MISSIONS = [
   {
     id: 1,
-    title: 'Misi 1: Induk Heterozigot (Aa)',
-    parentGenotype: 'Aa',
-    prompt: 'Tarik alel yang akan masuk ke gamet dari induk Heterozigot (Aa)!',
-    expectedGametes: ['A', 'a'],
-    hint: 'Ingat! Setiap gamet hanya membawa satu alel (Hukum Segregasi).'
+    title: 'Misi 1: Induk Heterozigot Warna Bunga (Pp)',
+    parentGenotype: 'Pp',
+    prompt: 'Pilih 2 alel yang akan terpisah ke dalam gamet dari induk Heterozigot (Pp)!',
+    expectedGametes: ['P', 'p'],
+    hint: 'Ingat Hukum Segregasi (Mendel I)! Sepasang alel Pp berpisah secara acak sehingga separuh gamet membawa P dan separuh membawa p.'
   },
   {
     id: 2,
-    title: 'Misi 2: Induk Homozigot Dominan (QQ)',
-    parentGenotype: 'QQ',
-    prompt: 'Tarik alel yang akan masuk ke gamet dari induk Homozigot Dominan (QQ)!',
-    expectedGametes: ['Q', 'Q'],
-    hint: 'Induk QQ memproduksi gamet yang semuanya membawa alel Q.'
+    title: 'Misi 2: Induk Homozigot Dominan Bentuk Biji (RR)',
+    parentGenotype: 'RR',
+    prompt: 'Pilih alel gamet yang terbentuk dari induk galur murni biji bulat (RR)!',
+    expectedGametes: ['R', 'R'],
+    hint: 'Induk homozigot dominan (RR) hanya memiliki alel R, sehingga 100% gamet yang diproduksi membawa alel R.'
   },
   {
     id: 3,
-    title: 'Misi 3: Induk Homozigot Resesif (bb)',
-    parentGenotype: 'bb',
-    prompt: 'Tarik alel yang akan masuk ke gamet dari induk Homozigot Resesif (bb)!',
-    expectedGametes: ['b', 'b'],
-    hint: 'Induk bb memproduksi gamet yang semuanya membawa alel b.'
+    title: 'Misi 3: Induk Homozigot Resesif Bunga Putih (pp)',
+    parentGenotype: 'pp',
+    prompt: 'Pilih alel gamet yang terbentuk dari induk bunga putih resesif (pp)!',
+    expectedGametes: ['p', 'p'],
+    hint: 'Induk homozigot resesif (pp) memproduksi gamet yang seluruhnya membawa alel resesif p.'
+  },
+  {
+    id: 4,
+    title: 'Misi 4: Induk Heterozigot Batang Tinggi (Tt)',
+    parentGenotype: 'Tt',
+    prompt: 'Pilih alel gamet dari induk heterozigot pembawa sifat tinggi dan kerdil (Tt)!',
+    expectedGametes: ['T', 't'],
+    hint: 'Selama pembelahan meiosis, alel T (tinggi) dan alel t (kerdil) memisah secara independen ke kutub berbeda.'
+  },
+  {
+    id: 5,
+    title: 'Misi 5: Induk Galur Murni Polong Hijau (GG)',
+    parentGenotype: 'GG',
+    prompt: 'Pilih alel gamet yang dihasilkan oleh tanaman polong hijau murni (GG)!',
+    expectedGametes: ['G', 'G'],
+    hint: 'Tanaman homozigot GG seragam menghasilkan gamet dengan alel G.'
+  },
+  {
+    id: 6,
+    title: 'Misi 6: Induk Homozigot Resesif Batang Pendek (tt)',
+    parentGenotype: 'tt',
+    prompt: 'Pilih alel gamet dari tanaman ercis kerdil homozigot (tt)!',
+    expectedGametes: ['t', 't'],
+    hint: 'Kedua alel kerdil (t) berpisah ke masing-masing sel kelamin haploid.'
   }
 ];
 
 export const Stage3GameteFactory = () => {
-  const { navigateTo, completeStage } = useGame();
+  const { navigateTo, completeStage, sourceWorldView } = useGame();
   const [missionIdx, setMissionIdx] = useState(0);
   const [selectedGametes, setSelectedGametes] = useState([]);
   const [feedback, setFeedback] = useState(null);
@@ -141,18 +165,18 @@ export const Stage3GameteFactory = () => {
   };
 
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-4 md:p-8 text-left justify-between">
+    <div className="w-full h-screen relative overflow-hidden bg-[#faf6ee] select-none flex flex-col p-2 sm:p-4 md:p-8 text-left justify-between overflow-y-auto stage-main-wrapper">
       
       {/* Retro parchment paper lines overlay for desk vibe */}
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] z-0" />
 
       {/* Floating Header Banner HUD */}
-      <div className="w-full p-3 rounded-2xl bg-white/90 border-2 border-slate-800 shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-2">
+      <div className="w-full p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/90 border-2 border-slate-800 shadow-[3px_3px_0px_#1e293b] sm:shadow-[4px_4px_0px_#1e293b] flex items-center justify-between gap-2 z-30 relative mb-1.5 sm:mb-2 stage-header-hud">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigateTo('map')}
+            onClick={() => navigateTo(sourceWorldView === 'rpg-world' ? 'rpg-world' : 'map')}
             className="p-1.5 rounded-xl bg-white border-2 border-slate-800 text-slate-700 hover:text-sky-600 transition shadow-3xs cursor-pointer flex-shrink-0 active:translate-y-0.5"
-            title="Kembali ke Peta"
+            title={sourceWorldView === 'rpg-world' ? "Kembali ke RPG Map" : "Kembali ke Peta"}
           >
             <ChevronLeft className="w-4 h-4 stroke-[3px]" />
           </button>
@@ -177,6 +201,23 @@ export const Stage3GameteFactory = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Mission Progress Badges */}
+          <div className="flex gap-1 mr-1">
+            {GAMETE_MISSIONS.map((m, idx) => (
+              <div 
+                key={m.id}
+                title={m.title}
+                className={`w-2.5 h-2.5 rounded-full border border-slate-800 transition-colors ${
+                  idx === missionIdx 
+                    ? 'bg-amber-400' 
+                    : idx < missionIdx 
+                      ? 'bg-emerald-400' 
+                      : 'bg-slate-200'
+                }`}
+              />
+            ))}
+          </div>
+
           {/* Score indicator */}
           <div className="flex items-center gap-1.5 bg-amber-500/10 border-2 border-slate-800 px-3 py-1 rounded-xl shadow-3xs">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
@@ -186,10 +227,10 @@ export const Stage3GameteFactory = () => {
       </div>
 
       {!stageCompleted ? (
-        <div className="flex-1 flex flex-col justify-between relative z-10 py-1">
+        <div className="flex-1 flex flex-col justify-between relative z-10 py-0.5 sm:py-1 stage-workspace-compact">
           
           {/* Heading */}
-          <div className="text-center space-y-0.5 my-1">
+          <div className="text-center space-y-0.5 my-0.5 sm:my-1">
             <h3 className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">
               Tarik alel yang akan masuk ke gamet!
             </h3>
@@ -199,61 +240,61 @@ export const Stage3GameteFactory = () => {
           </div>
 
           {/* Steampunk Gamete Factory Machine Container - Always Horizontal Row */}
-          <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 my-1 w-full max-w-2xl mx-auto px-2">
+          <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 my-0.5 sm:my-1 w-full max-w-2xl mx-auto px-2">
             
             {/* Left: Retro Machine Graphic */}
             <div className="flex flex-col items-center flex-shrink-0">
               {/* Induk : Genotype Sign */}
-              <div className="px-2.5 py-1 bg-[#fef3c7] border-2 border-slate-800 rounded-lg font-black text-[8.5px] text-slate-800 shadow-[1.5px_1.5px_0px_#1e293b] mb-1 z-10">
+              <div className="px-2 sm:px-2.5 py-0.5 sm:py-1 bg-[#fef3c7] border-2 border-slate-800 rounded-lg font-black text-[8px] sm:text-[8.5px] text-slate-800 shadow-[1.5px_1.5px_0px_#1e293b] mb-1 z-10">
                 Induk : {mission.parentGenotype}
               </div>
 
               {/* Steampunk Machine Body */}
-              <div className="w-28 h-22 bg-[#cbd5e1] border-[2.5px] border-slate-800 rounded-xl shadow-[3px_3px_0px_#1e293b] flex items-center justify-center p-1.5 relative overflow-hidden">
+              <div className="w-24 sm:w-28 h-18 sm:h-22 bg-[#cbd5e1] border-[2.5px] border-slate-800 rounded-xl shadow-[3px_3px_0px_#1e293b] flex items-center justify-center p-1 sm:p-1.5 relative overflow-hidden">
                 {/* Screen Grid Pattern */}
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.15)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_4px,6px_100%] pointer-events-none opacity-45" />
                 
                 {/* Screen Inner */}
-                <div className="w-full h-full bg-[#f8fafc] border-2 border-slate-800 rounded-lg flex items-center justify-center shadow-inner gap-1.5 px-1">
-                  <FlowerIcon type={mission.parentGenotype} size={24} />
-                  <span className="font-mono font-black text-2xl text-slate-800 tracking-tight select-none">
+                <div className="w-full h-full bg-[#f8fafc] border-2 border-slate-800 rounded-lg flex items-center justify-center shadow-inner gap-1 px-1">
+                  <FlowerIcon type={mission.parentGenotype} size={20} />
+                  <span className="font-mono font-black text-xl sm:text-2xl text-slate-800 tracking-tight select-none">
                     {mission.parentGenotype}
                   </span>
                 </div>
 
                 {/* Left/Right small lights */}
-                <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-2.5 rounded-full bg-emerald-500 border border-slate-800 animate-pulse" />
+                <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-2 rounded-full bg-emerald-500 border border-slate-800 animate-pulse" />
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-amber-500 border border-slate-800" />
               </div>
             </div>
 
             {/* Middle: Arrow */}
-            <div className="flex items-center justify-center text-slate-700 text-lg font-black animate-pulse select-none flex-shrink-0">
+            <div className="flex items-center justify-center text-slate-700 text-base sm:text-lg font-black animate-pulse select-none flex-shrink-0">
               <span className="text-slate-800 font-extrabold">➔</span>
             </div>
 
             {/* Center: Gamete Slots */}
             <div className="flex flex-col items-center flex-shrink-0">
-              <span className="text-[8.5px] font-black text-slate-800 uppercase tracking-widest mb-1">Gamet</span>
+              <span className="text-[8px] sm:text-[8.5px] font-black text-slate-800 uppercase tracking-widest mb-1">Gamet</span>
               
-              <div className="flex gap-2">
+              <div className="flex gap-1.5 sm:gap-2">
                 {[0, 1].map((idx) => {
                   const val = selectedGametes[idx];
                   return (
                     <div key={idx} className="flex flex-col items-center gap-1">
                       {/* Dashed Target Box */}
-                      <div className="w-11 h-11 rounded-lg border-1.5 border-dashed border-slate-400 bg-white/40 flex items-center justify-center font-mono text-slate-350 font-black text-sm select-none">
+                      <div className="w-9 sm:w-11 h-9 sm:h-11 rounded-lg border-1.5 border-dashed border-slate-400 bg-white/40 flex items-center justify-center font-mono text-slate-350 font-black text-xs sm:text-sm select-none">
                         ?
                       </div>
 
                       {/* Cream Card Underneath */}
-                      <div className={`w-11 h-12 rounded-lg border-2 border-slate-800 flex flex-col items-center justify-center shadow-[2px_2px_0px_#1e293b] transition-all gap-0.5 ${
+                      <div className={`w-9 sm:w-11 h-10 sm:h-12 rounded-lg border-2 border-slate-800 flex flex-col items-center justify-center shadow-[2px_2px_0px_#1e293b] transition-all gap-0.5 ${
                         val 
                           ? 'bg-[#fef08a] text-slate-900' 
                           : 'bg-[#faf6ee] text-slate-400 opacity-60'
                       }`}>
-                        {val && <FlowerIcon type={val} size={12} />}
-                        <span className="font-mono font-black text-[10px] leading-none">{val || '?'}</span>
+                        {val && <FlowerIcon type={val} size={11} />}
+                        <span className="font-mono font-black text-[9px] sm:text-[10px] leading-none">{val || '?'}</span>
                       </div>
                     </div>
                   );
@@ -262,20 +303,20 @@ export const Stage3GameteFactory = () => {
             </div>
 
             {/* Middle: Faint Arrow pointing to tip box */}
-            <div className="hidden md:flex items-center justify-center text-slate-400 text-lg font-black select-none flex-shrink-0">
+            <div className="hidden md:flex items-center justify-center text-slate-400 text-base sm:text-lg font-black select-none flex-shrink-0">
               <span>➔</span>
             </div>
 
             {/* Right: Post-It / Sticky Note Hint Card */}
-            <div className="w-32 p-2 bg-[#fef3c7] border-2 border-slate-800 rounded-lg shadow-[2px_2px_0px_#1e293b] flex flex-col gap-0.5 text-left relative overflow-hidden transform rotate-1 hover:rotate-0 transition duration-300 flex-shrink-0">
+            <div className="w-28 sm:w-32 p-1.5 sm:p-2 bg-[#fef3c7] border-2 border-slate-800 rounded-lg shadow-[2px_2px_0px_#1e293b] flex flex-col gap-0.5 text-left relative overflow-hidden transform rotate-1 hover:rotate-0 transition duration-300 flex-shrink-0">
               {/* Pin design */}
               <div className="absolute top-0.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-rose-500 border border-slate-800 shadow-xs" />
               
-              <div className="flex items-center gap-0.5 mt-1">
-                <span className="text-[8px]">💡</span>
-                <span className="text-[7.5px] font-black text-amber-950 uppercase tracking-wider">Ingat!</span>
+              <div className="flex items-center gap-0.5 mt-0.5">
+                <span className="text-[7.5px]">💡</span>
+                <span className="text-[7px] sm:text-[7.5px] font-black text-amber-950 uppercase tracking-wider">Ingat!</span>
               </div>
-              <p className="text-[7.5px] font-bold text-amber-900 leading-normal">
+              <p className="text-[7px] sm:text-[7.5px] font-bold text-amber-900 leading-tight line-clamp-3">
                 {mission.hint.replace('Ingat! ', '')}
               </p>
             </div>
@@ -283,18 +324,18 @@ export const Stage3GameteFactory = () => {
           </div>
 
           {/* Bottom Row: Source Cards */}
-          <div className="space-y-1 text-center my-1">
-            <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-widest block">
+          <div className="space-y-0.5 sm:space-y-1 text-center my-0.5 sm:my-1">
+            <span className="text-[7px] sm:text-[7.5px] font-black text-slate-400 uppercase tracking-widest block">
               Klik Alel Induk untuk Dimasukkan ke Mesin Gamet
             </span>
-            <div className="flex justify-center gap-3 flex-wrap">
+            <div className="flex justify-center gap-2 sm:gap-3 flex-wrap">
               {alleleOptions.map((al, idx) => (
                 <button
                   key={idx}
                   onClick={() => handlePickAllele(al)}
-                  className="w-12 h-14 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-800 flex flex-col items-center justify-center p-1 shadow-[3px_3px_0px_#1e293b] hover:scale-105 active:scale-95 active:translate-y-0.5 active:shadow-[1.5px_1.5px_0px_#1e293b] transition-all cursor-pointer gap-1"
+                  className="w-10 sm:w-12 h-12 sm:h-14 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-800 flex flex-col items-center justify-center p-1 shadow-[2px_2px_0px_#1e293b] sm:shadow-[3px_3px_0px_#1e293b] hover:scale-105 active:scale-95 active:translate-y-0.5 transition-all cursor-pointer gap-0.5"
                 >
-                  <FlowerIcon type={al} size={16} />
+                  <FlowerIcon type={al} size={14} />
                   <span className="font-mono font-black text-xs leading-none">{al}</span>
                 </button>
               ))}
@@ -341,8 +382,8 @@ export const Stage3GameteFactory = () => {
         </div>
       ) : (
         /* Victory Screen */
-        <div className="absolute inset-0 z-40 bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="p-6 rounded-3xl text-center space-y-4 max-w-xs w-full border-2 border-slate-800 bg-white shadow-2xl relative z-50 animate-scale-up">
+        <div className="absolute inset-0 z-40 bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+          <div className="p-4 sm:p-6 rounded-3xl text-center space-y-2.5 sm:space-y-4 max-w-xs w-full border-2 border-slate-800 bg-white shadow-2xl relative z-50 animate-scale-up max-h-[96vh] overflow-y-auto">
             <div className="w-16 h-16 rounded-2xl bg-blue-50 border-2 border-slate-800 p-1 flex items-center justify-center mx-auto shadow-xs overflow-hidden">
               <img 
                 src="/assets/rumah_mendel_banner.webp" 
@@ -369,21 +410,33 @@ export const Stage3GameteFactory = () => {
               🏆 Lencana Diperoleh: Master Gamet
             </div>
 
-            <div className="flex gap-2 justify-center pt-1.5">
-              <button
-                onClick={() => navigateTo('map')}
-                className="px-4 py-2 rounded-xl bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-700 font-bold text-[10px] shadow-3xs cursor-pointer flex-1"
-              >
-                PETA STAGE
-              </button>
-              <button
-                onClick={() => navigateTo('stage', 4)}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[10px] flex items-center justify-center gap-1 shadow-3xs cursor-pointer flex-1"
-              >
-                <span>STAGE 4</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            {sourceWorldView === 'rpg-world' ? (
+              <div className="flex justify-center pt-1.5">
+                <button
+                  onClick={() => navigateTo('rpg-world')}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-pixel text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:translate-y-0.5 transition cursor-pointer border-2 border-slate-800"
+                >
+                  <span>LANJUTKAN</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2 justify-center pt-1.5">
+                <button
+                  onClick={() => navigateTo('map')}
+                  className="px-4 py-2 rounded-xl bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-700 font-bold text-[10px] shadow-3xs cursor-pointer flex-1"
+                >
+                  PETA STAGE
+                </button>
+                <button
+                  onClick={() => navigateTo('stage', 4)}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[10px] flex items-center justify-center gap-1 shadow-3xs cursor-pointer flex-1"
+                >
+                  <span>STAGE 4</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

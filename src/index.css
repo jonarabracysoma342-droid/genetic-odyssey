@@ -132,28 +132,732 @@
   background-color: #F0F9FF;
 }
 
-/* Animations */
-.float-anim {
-  animation: float 4s infinite ease-in-out;
+/* Pixel Art Typography */
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+.font-pixel-heading {
+  font-family: 'Pixelify Sans', sans-serif;
 }
 
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+.font-pixel-body {
+  font-family: 'VT323', monospace;
 }
-::-webkit-scrollbar-track {
-  background: #F0F9FF;
+
+/* Crisp Pixel Rendering */
+.image-pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
-::-webkit-scrollbar-thumb {
-  background: #BAE6FD;
-  border-radius: 4px;
+
+/* Pixel Art Wooden Plank Button (Matching User's Reference) */
+.pixel-wood-button {
+  background: #ca7c38;
+  background: linear-gradient(180deg, #e4a259 0%, #ca7c38 40%, #aa5d25 85%, #884318 100%);
+  border: 4px solid #2b1103;
+  box-shadow: 
+    inset 0 3px 0 rgba(255, 235, 190, 0.6),
+    inset 0 -3px 0 rgba(40, 15, 5, 0.6),
+    0 6px 0 #2b1103,
+    0 10px 16px rgba(0, 0, 0, 0.45);
+  color: #2b1103;
+  text-shadow: 1px 1px 0 #ffd699;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #38BDF8;
+
+.pixel-wood-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 3px 0 rgba(255, 245, 210, 0.8),
+    inset 0 -3px 0 rgba(40, 15, 5, 0.6),
+    0 8px 0 #2b1103,
+    0 14px 20px rgba(0, 0, 0, 0.5);
+}
+
+.pixel-wood-button:active {
+  transform: translateY(4px);
+  box-shadow: 
+    inset 0 2px 0 rgba(255, 230, 180, 0.3),
+    inset 0 -2px 0 rgba(40, 15, 5, 0.7),
+    0 2px 0 #2b1103,
+    0 4px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Floating Title Animation */
+@keyframes pixelTitleBob {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+.animate-pixel-title {
+  animation: pixelTitleBob 3s ease-in-out infinite;
+}
+
+@keyframes gentleBob {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-gentle-bob {
+  animation: gentleBob 4s ease-in-out infinite;
+}
+
+/* Wooden Signboard Border Style */
+.pixel-sign-board {
+  background: #deb887;
+  border: 4px solid #361706;
+  box-shadow: 
+    inset 3px 3px 0 #fbe4c8,
+    inset -3px -3px 0 #8b4513,
+    0 6px 0 #2b1103;
+}
+
+/* Pixel Art Ground Layer (Grass + Dirt) */
+.pixel-ground-grass {
+  background: #5eb338;
+  border-top: 4px solid #7dd350;
+  box-shadow: inset 0 -4px 0 #468c24;
+}
+
+.pixel-ground-dirt {
+  background: #6a4128;
+  background-image: radial-gradient(#502e18 15%, transparent 16%), radial-gradient(#7c4e32 15%, transparent 16%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  border-top: 4px solid #3a1e0d;
+}
+
+/* Floating Pixel Clouds Animation */
+@keyframes cloudFloatLeft {
+  0% { transform: translateX(110vw); }
+  100% { transform: translateX(-40vw); }
+}
+
+.pixel-cloud-1 {
+  animation: cloudFloatLeft 45s linear infinite;
+}
+
+.pixel-cloud-2 {
+  animation: cloudFloatLeft 65s linear infinite;
+  animation-delay: -20s;
+}
+
+.pixel-cloud-3 {
+  animation: cloudFloatLeft 85s linear infinite;
+  animation-delay: -45s;
+}
+
+/* Landscape View Frame (16:9 / Widescreen Game Canvas) */
+.landscape-game-container {
+  aspect-ratio: 16 / 9;
+  max-width: 100%;
+  max-height: 100vh;
+}
+
+/* ================= MOBILE LANDSCAPE RESPONSIVE SCALING ================= */
+/* Triggered on any smartphone / compact device held horizontally (height <= 620px) */
+@media screen and (orientation: landscape) and (max-height: 620px) {
+  /* Prevent full-screen modals from clipping outside screen height */
+  .stardew-journal-board,
+  .stardew-quest-parchment,
+  .modal-landscape-compact {
+    max-height: 94vh !important;
+    overflow-y: auto !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  /* Compact top RPG HUD bar */
+  .rpg-hud-top {
+    padding: 0.25rem 0.6rem !important;
+  }
+
+  /* Compact wood buttons on top bar (MENU, PETA CEPAT) */
+  .rpg-wood-button {
+    height: 1.75rem !important; /* 28px */
+    padding: 0.15rem 0.45rem !important;
+    font-size: 0.68rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Compact square utility buttons (Help, Device switch, Fullscreen, Sound) */
+  .rpg-utility-btn {
+    width: 1.65rem !important; /* ~26px */
+    height: 1.65rem !important;
+    border-radius: 0.4rem !important;
+    padding: 0 !important;
+  }
+  .rpg-utility-btn svg {
+    width: 0.8rem !important;
+    height: 0.8rem !important;
+  }
+
+  /* Compact top right location and star plaque */
+  .rpg-location-plaque {
+    min-width: 85px !important;
+    padding: 0.15rem 0.35rem !important;
+  }
+
+  /* Compact BUKU MISI journal button */
+  .rpg-journal-btn {
+    padding: 0.2rem 0.45rem !important;
+    gap: 0.3rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Compact analog joystick in landscape */
+  .rpg-joystick-box {
+    width: 4.5rem !important; /* 72px */
+    height: 4.5rem !important;
+    border-width: 2.5px !important;
+  }
+  .rpg-joystick-knob {
+    width: 2rem !important; /* 32px */
+    height: 2rem !important;
+  }
+
+  /* Compact action buttons ([E] and [SPASI]) */
+  .rpg-action-button {
+    width: 2.75rem !important; /* 44px */
+    height: 2.75rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Bottom controls bar container */
+  .rpg-bottom-bar {
+    padding: 0.25rem 0.75rem 0.35rem !important;
+  }
+
+  /* Compact top & bottom bars across screens */
+  .mobile-landscape-compact-nav {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+  }
+
+  /* Compact button paddings and icons */
+  .mobile-landscape-compact-btn {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Ensure auth / login screen fits without awkward clipping */
+  .auth-card-landscape {
+    max-height: 96vh !important;
+    overflow-y: auto !important;
+    padding: 0.75rem 1rem !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* HTML class-level landscape mobile fallback */
+.landscape-mobile .stardew-journal-board,
+.landscape-mobile .stardew-quest-parchment,
+.landscape-mobile .modal-landscape-compact {
+  max-height: 94vh !important;
+  overflow-y: auto !important;
+}
+.landscape-mobile .rpg-hud-top {
+  padding: 0.25rem 0.6rem !important;
+}
+.landscape-mobile .rpg-wood-button {
+  height: 1.75rem !important;
+  padding: 0.15rem 0.45rem !important;
+  font-size: 0.68rem !important;
+  border-radius: 0.5rem !important;
+}
+.landscape-mobile .rpg-utility-btn {
+  width: 1.65rem !important;
+  height: 1.65rem !important;
+  border-radius: 0.4rem !important;
+}
+.landscape-mobile .rpg-utility-btn svg {
+  width: 0.8rem !important;
+  height: 0.8rem !important;
+}
+.landscape-mobile .rpg-location-plaque {
+  min-width: 85px !important;
+  padding: 0.15rem 0.35rem !important;
+}
+.landscape-mobile .rpg-journal-btn {
+  padding: 0.2rem 0.45rem !important;
+  gap: 0.3rem !important;
+  border-radius: 0.5rem !important;
+}
+.landscape-mobile .rpg-joystick-box {
+  width: 4.5rem !important;
+  height: 4.5rem !important;
+}
+.landscape-mobile .rpg-joystick-knob {
+  width: 2rem !important;
+  height: 2rem !important;
+}
+.landscape-mobile .rpg-action-button {
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+  border-radius: 0.75rem !important;
+}
+.landscape-mobile .rpg-bottom-bar {
+  padding: 0.25rem 0.75rem 0.35rem !important;
+}
+
+/* Mobile Landscape Enforce Prompt / Styling */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .portrait-compact-scale {
+    transform-origin: top center;
+  }
+}
+
+/* ================= STAGE LANDSCAPE COMPACT SCALING ================= */
+@media screen and (orientation: landscape) and (max-height: 640px), (max-height: 540px) {
+  /* Stage outer shell container */
+  .stage-main-wrapper {
+    padding: 0.35rem 0.6rem !important;
+  }
+  
+  /* Stage top banner HUD */
+  .stage-header-hud {
+    padding: 0.35rem 0.65rem !important;
+    margin-bottom: 0.35rem !important;
+    border-radius: 0.85rem !important;
+  }
+  .stage-header-hud h2 {
+    font-size: 0.72rem !important;
+    line-height: 1.15 !important;
+  }
+  .stage-header-hud span {
+    font-size: 0.58rem !important;
+  }
+
+  /* Stage floating panels in Stage 1 */
+  .stage1-legend-box {
+    top: 2.75rem !important;
+    left: 0.5rem !important;
+    max-width: 10rem !important;
+    font-size: 0.65rem !important;
+  }
+  .stage1-mission-box {
+    top: 2.75rem !important;
+    right: 0.5rem !important;
+    max-width: 11.5rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  /* Stage bottom action button */
+  .stage-action-btn-bottom {
+    bottom: 0.5rem !important;
+    right: 0.5rem !important;
+    padding: 0.4rem 0.85rem !important;
+    font-size: 0.7rem !important;
+    border-radius: 0.65rem !important;
+  }
+
+  /* Workspaces & grid cards inside Stages 2-8 */
+  .stage-workspace-compact {
+    padding-top: 0.2rem !important;
+    padding-bottom: 0.2rem !important;
+    gap: 0.35rem !important;
+  }
+  .stage-card-compact {
+    padding: 0.35rem 0.5rem !important;
+  }
+  .boss-arena-compact {
+    min-height: 170px !important;
+  }
+  .boss-sprite-compact {
+    height: 8rem !important;
+  }
+  .test-tube-compact {
+    height: 4.25rem !important;
+    width: 2.25rem !important;
+  }
+  .punnett-grid-compact {
+    max-width: 250px !important;
+    gap: 0.25rem !important;
+  }
+}
+
+.landscape-mobile .stage-main-wrapper {
+  padding: 0.35rem 0.6rem !important;
+}
+.landscape-mobile .stage-header-hud {
+  padding: 0.35rem 0.65rem !important;
+  margin-bottom: 0.35rem !important;
+  border-radius: 0.85rem !important;
+}
+.landscape-mobile .stage-header-hud h2 {
+  font-size: 0.72rem !important;
+  line-height: 1.15 !important;
+}
+.landscape-mobile .stage-header-hud span {
+  font-size: 0.58rem !important;
+}
+.landscape-mobile .stage1-legend-box {
+  top: 2.75rem !important;
+  left: 0.5rem !important;
+  max-width: 10rem !important;
+}
+.landscape-mobile .stage1-mission-box {
+  top: 2.75rem !important;
+  right: 0.5rem !important;
+  max-width: 11.5rem !important;
+}
+.landscape-mobile .stage-action-btn-bottom {
+  bottom: 0.5rem !important;
+  right: 0.5rem !important;
+  padding: 0.4rem 0.85rem !important;
+  font-size: 0.7rem !important;
+}
+
+/* ================= CINEMATIC 1.5s BLACK FADE IN / FADE OUT ================= */
+@keyframes blackFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes blackFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-fade-in {
+  animation: blackFadeIn 0.75s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: blackFadeOut 0.75s ease-in forwards;
+}
+
+/* Custom 750ms Duration Utility for Tailwind */
+.duration-750 {
+  transition-duration: 750ms;
+}
+
+@keyframes scaleUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+/* ================= MAIN MENU BUTTONS STAGGERED SLIDE UP ================= */
+@keyframes menuSlideUpStagger {
+  0% {
+    opacity: 0;
+    transform: translateY(45px) scale(0.95);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+.animate-menu-slide-1 {
+  opacity: 0;
+  animation: menuSlideUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+}
+
+.animate-menu-slide-2 {
+  opacity: 0;
+  animation: menuSlideUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+}
+
+.animate-menu-slide-3 {
+  opacity: 0;
+  animation: menuSlideUpStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+}
+
+/* ================= STARDEW VALLEY UI & TYPOGRAPHY STYLES ================= */
+.font-stardew {
+  font-family: 'Jersey 10', 'Pixelify Sans', cursive, sans-serif;
+}
+
+.font-pixel-sans {
+  font-family: 'Pixelify Sans', cursive, sans-serif;
+}
+
+/* Stardew Carved Wood Plaque Effect */
+.stardew-wood-panel {
+  background: linear-gradient(180deg, #9a5316 0%, #78350f 45%, #542508 100%);
+  border: 2.5px solid #361706;
+  box-shadow: 
+    0 4px 0 #1f0b02,
+    inset 0 1px 0 rgba(255, 235, 175, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.stardew-wood-btn {
+  background: linear-gradient(180deg, #b45309 0%, #853706 50%, #632503 100%);
+  border: 2px solid #361706;
+  box-shadow: 
+    0 3px 0 #1c0a02,
+    inset 0 1px 0 rgba(255, 240, 185, 0.4);
+  transition: all 0.15s ease;
+}
+
+.stardew-wood-btn:hover {
+  filter: brightness(1.1);
+}
+
+.stardew-wood-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #1c0a02;
+}
+
+/* Stardew Engraved Golden Lettering */
+.stardew-gold-title {
+  color: #fffbeb;
+  text-shadow: 
+    1.5px 1.5px 0 #2b1103,
+    -0.5px -0.5px 0 #92400e;
+  letter-spacing: 0.05em;
+}
+
+.stardew-amber-text {
+  color: #fef08a;
+  text-shadow: 1.5px 1.5px 0 #361706;
+}
+
+/* Translucent Stardew In-World Touch Pad & Controls */
+.stardew-touch-pad {
+  background: radial-gradient(circle, rgba(43, 17, 3, 0.28) 0%, rgba(20, 8, 2, 0.15) 100%);
+  border: 1.5px solid rgba(217, 119, 6, 0.35);
+  box-shadow: 
+    inset 0 0 12px rgba(245, 158, 11, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(2px);
+}
+
+.stardew-touch-btn {
+  background: rgba(67, 28, 5, 0.38);
+  border: 1px solid rgba(245, 158, 11, 0.38);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 240, 185, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  color: rgba(254, 240, 138, 0.88);
+  transition: all 0.1s ease;
+}
+
+.stardew-touch-btn:active {
+  background: rgba(180, 83, 9, 0.65);
+  border-color: rgba(251, 191, 36, 0.85);
+  color: #ffffff;
+  transform: scale(0.92);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.45);
+}
+
+.stardew-action-btn {
+  background: radial-gradient(circle at 35% 35%, rgba(133, 55, 6, 0.45) 0%, rgba(54, 23, 6, 0.6) 100%);
+  border: 2px solid rgba(245, 158, 11, 0.45);
+  box-shadow: 
+    inset 0 2px 0 rgba(255, 240, 185, 0.35),
+    0 4px 10px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(2px);
+  color: #fef08a;
+  transition: all 0.15s ease;
+}
+
+.stardew-action-btn:hover {
+  filter: brightness(1.15);
+}
+
+.stardew-action-btn:active {
+  background: rgba(180, 83, 9, 0.75);
+  border-color: rgba(253, 224, 71, 0.9);
+  transform: scale(0.93) translateY(2px);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.6);
+}
+
+/* Stardew Valley Authentic Top-Right Corner HUD Widget */
+.stardew-hud-plaque {
+  background: linear-gradient(180deg, #b45309 0%, #853706 45%, #542508 100%);
+  border: 2.5px solid #2e1204;
+  box-shadow: 
+    0 3.5px 0 #180701,
+    inset 0 1.5px 0 rgba(255, 235, 175, 0.45),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.4);
+}
+
+.stardew-recessed-slot {
+  background: #1c0a02;
+  border: 1.5px solid #361706;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.75);
+}
+
+.stardew-journal-btn {
+  background: linear-gradient(180deg, #b45309 0%, #78350f 50%, #451a03 100%);
+  border: 2.5px solid #2e1204;
+  box-shadow: 
+    0 3.5px 0 #180701,
+    inset 0 1.5px 0 rgba(255, 240, 185, 0.45);
+  transition: all 0.15s ease;
+}
+
+.stardew-journal-btn:hover {
+  filter: brightness(1.12);
+  border-color: #ca8a04;
+}
+
+.stardew-journal-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #180701;
+}
+
+@keyframes stardew-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3.5px); }
+}
+
+.animate-stardew-bounce {
+  animation: stardew-bounce 0.9s infinite ease-in-out;
+}
+
+/* Stardew Valley Authentic Journal Modal */
+.stardew-journal-board {
+  background-color: #f4b469;
+  background-image: linear-gradient(180deg, #f7be78 0%, #f0a753 50%, #e6963e 100%);
+  border: 4px solid #361706;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 3px #fed79e,
+    inset 0 0 0 6px #a85817;
+}
+
+/* Stardew Scroll Ribbon Banner */
+.stardew-scroll-banner {
+  background: #fbf1d8;
+  background-image: linear-gradient(180deg, #fff9ea 0%, #f5e6be 60%, #eed59e 100%);
+  border: 2.5px solid #361706;
+  box-shadow: 
+    0 4px 0 #200d03,
+    inset 0 1px 0 #ffffff;
+}
+
+/* Stardew Square Close Button */
+.stardew-close-btn {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #991b1b 100%);
+  border: 2.5px solid #361706;
+  box-shadow: 
+    0 3px 0 #200d03,
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.4);
+}
+.stardew-close-btn:hover {
+  filter: brightness(1.1);
+}
+.stardew-close-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #200d03;
+}
+
+/* Stardew Quest Slot Bar */
+.stardew-quest-bar {
+  background: linear-gradient(180deg, #fedb98 0%, #f6ba69 45%, #ec9f46 100%);
+  border: 2.5px solid #361706;
+  box-shadow: 
+    0 3px 0 #280f03,
+    inset 0 1.5px 0 #ffeed1,
+    inset 0 -1.5px 0 #aa5212;
+  transition: all 0.15s ease;
+}
+.stardew-quest-bar:hover {
+  filter: brightness(1.05);
+}
+.stardew-quest-bar:active {
+  transform: translateY(1.5px);
+  box-shadow: 0 1.5px 0 #280f03;
+}
+
+/* Stardew Empty Quest Slot */
+.stardew-empty-slot {
+  background: rgba(230, 150, 62, 0.45);
+  border: 2px solid #5a270a;
+  box-shadow: inset 0 2px 4px rgba(54, 23, 6, 0.2);
+}
+
+/* Stardew Left Protruding Back Arrow Tab */
+.stardew-back-btn {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+  border: 2.5px solid #361706;
+  box-shadow: 
+    0 3px 0 #200d03,
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.stardew-back-btn:hover {
+  filter: brightness(1.1);
+}
+.stardew-back-btn:active {
+  transform: translateY(1.5px);
+  box-shadow: 0 1px 0 #200d03;
+}
+
+/* Stardew Detail Parchment Inner Sheet */
+.stardew-quest-parchment {
+  background-color: #fcefd4;
+  background-image: 
+    radial-gradient(#f7e1b5 15%, transparent 16%),
+    linear-gradient(180deg, #fef6e2 0%, #faeed4 50%, #f4e1b8 100%);
+  border: 2.5px solid #6b2f0a;
+  box-shadow: 
+    inset 0 0 0 2px #fff3db,
+    inset 0 2px 6px rgba(107, 47, 10, 0.15),
+    0 2px 5px rgba(54, 23, 6, 0.25);
+}
+
+/* Stardew Red Cancel Circle Button (bottom left of detail modal) */
+.stardew-cancel-btn {
+  background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+  border: 2px solid #361706;
+  box-shadow: 
+    0 2px 0 #200d03,
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.stardew-cancel-btn:hover {
+  filter: brightness(1.1);
+}
+.stardew-cancel-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #200d03;
 }

@@ -141,6 +141,34 @@ export const STAGES = [
     bloomCode: 'C6',
     bloomName: 'Menciptakan',
     bloomStyle: 'bg-amber-50 border-amber-200 text-amber-700 font-extrabold'
+  },
+  {
+    id: 7,
+    name: 'Stage 7 – Mutation Trap',
+    title: 'Jebakan Mutasi',
+    location: 'Pusat Penelitian',
+    topic: 'Penyimpangan Semu & Evaluasi Miskonsepsi',
+    missionText: 'Deteksi dan netralkan miskonsepsi genetika serta evaluasi penyimpangan hukum Mendel untuk mengamankan data laboratorium.',
+    guideText: 'Periksa dengan teliti setiap pernyataan, temukan konsep yang menyimpang dari hukum pewarisan sifat.',
+    learningOutput: 'Pemain mampu mengevaluasi miskonsepsi genetika dan memahami fenomena penyimpangan semu.',
+    badge: 'Detektor Mutasi',
+    bloomCode: 'C5',
+    bloomName: 'Evaluasi',
+    bloomStyle: 'bg-rose-50 border-rose-200 text-rose-700'
+  },
+  {
+    id: 8,
+    name: 'Stage 8 – Final Boss Dr. Chaos',
+    title: 'Pertarungan Dr. Chaos',
+    location: 'Hall of Genetics',
+    topic: 'Master Evaluasi Genetika Mendelian',
+    missionText: 'Kalahkan Dr. Chaos dalam duel 3 fase genetika: pembentukan gamet, persilangan monohibrid, dan analisis rasio dihibrid.',
+    guideText: 'Gunakan seluruh pemahamanmu tentang Hukum Mendel I dan II untuk mengalahkan Dr. Chaos!',
+    learningOutput: 'Pemain menguasai seluruh konsep pewarisan sifat Mendel secara komprehensif.',
+    badge: 'Pahlawan Genetika',
+    bloomCode: 'C6',
+    bloomName: 'Kreasi & Evaluasi',
+    bloomStyle: 'bg-amber-50 border-amber-200 text-amber-700 font-extrabold'
   }
 ];
 

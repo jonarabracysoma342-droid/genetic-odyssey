@@ -43,12 +43,12 @@ const PLANT_CARDS = [
     name: 'Tanaman C', 
     flowerColor: 'Ungu', 
     seedShape: 'Bulat', 
-    podColor: 'Hijau', 
+    podColor: 'Kuning', 
     image: '/assets/pixel_plant_a.svg', 
-    imageBg: 'from-purple-100 via-indigo-50 to-blue-100',
+    imageBg: 'from-purple-100 via-amber-50 to-yellow-100',
     flowerBadgeBg: 'bg-purple-600 text-white',
     seedBadgeBg: 'bg-emerald-600 text-white',
-    podBadgeBg: 'bg-green-600 text-white'
+    podBadgeBg: 'bg-amber-500 text-white'
   },
   { 
     id: 'p4', 
@@ -109,42 +109,90 @@ const PLANT_CARDS = [
     flowerBadgeBg: 'bg-slate-200 text-slate-800 border border-slate-300',
     seedBadgeBg: 'bg-emerald-600 text-white',
     podBadgeBg: 'bg-green-600 text-white'
+  },
+  { 
+    id: 'p9', 
+    name: 'Tanaman I', 
+    flowerColor: 'Putih', 
+    seedShape: 'Keriput', 
+    podColor: 'Hijau', 
+    image: '/assets/pixel_plant_d.svg', 
+    imageBg: 'from-teal-100 via-emerald-50 to-green-100',
+    flowerBadgeBg: 'bg-slate-200 text-slate-800 border border-slate-300',
+    seedBadgeBg: 'bg-amber-700 text-white',
+    podBadgeBg: 'bg-green-600 text-white'
+  },
+  { 
+    id: 'p10', 
+    name: 'Tanaman J', 
+    flowerColor: 'Putih', 
+    seedShape: 'Keriput', 
+    podColor: 'Kuning', 
+    image: '/assets/pixel_plant_b.svg', 
+    imageBg: 'from-yellow-100 via-amber-50 to-orange-100',
+    flowerBadgeBg: 'bg-slate-200 text-slate-800 border border-slate-300',
+    seedBadgeBg: 'bg-amber-700 text-white',
+    podBadgeBg: 'bg-amber-500 text-white'
   }
 ];
 
 const MISSIONS = [
   {
     id: 1,
-    title: 'Misi 1: Tanaman Bunga Ungu',
+    title: 'Misi 1: Fenotipe Dominan Bunga Ungu',
     promptText: 'Pilih semua tanaman yang memiliki fenotipe Bunga Berwarna Ungu!',
     targetTrait: { key: 'flowerColor', value: 'Ungu' },
-    explanation: 'Warna bunga (Ungu/Putih) adalah contoh fenotipe, yaitu sifat fisik yang tampak pada makhluk hidup.'
+    explanation: 'Warna bunga ungu adalah sifat tampak (fenotipe) dominan pada tanaman ercis Gregor Mendel.'
   },
   {
     id: 2,
-    title: 'Misi 2: Tanaman Biji Bulat',
+    title: 'Misi 2: Fenotipe Dominan Biji Bulat',
     promptText: 'Pilih semua tanaman yang memiliki fenotipe Biji berbentuk Bulat!',
     targetTrait: { key: 'seedShape', value: 'Bulat' },
-    explanation: 'Bentuk biji bulat merupakan fenotipe dominan pada percobaan persilangan Gregor Mendel.'
+    explanation: 'Bentuk biji bulat merupakan fenotipe dominan yang mengalahkan alel biji keriput.'
   },
   {
     id: 3,
-    title: 'Misi 3: Kombinasi Sifat Fenotipe',
+    title: 'Misi 3: Fenotipe Resesif Bunga Putih',
+    promptText: 'Pilih semua tanaman yang mengekspresikan fenotipe Bunga Berwarna Putih!',
+    targetTrait: { key: 'flowerColor', value: 'Putih' },
+    explanation: 'Bunga putih adalah sifat resesif. Sifat ini hanya muncul secara fenotipe jika kedua alelnya resesif (homozigot resesif).'
+  },
+  {
+    id: 4,
+    title: 'Misi 4: Fenotipe Resesif Polong Kuning',
+    promptText: 'Pilih semua tanaman yang memiliki polong masak berwarna Kuning!',
+    targetTrait: { key: 'podColor', value: 'Kuning' },
+    explanation: 'Pada tanaman ercis, polong hijau dominan sedangkan polong kuning bersifat resesif.'
+  },
+  {
+    id: 5,
+    title: 'Misi 5: Kombinasi Dihibrid (Bunga Ungu + Biji Keriput)',
     promptText: 'Pilih tanaman yang memiliki Bunga Ungu DAN Biji Keriput!',
     targetTraitCombo: { flowerColor: 'Ungu', seedShape: 'Keriput' },
-    explanation: 'Organisme dapat memiliki kombinasi dari beberapa sifat fenotipe yang berbeda secara bersamaan!'
+    explanation: 'Dua sifat beda memisah dan bergabung secara bebas (Hukum Asortasi Bebas) menghasilkan kombinasi sifat baru!'
+  },
+  {
+    id: 6,
+    title: 'Misi 6: Kombinasi Dihibrid (Bunga Putih + Biji Bulat)',
+    promptText: 'Pilih tanaman yang memiliki Bunga Putih DAN Biji berbentuk Bulat!',
+    targetTraitCombo: { flowerColor: 'Putih', seedShape: 'Bulat' },
+    explanation: 'Hebat! Kamu telah menguasai analisis fenotipe tunggal maupun kombinasi sifat ganda tanaman ercis!'
   }
 ];
 
 export const Stage1MysteryGarden = () => {
-  const { navigateTo, completeStage } = useGame();
+  const { navigateTo, completeStage, sourceWorldView } = useGame();
   const [currentMissionIdx, setCurrentMissionIdx] = useState(0);
   const [selectedCards, setSelectedCards] = useState([]);
   const [feedback, setFeedback] = useState(null);
   const [stageCompleted, setStageCompleted] = useState(false);
   const [score, setScore] = useState(0);
   const [isMissionExpanded, setIsMissionExpanded] = useState(true);
-  const [isLegendExpanded, setIsLegendExpanded] = useState(true);
+  const [isLegendExpanded, setIsLegendExpanded] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.innerHeight > 620;
+  });
   const [lives, setLives] = useState(3);
   const [gameOver, setGameOver] = useState(false);
 
@@ -293,18 +341,18 @@ export const Stage1MysteryGarden = () => {
       `}</style>
 
       {/* Floating Header Banner HUD */}
-      <div className="absolute top-4 left-4 right-4 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg flex items-center justify-between gap-2 z-30">
-        <div className="flex items-center gap-3">
+      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 p-1.5 sm:p-3 rounded-xl sm:rounded-2xl bg-white/85 backdrop-blur-md border border-slate-200 shadow-sm flex items-center justify-between gap-1.5 sm:gap-2 z-30 stage-header-hud">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
-            onClick={() => navigateTo('map')}
-            className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-sky-600 transition shadow-3xs cursor-pointer flex-shrink-0"
-            title="Kembali ke Peta"
+            onClick={() => navigateTo(sourceWorldView === 'rpg-world' ? 'rpg-world' : 'map')}
+            className="p-1 sm:p-1.5 rounded-lg sm:rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-sky-600 transition shadow-3xs cursor-pointer flex-shrink-0"
+            title={sourceWorldView === 'rpg-world' ? "Kembali ke RPG Map" : "Kembali ke Peta"}
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
           
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-100 p-0.5 flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-50 border border-blue-100 p-0.5 flex items-center justify-center flex-shrink-0 overflow-hidden">
               <img 
                 src="/assets/rumah_mendel_banner.webp" 
                 alt="Rumah Mendel Banner PNG" 
@@ -312,25 +360,25 @@ export const Stage1MysteryGarden = () => {
               />
             </div>
             <div>
-              <span className="text-[7px] font-black text-indigo-700 uppercase tracking-widest font-sans block">
+              <span className="text-[6px] sm:text-[7px] font-black text-indigo-700 uppercase tracking-widest font-sans block">
                 {stageInfo.location} &bull; STAGE 1
               </span>
-              <h2 className="text-[11px] sm:text-xs font-black text-black leading-tight">
+              <h2 className="text-[10px] sm:text-xs font-black text-black leading-tight">
                 {stageInfo.title}
               </h2>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Hearts / Lives indicator */}
-          <div className="flex items-center gap-0.5 bg-rose-500/10 border border-rose-300/60 px-2 py-1 rounded-xl shadow-3xs">
+          <div className="flex items-center gap-0.5 bg-rose-500/10 border border-rose-300/60 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg sm:rounded-xl shadow-3xs">
             {[1, 2, 3].map((heartIdx) => {
               const isAlive = heartIdx <= lives;
               return (
                 <Heart 
                   key={heartIdx}
-                  className={`w-3 h-3 ${
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${
                     isAlive 
                       ? 'text-rose-500 fill-rose-500 animate-pulse' 
                       : 'text-slate-300 fill-slate-200'
@@ -341,9 +389,9 @@ export const Stage1MysteryGarden = () => {
           </div>
 
           {/* Score indicator */}
-          <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-300/60 px-3 py-1 rounded-xl shadow-3xs">
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            <span className="text-[10px] font-black text-amber-900 font-mono">Skor: {score}</span>
+          <div className="flex items-center gap-1 sm:gap-1.5 bg-amber-500/10 border border-amber-300/60 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl shadow-3xs">
+            <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 fill-amber-500" />
+            <span className="text-[8.5px] sm:text-[10px] font-black text-amber-900 font-mono">Skor: {score}</span>
           </div>
         </div>
       </div>
@@ -354,43 +402,43 @@ export const Stage1MysteryGarden = () => {
           {!isMissionExpanded ? (
             <button 
               onClick={() => setIsMissionExpanded(true)}
-              className="absolute top-20 right-2 md:right-4 w-8 h-8 md:w-9 md:h-9 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-md flex items-center justify-center cursor-pointer text-indigo-700 hover:text-indigo-800 transition z-30 font-black text-xs md:text-sm"
+              className="absolute top-11 sm:top-20 right-2 sm:right-4 w-7 h-7 sm:w-9 sm:h-9 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-md flex items-center justify-center cursor-pointer text-indigo-700 hover:text-indigo-800 transition z-30 font-black text-xs sm:text-sm"
               title="Tampilkan Misi"
             >
               📋
             </button>
           ) : (
-            <div className="absolute top-20 right-2 md:right-4 w-44 md:w-56 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl shadow-md z-30 transition-all duration-300 overflow-hidden select-none">
+            <div className="absolute top-11 sm:top-20 right-2 sm:right-4 w-38 sm:w-56 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl shadow-md z-30 transition-all duration-300 overflow-hidden select-none stage1-mission-box">
               {/* Card Header */}
               <div 
                 onClick={() => setIsMissionExpanded(false)}
-                className="flex items-center justify-between px-1.5 py-1.5 md:px-2.5 md:py-2 bg-slate-50/80 border-b border-slate-100 cursor-pointer hover:bg-slate-100/80 transition"
+                className="flex items-center justify-between px-1.5 py-1 sm:px-2.5 sm:py-2 bg-slate-50/80 border-b border-slate-100 cursor-pointer hover:bg-slate-100/80 transition"
               >
-                <span className="text-[6.5px] md:text-[8px] font-black text-indigo-700 tracking-wider font-sans uppercase">
+                <span className="text-[6.5px] sm:text-[8px] font-black text-indigo-700 tracking-wider font-sans uppercase">
                   📋 MISI ({currentMissionIdx + 1}/{MISSIONS.length})
                 </span>
-                <button className="text-slate-500 hover:text-indigo-650 font-extrabold text-[6.5px] md:text-[7.5px] focus:outline-none">
-                  Sembunyikan
+                <button className="text-slate-500 hover:text-indigo-650 font-extrabold text-[6px] sm:text-[7.5px] focus:outline-none cursor-pointer">
+                  Tutup
                 </button>
               </div>
 
               {/* Card Body */}
-              <div className="p-1.5 md:p-2.5 space-y-1.5 md:space-y-2 text-left animate-fade-in">
-                <div className="flex items-start gap-1 md:gap-1.5">
+              <div className="p-1.5 sm:p-2.5 space-y-1 sm:space-y-2 text-left animate-fade-in">
+                <div className="flex items-start gap-1 sm:gap-1.5">
                   <img 
                     src="/assets/mendel_avatar.webp" 
                     alt="Gregor Mendel" 
-                    className="w-5 h-5 md:w-7 md:h-7 object-contain flex-shrink-0 drop-shadow-3xs"
+                    className="w-4 h-4 sm:w-7 sm:h-7 object-contain flex-shrink-0 drop-shadow-3xs"
                   />
                   <div className="space-y-0.5">
-                    <span className="text-[6px] md:text-[7px] font-black text-slate-400 uppercase tracking-widest block truncate max-w-[90px] md:max-w-[120px]">{mission.title}</span>
-                    <h3 className="text-[7.5px] md:text-[8.5px] font-black text-slate-800 leading-tight">
+                    <span className="text-[6px] sm:text-[7px] font-black text-slate-400 uppercase tracking-widest block truncate max-w-[80px] sm:max-w-[120px]">{mission.title}</span>
+                    <h3 className="text-[7px] sm:text-[8.5px] font-black text-slate-800 leading-tight">
                       {mission.promptText}
                     </h3>
                   </div>
                 </div>
 
-                <p className="text-[7.5px] md:text-[8px] font-bold text-indigo-900 bg-indigo-50/50 p-1.5 md:p-2 rounded-lg border border-indigo-100/50 leading-normal">
+                <p className="text-[7px] sm:text-[8px] font-bold text-indigo-900 bg-indigo-50/50 p-1 sm:p-2 rounded-lg border border-indigo-100/50 leading-normal">
                   💡 {mission.explanation}
                 </p>
               </div>
@@ -401,23 +449,23 @@ export const Stage1MysteryGarden = () => {
           {!isLegendExpanded ? (
             <button 
               onClick={() => setIsLegendExpanded(true)}
-              className="absolute top-20 left-2 md:left-4 w-8 h-8 md:w-9 md:h-9 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-md flex items-center justify-center cursor-pointer text-indigo-700 hover:text-indigo-800 transition z-30 font-black text-xs md:text-sm animate-bounce"
-              title="Tampilkan Legenda"
+              className="absolute top-11 sm:top-20 left-2 sm:left-4 w-7 h-7 sm:w-9 sm:h-9 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-md flex items-center justify-center cursor-pointer text-indigo-700 hover:text-indigo-800 transition z-30 font-black text-xs sm:text-sm animate-pulse"
+              title="Tampilkan Legenda Simbol"
             >
               🏷️
             </button>
           ) : (
-            <div className="absolute top-20 left-2 md:left-4 w-36 md:w-52 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl shadow-md z-30 transition-all duration-300 overflow-hidden select-none">
+            <div className="absolute top-11 sm:top-20 left-2 sm:left-4 w-32 sm:w-52 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl shadow-md z-30 transition-all duration-300 overflow-hidden select-none stage1-legend-box">
               {/* Card Header */}
               <div 
                 onClick={() => setIsLegendExpanded(false)}
-                className="flex items-center justify-between px-1.5 py-1.5 md:px-2.5 md:py-2 bg-slate-50/80 border-b border-slate-100 cursor-pointer hover:bg-slate-100/80 transition"
+                className="flex items-center justify-between px-1.5 py-1 sm:px-2.5 sm:py-2 bg-slate-50/80 border-b border-slate-100 cursor-pointer hover:bg-slate-100/80 transition"
               >
-                <span className="text-[6.5px] md:text-[8px] font-black text-indigo-700 tracking-wider font-sans uppercase">
+                <span className="text-[6.5px] sm:text-[8px] font-black text-indigo-700 tracking-wider font-sans uppercase">
                   🏷️ LEGENDA SIMBOL
                 </span>
-                <button className="text-slate-500 hover:text-indigo-655 font-extrabold text-[6.5px] md:text-[7.5px] focus:outline-none">
-                  Sembunyikan
+                <button className="text-slate-500 hover:text-indigo-655 font-extrabold text-[6px] sm:text-[7.5px] focus:outline-none cursor-pointer">
+                  Tutup
                 </button>
               </div>
 
@@ -583,14 +631,14 @@ export const Stage1MysteryGarden = () => {
             </div>
           )}
 
-          <div className="absolute bottom-4 right-4 z-30">
+          <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 z-30 stage-action-btn-bottom">
             <button
               onClick={handleVerifyMission}
               disabled={selectedCards.length === 0}
-              className={`px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[11px] flex items-center gap-1.5 shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+              className={`px-3.5 sm:px-5 py-1.5 sm:py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[9px] sm:text-[11px] flex items-center gap-1.5 shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all`}
             >
               <span>PERIKSA JAWABAN</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </button>
           </div>
         </>
@@ -624,21 +672,33 @@ export const Stage1MysteryGarden = () => {
               🏆 Lencana Diperoleh: Detektif Sifat
             </div>
 
-            <div className="flex gap-2 justify-center pt-1.5">
-              <button
-                onClick={() => navigateTo('map')}
-                className="px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-[10px] shadow-3xs cursor-pointer flex-1"
-              >
-                PETA STAGE
-              </button>
-              <button
-                onClick={() => navigateTo('stage', 2)}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[10px] flex items-center justify-center gap-1 shadow-3xs cursor-pointer flex-1"
-              >
-                <span>STAGE 2</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            {sourceWorldView === 'rpg-world' ? (
+              <div className="flex justify-center pt-1.5">
+                <button
+                  onClick={() => navigateTo('rpg-world')}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-pixel text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:translate-y-0.5 transition cursor-pointer"
+                >
+                  <span>LANJUTKAN</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2 justify-center pt-1.5">
+                <button
+                  onClick={() => navigateTo('map')}
+                  className="px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-[10px] shadow-3xs cursor-pointer flex-1"
+                >
+                  PETA STAGE
+                </button>
+                <button
+                  onClick={() => navigateTo('stage', 2)}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-[10px] flex items-center justify-center gap-1 shadow-3xs cursor-pointer flex-1"
+                >
+                  <span>STAGE 2</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -690,12 +750,12 @@ export const Stage1MysteryGarden = () => {
               {/* Back to Map Button */}
               <button
                 onClick={() => {
-                  navigateTo('map');
+                  navigateTo(sourceWorldView === 'rpg-world' ? 'rpg-world' : 'map');
                   sound.playClick();
                 }}
                 className="w-full py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-400 hover:text-white font-extrabold text-[9px] cursor-pointer"
               >
-                <span>KEMBALI KE PETA</span>
+                <span>{sourceWorldView === 'rpg-world' ? 'KEMBALI KE RPG MAP' : 'KEMBALI KE PETA'}</span>
               </button>
             </div>
           </div>

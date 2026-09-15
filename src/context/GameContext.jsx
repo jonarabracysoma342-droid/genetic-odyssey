@@ -9,7 +9,7 @@ const GameContext = createContext();
 
 const INITIAL_PROGRESS = {
   unlockedStage: 1,
-  stars: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+  stars: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 },
   score: 0,
   badges: [],
   totalQuestionsAnswered: 0,
@@ -17,7 +17,7 @@ const INITIAL_PROGRESS = {
 };
 
 export const GameProvider = ({ children }) => {
-  const [activeView, setActiveView] = useState('main-menu'); // 'main-menu', 'map', 'stage', 'hots-quiz'
+  const [activeView, setActiveView] = useState('intro-story'); // 'intro-story', 'main-menu', 'map', 'stage', 'hots-quiz'
   const [currentStageId, setCurrentStageId] = useState(1);
   const [userProgress, setUserProgress] = useState(INITIAL_PROGRESS);
   const [teacherLogs, setTeacherLogs] = useState(() => {
@@ -38,11 +38,13 @@ export const GameProvider = ({ children }) => {
       setAuthLoading(true);
       if (user) {
         setCurrentUser(user);
+        let resolvedRole = 'siswa';
         try {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            setUserRole(userData.role || 'siswa');
+            resolvedRole = userData.role || 'siswa';
+            setUserRole(resolvedRole);
             setUserName(userData.displayName || user.email.split('@')[0]);
             setGroupId(userData.groupId || '');
             if (userData.progress) {
@@ -52,6 +54,8 @@ export const GameProvider = ({ children }) => {
         } catch (err) {
           console.error("Error fetching user profile from Firestore:", err);
         }
+        // Guru → langsung ke dashboard, siswa → intro story
+        setActiveView(resolvedRole === 'guru' ? 'group-dashboard' : 'intro-story');
       } else {
         // Only clear if the current session is not a guest session
         setCurrentUser(prev => {
@@ -87,7 +91,7 @@ export const GameProvider = ({ children }) => {
     setUserName('Tamu Odyssey');
     setGroupId('');
     setUserProgress(INITIAL_PROGRESS);
-    setActiveView('main-menu');
+    setActiveView('intro-story');
   };
 
   // Modal Visibility States
@@ -98,6 +102,55 @@ export const GameProvider = ({ children }) => {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [lastCompletedStageId, setLastCompletedStageId] = useState(null);
+
+  // Landscape Mobile Detection state (height <= 620px and landscape orientation or mobile aspect ratio)
+  const [isLandscapeMobile, setIsLandscapeMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isShortHeight = window.innerHeight <= 620;
+    const isLandscape = window.innerWidth > window.innerHeight;
+    const mediaMatch = window.matchMedia?.('(orientation: landscape) and (max-height: 620px)')?.matches;
+    return Boolean(mediaMatch || ((isMobileUA || isTouch || window.innerWidth <= 1180) && isShortHeight && isLandscape));
+  });
+
+  useEffect(() => {
+    const checkLandscape = () => {
+      if (typeof window === 'undefined') return;
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isShortHeight = window.innerHeight <= 620;
+      const isLandscape = window.innerWidth > window.innerHeight;
+      const mediaMatch = window.matchMedia?.('(orientation: landscape) and (max-height: 620px)')?.matches;
+      const match = Boolean(mediaMatch || ((isMobileUA || isTouch || window.innerWidth <= 1180) && isShortHeight && isLandscape));
+      setIsLandscapeMobile(match);
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('landscape-mobile', match);
+      }
+    };
+
+    checkLandscape();
+    const delayedCheck = () => {
+      checkLandscape();
+      setTimeout(checkLandscape, 100);
+      setTimeout(checkLandscape, 300);
+    };
+
+    window.addEventListener('resize', checkLandscape);
+    window.addEventListener('orientationchange', delayedCheck);
+    try {
+      window.screen?.orientation?.addEventListener?.('change', delayedCheck);
+    } catch (e) {}
+
+    return () => {
+      window.removeEventListener('resize', checkLandscape);
+      window.removeEventListener('orientationchange', delayedCheck);
+      try {
+        window.screen?.orientation?.removeEventListener?.('change', delayedCheck);
+      } catch (e) {}
+    };
+  }, []);
 
   // Modals for sub-components (promoted to game context for scroll-locking)
   const [activePreviewStage, setActivePreviewStage] = useState(null);
@@ -173,21 +226,52 @@ export const GameProvider = ({ children }) => {
 
   const totalStars = Object.values(userProgress.stars).reduce((acc, curr) => acc + curr, 0);
 
+  // Transition state for smooth 1.5s cinematic black fade-in / fade-out across menus
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [sourceWorldView, setSourceWorldView] = useState('rpg-world');
+
   const navigateTo = (view, stageId = null) => {
     sound.playClick();
-    if (stageId) setCurrentStageId(stageId);
-    setActiveView(view);
+    if (activeView === view && (!stageId || stageId === currentStageId)) return;
+
+    // Track whether the player entered a stage from rpg-world or map
+    if (view === 'stage') {
+      if (activeView === 'rpg-world' || activeView === 'map') {
+        setSourceWorldView(activeView);
+      }
+    }
+
+    let targetView = view;
+    // If a stage requests returning to 'map', but player entered from 'rpg-world', return to 'rpg-world'
+    if (view === 'map' && activeView === 'stage' && sourceWorldView === 'rpg-world') {
+      targetView = 'rpg-world';
+    }
+
+    setIsTransitioning(true);
+    // 750ms fade to black
+    setTimeout(() => {
+      if (stageId) setCurrentStageId(stageId);
+      setActiveView(targetView);
+      // Wait a tick for the new view DOM to mount before fading back in
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50);
+    }, 750);
   };
 
   const completeStage = async (stageId, starsEarned, scoreAdded, accuracy = 100, timeSpent = 45) => {
     sound.playFanfare();
+    setLastCompletedStageId(stageId);
+    try {
+      sessionStorage.setItem('rpg_last_completed_stage', String(stageId));
+    } catch (e) {}
     const currentStageObj = STAGES.find(s => s.id === stageId);
     const newBadge = currentStageObj ? currentStageObj.badge : null;
 
     let updatedProgress = INITIAL_PROGRESS;
 
     setUserProgress(prev => {
-      const nextUnlocked = Math.max(prev.unlockedStage, Math.min(6, stageId + 1));
+      const nextUnlocked = Math.max(prev.unlockedStage, Math.min(8, stageId + 1));
       const oldStars = prev.stars[stageId] || 0;
       const newStars = Math.max(oldStars, starsEarned);
       const updatedStars = { ...prev.stars, [stageId]: newStars };
@@ -272,11 +356,65 @@ export const GameProvider = ({ children }) => {
     showAlert("🔓 Selamat! Seluruh level (Stage 1 - 8) telah berhasil dibuka.");
   };
 
+  // One-time automatic reset for RPG player data requested by user
+  useEffect(() => {
+    const RESET_KEY = 'genetic_odyssey_rpg_full_reset_v2026_09';
+    if (typeof window !== 'undefined' && !localStorage.getItem(RESET_KEY)) {
+      try {
+        localStorage.removeItem('genetic_odyssey_rpg_inventory');
+        localStorage.removeItem('genetic_odyssey_rpg_turned_in');
+        localStorage.removeItem('genetic_odyssey_rpg_started_quests');
+        sessionStorage.removeItem('rpg_last_completed_stage');
+        sessionStorage.removeItem('rpg_last_player_pos');
+        localStorage.setItem(RESET_KEY, 'done');
+        setUserProgress(INITIAL_PROGRESS);
+      } catch (e) {
+        console.error("Auto reset RPG data error:", e);
+      }
+    }
+  }, []);
+
+  const resetRpgData = (silent = false) => {
+    try {
+      localStorage.removeItem('genetic_odyssey_rpg_inventory');
+      localStorage.removeItem('genetic_odyssey_rpg_turned_in');
+      localStorage.removeItem('genetic_odyssey_rpg_started_quests');
+      localStorage.removeItem('genetic_odyssey_rpg_greeted_npcs');
+      sessionStorage.removeItem('rpg_last_completed_stage');
+      sessionStorage.removeItem('rpg_last_player_pos');
+    } catch (e) {
+      console.error("Error clearing RPG storage:", e);
+    }
+    setUserProgress(INITIAL_PROGRESS);
+    setLastCompletedStageId(null);
+    if (currentUser) {
+      setDoc(doc(db, 'users', currentUser.uid), {
+        progress: INITIAL_PROGRESS
+      }, { merge: true }).catch(err => console.error("Error resetting progress in Firestore:", err));
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('genetic_odyssey_reset_rpg'));
+    }
+    if (!silent) {
+      showAlert("Semua data pemain RPG (inventori, quest NPC, dan kemajuan stage) telah berhasil direset dari awal!");
+    }
+  };
+
   const resetProgress = () => {
-    showConfirm("Apakah Anda yakin ingin mereset seluruh kemajuan belajar dan skor?", () => {
+    showConfirm("Apakah Anda yakin ingin mereset seluruh kemajuan belajar, data RPG, dan skor?", () => {
       setUserProgress(INITIAL_PROGRESS);
       setTeacherLogs([]);
       localStorage.removeItem('genetic_odyssey_teacher_logs');
+      localStorage.removeItem('genetic_odyssey_rpg_inventory');
+      localStorage.removeItem('genetic_odyssey_rpg_turned_in');
+      localStorage.removeItem('genetic_odyssey_rpg_started_quests');
+      sessionStorage.removeItem('rpg_last_completed_stage');
+      sessionStorage.removeItem('rpg_last_player_pos');
+      setLastCompletedStageId(null);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('genetic_odyssey_reset_rpg'));
+      }
       
       if (currentUser) {
         setDoc(doc(db, 'users', currentUser.uid), {
@@ -292,7 +430,11 @@ export const GameProvider = ({ children }) => {
     <GameContext.Provider
       value={{
         activeView,
+        isTransitioning,
+        sourceWorldView,
+        setSourceWorldView,
         currentStageId,
+        setCurrentStageId,
         userProgress,
         teacherLogs,
         totalStars,
@@ -318,6 +460,7 @@ export const GameProvider = ({ children }) => {
         toggleBgm,
         unlockAllStages,
         resetProgress,
+        resetRpgData,
         
         // Auth variables
         currentUser,
@@ -340,7 +483,14 @@ export const GameProvider = ({ children }) => {
         activeStudentModal,
         setActiveStudentModal,
         activeReviewQuiz,
-        setActiveReviewQuiz
+        setActiveReviewQuiz,
+
+        // Last completed stage tracking for RPG flow
+        lastCompletedStageId,
+        setLastCompletedStageId,
+
+        // Responsive Mobile Landscape State
+        isLandscapeMobile
       }}
     >
       {children}
@@ -348,4 +498,29 @@ export const GameProvider = ({ children }) => {
   );
 };
 
-export const useGame = () => useContext(GameContext);
+export const useGame = () => {
+  const context = useContext(GameContext);
+  if (!context) {
+    console.warn("useGame called outside of GameProvider or before context mounted, returning fallback.");
+    return {
+      activeView: 'main-menu',
+      sourceWorldView: 'rpg-world',
+      setSourceWorldView: () => {},
+      isLandscapeMobile: false,
+      currentStageId: 1,
+      setCurrentStageId: () => {},
+      userProgress: { unlockedStage: 1, stars: {} },
+      totalStars: 0,
+      userName: '',
+      userRole: 'siswa',
+      soundOn: true,
+      bgmOn: true,
+      navigateTo: () => {},
+      toggleSound: () => {},
+      toggleBgm: () => {},
+      showAlert: () => {},
+      showConfirm: () => {}
+    };
+  }
+  return context;
+};

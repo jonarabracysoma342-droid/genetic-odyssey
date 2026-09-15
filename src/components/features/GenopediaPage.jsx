@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
+import { sound } from '../../services/sound';
+import { PixelValleyBackground } from '../common/PixelValleyBackground';
 import { 
   ArrowLeft, 
   Award, 
@@ -29,7 +31,8 @@ import {
   BookMarked,
   BookCheck,
   RefreshCw,
-  Globe
+  Globe,
+  Play
 } from 'lucide-react';
 
 export const GenopediaPage = () => {
@@ -992,564 +995,589 @@ export const GenopediaPage = () => {
     }
   ];
 
+  const CHAPTER_METADATA = [
+    {
+      headerBg: 'bg-[#e04f4f]',
+      headerText: 'text-white',
+      bannerTitle: 'SEJARAH MENDEL',
+      subtitle: 'Kisah Biara Brno',
+      level: 'Level 1',
+      progress: '3/3',
+      charImg: '/assets/genopedia_mendel.webp',
+      barColor: 'bg-[#e04f4f]'
+    },
+    {
+      headerBg: 'bg-[#38bdf8]',
+      headerText: 'text-[#0c4a6e]',
+      bannerTitle: 'KONSEP GENETIKA',
+      subtitle: 'Gen, Alel & Sifat',
+      level: 'Level 2',
+      progress: '3/3',
+      charImg: '/assets/genopedia_concept.webp',
+      barColor: 'bg-[#38bdf8]'
+    },
+    {
+      headerBg: 'bg-[#84cc16]',
+      headerText: 'text-[#14532d]',
+      bannerTitle: 'HUKUM MENDEL I',
+      subtitle: 'Segregasi Bebas',
+      level: 'Level 3',
+      progress: '3/3',
+      charImg: '/assets/genopedia_law1.webp',
+      barColor: 'bg-[#84cc16]'
+    },
+    {
+      headerBg: 'bg-[#10b981]',
+      headerText: 'text-[#064e3b]',
+      bannerTitle: 'PUNNETT 2X2',
+      subtitle: 'Monohibrid & Rasio',
+      level: 'Level 4',
+      progress: '3/3',
+      charImg: '/assets/genopedia_punnett2x2.webp',
+      barColor: 'bg-[#10b981]'
+    },
+    {
+      headerBg: 'bg-[#c084fc]',
+      headerText: 'text-[#4c1d95]',
+      bannerTitle: 'HUKUM MENDEL II',
+      subtitle: 'Asortasi Bebas',
+      level: 'Level 5',
+      progress: '3/3',
+      charImg: '/assets/genopedia_law2.webp',
+      barColor: 'bg-[#c084fc]'
+    },
+    {
+      headerBg: 'bg-[#fb923c]',
+      headerText: 'text-[#7c2d12]',
+      bannerTitle: 'PUNNETT 4X4',
+      subtitle: 'Persilangan Dihibrid',
+      level: 'Level 6',
+      progress: '3/3',
+      charImg: '/assets/genopedia_punnett4x4.webp',
+      barColor: 'bg-[#fb923c]'
+    },
+    {
+      headerBg: 'bg-[#2dd4bf]',
+      headerText: 'text-[#134e4a]',
+      bannerTitle: 'APLIKASI NYATA',
+      subtitle: 'Pemuliaan & Medis',
+      level: 'Level 7',
+      progress: '3/3',
+      charImg: '/assets/stage1_garden_illustration.webp',
+      barColor: 'bg-[#2dd4bf]'
+    }
+  ];
+
   return (
-    <div className="max-w-md md:max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-5 md:space-y-6 text-left pb-24 bg-slate-50/40 relative overflow-hidden min-h-screen">
+    <div className="relative w-full min-h-screen overflow-x-hidden flex flex-col justify-between select-none bg-[#74c2e8] p-2 sm:p-4 md:p-6 pb-28">
       
-      {/* Background Decorator Blobs */}
-      <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-sky-200/50 blur-3xl pointer-events-none z-0" />
-      <div className="absolute top-1/3 -left-20 w-56 h-56 rounded-full bg-indigo-200/40 blur-3xl pointer-events-none z-0 animate-pulse duration-[8s]" />
-      <div className="absolute -bottom-10 right-10 w-44 h-44 rounded-full bg-amber-100/60 blur-3xl pointer-events-none z-0" />
+      {/* ================= DETAILED STARDEW VALLEY MENDEL BACKGROUND ================= */}
+      <PixelValleyBackground overlay="medium" />
 
-      {/* Top Header Bar with Back Button & Voice Selection */}
-      <div className="flex items-center justify-between border-b border-slate-200/60 pb-3 relative z-10 flex-shrink-0 gap-2">
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => {
-              stopSpeaking();
-              if (selectedSubTopic !== null) {
-                setSelectedSubTopic(null);
-              } else if (selectedTopic !== null) {
-                setSelectedTopic(null);
-              } else {
-                navigateTo('main-menu');
-              }
-            }}
-            className="p-2 md:p-2.5 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:text-sky-600 transition shadow-2xs cursor-pointer"
-            title="Kembali"
-          >
-            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
-          </button>
+      {/* ================= MASTER WOODEN BOARD CONTAINER ================= */}
+      <div className="max-w-6xl mx-auto w-full relative z-10 rounded-2xl md:rounded-3xl border-4 md:border-8 border-[#241005] bg-[#3a1d0b] p-3 sm:p-5 md:p-6 shadow-[0_10px_0_#150802,0_16px_24px_rgba(0,0,0,0.6)] space-y-4 text-left">
+        
+        {/* ================= TOP HEADER BAR ================= */}
+        <div className="flex items-center justify-between gap-2">
+          
+          {/* Left Buttons: Menu & Settings */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              onClick={() => {
+                sound.playClick();
+                if (selectedSubTopic !== null) {
+                  setSelectedSubTopic(null);
+                } else if (selectedTopic !== null) {
+                  setSelectedTopic(null);
+                } else {
+                  navigateTo('main-menu');
+                }
+              }}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#fae8b6] hover:bg-[#fff8e7] border-3 border-[#361706] shadow-[2px_2px_0_#1a0b03] flex items-center justify-center text-[#361706] font-pixel text-xs active:translate-y-0.5 cursor-pointer flex-shrink-0"
+              title="Kembali"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3px]" />
+            </button>
 
-          <div className="flex items-center gap-2">
-            <div className="p-2 md:p-2.5 rounded-2xl bg-blue-50 text-blue-650 border border-blue-100 flex items-center justify-center flex-shrink-0">
-              <BookOpen className="w-5 h-5 md:w-6 md:h-6" />
-            </div>
-            <div>
-              <h3 className="text-base md:text-lg font-extrabold text-black">Materi Genopedia</h3>
-              <p className="text-[10px] md:text-xs text-black/60 font-bold">
-                Pusat referensi & pustaka ilmiah genetika
-              </p>
+            <button
+              onClick={() => { sound.playClick(); navigateTo('main-menu'); }}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#ca7c38] hover:bg-[#df9b52] border-3 border-[#361706] shadow-[2px_2px_0_#1a0b03] flex items-center justify-center text-lg active:translate-y-0.5 cursor-pointer flex-shrink-0"
+              title="Profil Peneliti"
+            >
+              🧑‍🔬
+            </button>
+          </div>
+
+          {/* Center Title Sign (Wooden Sign with 4 Corner Star Studs) */}
+          <div className="relative flex-1 max-w-xl mx-auto">
+            <div className="bg-[#fae8b6] border-4 border-[#361706] rounded-2xl py-2 px-3 sm:px-6 shadow-[3px_3px_0_#1a0b03] text-center relative overflow-hidden">
+              {/* Corner Star Studs */}
+              <div className="absolute top-1 left-1.5 text-xs text-[#f59e0b] drop-shadow-xs">⭐</div>
+              <div className="absolute bottom-1 left-1.5 text-xs text-[#f59e0b] drop-shadow-xs">⭐</div>
+              <div className="absolute top-1 right-1.5 text-xs text-[#f59e0b] drop-shadow-xs">⭐</div>
+              <div className="absolute bottom-1 right-1.5 text-xs text-[#f59e0b] drop-shadow-xs">⭐</div>
+
+              <h1 className="font-pixel text-[10px] sm:text-xs md:text-sm text-[#361706] uppercase tracking-wider leading-tight">
+                MATERI BELAJAR
+              </h1>
+              <span className="font-pixel text-[8px] sm:text-[9px] md:text-[10px] text-[#884318] block mt-0.5 tracking-widest uppercase">
+                GENOPEDIA MENDEL 🧬
+              </span>
             </div>
           </div>
+
+          {/* Right Buttons: TTS Selector & Info */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {availableVoices.length > 0 && (
+              <div className="bg-[#fae8b6] border-3 border-[#361706] px-2 py-1 rounded-xl shadow-[2px_2px_0_#1a0b03] flex items-center gap-1">
+                <Mic className="w-3.5 h-3.5 text-[#884318]" />
+                <select
+                  value={selectedVoiceIndex}
+                  onChange={(e) => setSelectedVoiceIndex(Number(e.target.value))}
+                  className="bg-transparent text-[7px] md:text-[8px] font-pixel text-[#361706] focus:outline-none cursor-pointer max-w-[75px] sm:max-w-[110px] truncate"
+                  title="Pilih Suara Narasi Alami"
+                >
+                  {availableVoices.map((voice, idx) => (
+                    <option key={idx} value={idx} className="bg-[#fae8b6] text-[#361706]">
+                      {voice.name.replace(/Microsoft|Google|Desktop|Online|Indonesia|Indonesian/gi, '').trim() || `Suara ${idx + 1}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <button
+              onClick={() => {
+                sound.playClick();
+                showAlert('Genopedia Mendel: Ensiklopedia interaktif hukum pewarisan sifat lengkap dengan narasi suara.');
+              }}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#fae8b6] hover:bg-[#fff8e7] border-3 border-[#361706] shadow-[2px_2px_0_#1a0b03] flex items-center justify-center text-sm active:translate-y-0.5 cursor-pointer flex-shrink-0"
+              title="Informasi Genopedia"
+            >
+              🔔
+            </button>
+          </div>
+
         </div>
 
-        {/* Global Voice Selector */}
-        {availableVoices.length > 0 && mainTab === 'materi' && (
-          <div className="flex items-center gap-1 bg-white/80 backdrop-blur-md px-2 py-1 rounded-2xl border border-slate-200 shadow-2xs text-[9px] font-bold text-slate-700">
-            <Mic className="w-3 h-3 text-indigo-600" />
-            <select
-              value={selectedVoiceIndex}
-              onChange={(e) => setSelectedVoiceIndex(Number(e.target.value))}
-              className="bg-transparent text-[9px] font-bold text-slate-800 focus:outline-none cursor-pointer max-w-[90px] truncate"
-              title="Pilih Suara Narasi Alami"
-            >
-              {availableVoices.map((voice, idx) => (
-                <option key={idx} value={idx}>
-                  {voice.name.replace(/Microsoft|Google|Desktop|Online|Indonesia|Indonesian/gi, '').trim() || `Suara ${idx + 1}`}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
-
-      {/* ================= MAIN TAB HEADER NAVIGATION BAR (Materi | Decoder Istilah | Semantic Scholar) ================= */}
-      <div className="flex bg-white/80 backdrop-blur-md p-1.5 md:p-2 rounded-2xl border border-sky-100 shadow-2xs gap-1 md:gap-1.5 relative z-10">
-        <button
-          onClick={() => { stopSpeaking(); setMainTab('materi'); }}
-          className={`flex-1 py-2 md:py-2.5 px-2.5 md:px-3 rounded-xl text-[11px] md:text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
-            mainTab === 'materi'
-              ? 'bg-blue-600 text-white shadow-2xs'
-              : 'text-slate-600 hover:text-black hover:bg-slate-50'
-          }`}
-        >
-          <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
-          <span>Materi</span>
-        </button>
-
-        <button
-          onClick={() => { stopSpeaking(); setMainTab('decoder'); }}
-          className={`flex-1 py-2 md:py-2.5 px-2.5 md:px-3 rounded-xl text-[11px] md:text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
-            mainTab === 'decoder'
-              ? 'bg-indigo-600 text-white shadow-2xs'
-              : 'text-slate-600 hover:text-black hover:bg-slate-50'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
-          <span>Decoder Istilah</span>
-        </button>
-
-        <button
-          onClick={() => { stopSpeaking(); setMainTab('scholar'); }}
-          className={`flex-1 py-2 md:py-2.5 px-2.5 md:px-3 rounded-xl text-[11px] md:text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
-            mainTab === 'scholar'
-              ? 'bg-emerald-600 text-white shadow-2xs'
-              : 'text-slate-600 hover:text-black hover:bg-slate-50'
-          }`}
-        >
-          <GraduationCap className="w-3.5 h-3.5 md:w-4 md:h-4" />
-          <span>Semantic Scholar</span>
-        </button>
-      </div>
-
-      {/* ================= TAB 1: MATERI (3-LEVEL CATALOG & AUDIO) ================= */}
-      {mainTab === 'materi' && (
-        <>
-          {selectedTopic === null ? (
-            /* ================= LEVEL 1: GRID DAFTAR TOPIK UTAMA (7 KOTAK) ================= */
-            <div className="space-y-4 relative z-10 animate-fade-in">
-              {/* Introduction Banner */}
-              <div className="relative rounded-3xl bg-gradient-to-br from-blue-100/60 via-blue-50/40 to-indigo-50/50 backdrop-blur-md border border-white/60 p-4 shadow-2xs">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div className="text-left">
-                    <h4 className="text-xs font-black text-black leading-tight">Materi Belajar Interaktif</h4>
-                    <p className="text-[9px] text-black/70 leading-relaxed font-bold">
-                      Pilih salah satu kotak materi genetika di bawah ini untuk melihat sub-topik materi & mendengarkan narasi suara manusia alami.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Grid Box Cards */}
-              <div className="grid grid-cols-2 gap-3.5">
-                {topics.map((topic, idx) => {
-                  const TopicIcon = topic.icon;
-                  return (
-                    <div
-                      key={idx}
-                      onClick={() => {
-                        stopSpeaking();
-                        setSelectedTopic(idx);
-                        setSelectedSubTopic(null); // Ensure sub-topic is reset to show grid first
-                      }}
-                      className={`rounded-3xl border border-sky-100 bg-white/75 backdrop-blur-md hover:shadow-md hover:border-sky-300 transition duration-300 cursor-pointer overflow-hidden flex flex-col text-left group ${
-                        idx === 6 ? 'col-span-2' : ''
-                      }`}
-                    >
-                      {/* Image/Illustration at the top, full width */}
-                      <div className="w-full h-28 bg-slate-50/50 flex items-center justify-center overflow-hidden border-b border-slate-100 flex-shrink-0 relative p-2">
-                        <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-white/90 text-[8px] font-black text-amber-500 border border-slate-100 uppercase tracking-wider shadow-3xs">
-                          {topic.tag.split(' ')[0]}
-                        </span>
-                        <div className="absolute top-2.5 right-2.5 p-1 rounded-lg bg-white/90 border border-slate-100 text-slate-400 group-hover:text-blue-600 transition">
-                          <TopicIcon className="w-3.5 h-3.5" />
-                        </div>
-                        {topic.illustration}
-                      </div>
-
-                      {/* Text title below the image */}
-                      <div className="p-3 flex flex-col justify-start min-h-[64px] bg-white/40">
-                        <h4 className="text-[11px] sm:text-xs font-black text-black leading-snug group-hover:text-blue-600 transition line-clamp-2">
-                          {topic.title}
-                        </h4>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : selectedSubTopic === null ? (
-            /* ================= LEVEL 2: GRID SUB-MATERI PER KOTAK (3 KOTAK DENGAN ILUSTRASI PNG SPESIFIK 3D) ================= */
-            <div className="space-y-4 relative z-10 animate-fade-in">
-              <div className="p-4 rounded-3xl bg-gradient-to-br from-indigo-50/50 to-white border border-indigo-100 flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-indigo-650 text-white shadow-2xs flex-shrink-0">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <div className="text-left">
-                  <span className="text-[8px] font-black text-indigo-700 tracking-wider block font-sans">TOPIK UTAMA</span>
-                  <h4 className="text-xs font-extrabold text-black leading-snug">{topics[selectedTopic].title}</h4>
-                </div>
-              </div>
-
-              <div className="text-[10px] text-black/60 font-bold text-left px-1">
-                Pilih sub-bab di bawah untuk membaca pembahasan lengkap:
-              </div>
-
-              <div className="grid grid-cols-2 gap-3.5">
-                {topics[selectedTopic].subTabs.map((sub, sIdx) => {
-                  const SubIcon = sub.icon;
-                  return (
-                    <div
-                      key={sIdx}
-                      onClick={() => {
-                        stopSpeaking();
-                        setSelectedSubTopic(sIdx);
-                      }}
-                      className={`rounded-3xl border border-sky-100 bg-white/75 backdrop-blur-md hover:shadow-md hover:border-sky-300 transition duration-300 cursor-pointer overflow-hidden flex flex-col text-left group ${
-                        sIdx === 2 ? 'col-span-2' : ''
-                      }`}
-                    >
-                      <div className="w-full h-28 bg-slate-50/50 flex items-center justify-center overflow-hidden border-b border-slate-100 flex-shrink-0 relative p-2">
-                        <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-white/90 text-[8px] font-black text-amber-500 border border-slate-100 uppercase tracking-wider shadow-3xs">
-                          SUB-BAB {sIdx + 1}
-                        </span>
-                        <div className="absolute top-2.5 right-2.5 p-1 rounded-lg bg-white/90 border border-slate-100 text-slate-400 group-hover:text-blue-600 transition">
-                          <SubIcon className="w-3.5 h-3.5" />
-                        </div>
-                        {sub.illustration}
-                      </div>
-
-                      <div className="p-3 flex flex-col justify-start min-h-[56px] bg-white/40">
-                        <h4 className="text-[11px] sm:text-xs font-black text-black leading-snug group-hover:text-blue-600 transition line-clamp-2">
-                          {sub.title}
-                        </h4>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            /* ================= LEVEL 3: ISI MATERI LENGKAP DETAIL DENGAN TOMBOL NARA SUARA (TEXT-TO-SPEECH) ================= */
-            <div className="space-y-4 relative z-10 animate-fade-in">
-              <div className="bg-white/75 backdrop-blur-md border border-sky-100 rounded-3xl p-5 shadow-[0_8px_30px_rgba(2,132,199,0.04)] min-h-[400px] flex flex-col justify-start">
+        {/* ================= VIEW SWITCHER ================= */}
+        {mainTab === 'materi' && (
+          <>
+            {selectedTopic === null ? (
+              /* ================= LEVEL 1: THE 7 SUBJECT CARDS GRID (EXACT REFERENCE STYLE) ================= */
+              <div className="space-y-4">
                 
-                <div className="flex items-start justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-indigo-700/30 font-black text-xl">
+                {/* 7 Subject Cards Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                  {topics.map((topic, idx) => {
+                    const meta = CHAPTER_METADATA[idx] || CHAPTER_METADATA[0];
+
+                    return (
+                      <div
+                        key={idx}
+                        className="rounded-2xl border-4 border-[#221208] bg-[#fbf5e6] shadow-[4px_4px_0_#1a0b03] overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-[6px_6px_0_#1a0b03] transition-all"
+                      >
+                        {/* Top Colored Banner */}
+                        <div className={`${meta.headerBg} ${meta.headerText} border-b-3 border-[#221208] px-3 py-1.5 font-pixel text-[9px] md:text-[10px] text-center font-bold tracking-wider uppercase truncate`}>
+                          {meta.bannerTitle}
+                        </div>
+
+                        {/* Card Content Body */}
+                        <div className="p-3 flex items-center gap-3">
+                          
+                          {/* Left Character Illustration Box */}
+                          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-[#fae8b6] border-3 border-[#221208] rounded-xl flex items-center justify-center p-1.5 flex-shrink-0 shadow-inner overflow-hidden">
+                            <img 
+                              src={meta.charImg} 
+                              alt={topic.title}
+                              className="w-full h-full object-contain image-pixelated hover:scale-105 transition"
+                            />
+                          </div>
+
+                          {/* Right Info & Progress Column */}
+                          <div className="flex-1 min-w-0 space-y-1.5 text-left">
+                            <h3 className="font-pixel text-[9px] sm:text-[10px] text-[#361706] font-bold leading-tight truncate">
+                              {meta.subtitle}
+                            </h3>
+
+                            {/* Level & Segmented Progress Bar */}
+                            <div className="space-y-0.5">
+                              <div className="flex justify-between font-pixel text-[7px] text-[#884318]">
+                                <span>{meta.level}</span>
+                                <span>{meta.progress} SUB</span>
+                              </div>
+                              <div className="w-full h-2.5 bg-[#361706] p-0.5 rounded-sm flex gap-0.5 border border-[#361706]">
+                                <div className={`flex-1 h-full ${meta.barColor} rounded-xs`} />
+                                <div className={`flex-1 h-full ${meta.barColor} rounded-xs`} />
+                                <div className={`flex-1 h-full ${meta.barColor} rounded-xs`} />
+                              </div>
+                            </div>
+
+                            {/* Orange Action Button */}
+                            <button
+                              onClick={() => {
+                                sound.playClick();
+                                stopSpeaking();
+                                setSelectedTopic(idx);
+                                setSelectedSubTopic(null);
+                              }}
+                              className="w-full py-1.5 rounded-lg bg-[#f59e0b] hover:bg-[#fbbf24] border-2 border-[#221208] text-[#2b1103] font-pixel text-[8px] md:text-[8.5px] uppercase font-bold shadow-[2px_2px_0_#1a0b03] active:translate-y-0.5 transition cursor-pointer text-center block mt-1"
+                            >
+                              IKUTI MATERI
+                            </button>
+                          </div>
+
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+              </div>
+            ) : selectedSubTopic === null ? (
+              /* ================= LEVEL 2: SUB-BAB CARDS ================= */
+              <div className="space-y-4">
+                
+                {/* Chapter Banner */}
+                <div className="rounded-2xl border-4 border-[#221208] bg-[#fae8b6] p-3 md:p-4 shadow-[4px_4px_0_#1a0b03] flex items-center justify-between gap-3 text-[#361706]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#ca7c38] border-2 border-[#221208] flex items-center justify-center font-pixel text-xs text-[#2b1103]">
                       {topics[selectedTopic].num}
-                    </span>
-                    <div className="text-left">
-                      <span className="text-[8px] font-black text-indigo-700 uppercase tracking-wider block font-sans">
-                        {topics[selectedTopic].titleShort} &raquo; SUB-BAB {selectedSubTopic + 1}
+                    </div>
+                    <div>
+                      <span className="font-pixel text-[7.5px] text-[#884318] uppercase block">
+                        BAB {topics[selectedTopic].num} &bull; {topics[selectedTopic].tag}
                       </span>
-                      <h4 className="text-xs sm:text-sm font-black text-black leading-snug">
-                        {topics[selectedTopic].subTabs[selectedSubTopic].title}
-                      </h4>
+                      <h2 className="font-pixel text-[10px] md:text-xs text-[#361706] uppercase mt-0.5">
+                        {topics[selectedTopic].title}
+                      </h2>
                     </div>
                   </div>
 
                   <button
-                    onClick={() => {
-                      if (isSpeaking) {
-                        stopSpeaking();
-                      } else {
-                        speakText(topics[selectedTopic].subTabs[selectedSubTopic].plainText);
-                      }
-                    }}
-                    className={`px-3 py-1.5 rounded-2xl text-[10px] font-extrabold transition cursor-pointer flex items-center gap-1.5 shadow-2xs flex-shrink-0 ${
-                      isSpeaking 
-                        ? 'bg-rose-500 text-white animate-pulse' 
-                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
-                    }`}
-                    title={isSpeaking ? 'Hentikan Audio' : 'Dengarkan Narasi Suara Alami Manusia'}
+                    onClick={() => { sound.playClick(); setSelectedTopic(null); }}
+                    className="px-3 py-1.5 rounded-lg bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#221208] text-[#2b1103] font-pixel text-[7.5px] uppercase shadow-xs cursor-pointer"
                   >
-                    {isSpeaking ? (
-                      <>
-                        <VolumeX className="w-3.5 h-3.5" />
-                        <span>Stop Audio</span>
-                      </>
-                    ) : (
-                      <>
-                        <Volume2 className="w-3.5 h-3.5" />
-                        <span>Dengarkan Suara</span>
-                      </>
-                    )}
+                    DAFTAR BAB
                   </button>
                 </div>
-                
-                {/* Visual Illustration for Detail View */}
-                {topics[selectedTopic].subTabs[selectedSubTopic].illustration && !topics[selectedTopic].subTabs[selectedSubTopic].hideTopIllustration && (
-                  <div className="w-full h-44 bg-slate-100/50 border border-slate-200/40 rounded-2xl flex items-center justify-center overflow-hidden mb-4 p-3 shadow-2xs relative">
-                    <img 
-                      src={topics[selectedTopic].subTabs[selectedSubTopic].illustration.props.src} 
-                      alt={topics[selectedTopic].subTabs[selectedSubTopic].title}
-                      className="h-full w-auto object-contain drop-shadow-xs hover:scale-105 transition duration-300"
-                    />
-                  </div>
-                )}
-                
-                <div className="flex-1 animate-fade-in">
-                  {topics[selectedTopic].subTabs[selectedSubTopic].content}
+
+                {/* 3 Sub-Topic Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+                  {topics[selectedTopic].subTabs.map((sub, sIdx) => (
+                    <div
+                      key={sIdx}
+                      className="rounded-2xl border-4 border-[#221208] bg-[#fbf5e6] shadow-[4px_4px_0_#1a0b03] overflow-hidden flex flex-col justify-between hover:-translate-y-1 transition"
+                    >
+                      <div className="bg-[#ca7c38] text-[#2b1103] border-b-3 border-[#221208] px-3 py-1.5 font-pixel text-[8.5px] text-center font-bold uppercase">
+                        SUB-BAB 0{sIdx + 1}
+                      </div>
+
+                      <div className="p-3 space-y-2.5">
+                        <div className="w-full h-24 bg-[#fae8b6] border-2 border-[#221208] rounded-xl flex items-center justify-center p-2 overflow-hidden shadow-inner">
+                          {sub.illustration}
+                        </div>
+
+                        <div className="text-left space-y-1">
+                          <h4 className="font-pixel text-[9px] text-[#361706] font-bold leading-tight">
+                            {sub.title}
+                          </h4>
+                          <p className="text-[8px] text-[#543319] leading-snug line-clamp-2">
+                            {sub.plainText}
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            sound.playClick();
+                            stopSpeaking();
+                            setSelectedSubTopic(sIdx);
+                          }}
+                          className="w-full py-1.5 rounded-lg bg-[#f59e0b] hover:bg-[#fbbf24] border-2 border-[#221208] text-[#2b1103] font-pixel text-[8px] uppercase font-bold shadow-[2px_2px_0_#1a0b03] active:translate-y-0.5 cursor-pointer"
+                        >
+                          BUKA SUB-BAB ➔
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+
               </div>
-
-              <div className="flex items-center justify-between gap-2.5">
-                <button
-                  onClick={() => {
-                    stopSpeaking();
-                    setSelectedSubTopic(selectedSubTopic > 0 ? selectedSubTopic - 1 : null);
-                  }}
-                  className="px-4 py-2.5 text-xs font-bold rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition cursor-pointer flex items-center gap-1.5 flex-1 justify-center disabled:opacity-50"
-                  disabled={selectedTopic === 0 && selectedSubTopic === 0}
-                >
-                  <ChevronLeft className="w-4 h-4 text-black/60" />
-                  <span>Sebelumnya</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    stopSpeaking();
-                    setSelectedSubTopic(null);
-                  }}
-                  className="px-4 py-2.5 text-xs font-extrabold rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition cursor-pointer"
-                >
-                  Daftar Sub-Bab
-                </button>
-
-                <button
-                  onClick={() => {
-                    stopSpeaking();
-                    if (selectedSubTopic < 2) {
-                      setSelectedSubTopic(selectedSubTopic + 1);
-                    }
-                  }}
-                  className="px-4 py-2.5 text-xs font-bold rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition cursor-pointer flex items-center gap-1.5 flex-1 justify-center disabled:opacity-50"
-                  disabled={selectedSubTopic === 2}
-                >
-                  <span>Berikutnya</span>
-                  <ChevronRight className="w-4 h-4 text-black/60" />
-                </button>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ================= TAB 2: DECODER ISTILAH (GLOSSARY & KAMUS INTERAKTIF) ================= */}
-      {mainTab === 'decoder' && (
-        <div className="space-y-4 relative z-10 animate-fade-in">
-          {/* Search & Filter Header */}
-          <div className="p-4 rounded-3xl bg-gradient-to-br from-indigo-100/60 to-purple-50/50 backdrop-blur-md border border-white/80 space-y-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-indigo-600" />
-              <h4 className="text-xs font-black text-black">Decoder & Kamus Istilah Genetika</h4>
-            </div>
-
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Cari istilah genetika (contoh: Alel, Genotipe, Heterozigot)..."
-                value={decoderSearch}
-                onChange={(e) => setDecoderSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 rounded-2xl bg-white border border-indigo-150 text-xs font-bold text-black focus:outline-none focus:border-indigo-500 shadow-2xs"
-              />
-            </div>
-
-            {/* Category Badges Filter */}
-            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-              {['All', 'Konsep', 'Sifat', 'Genotipe', 'Persilangan', 'Hukum'].map((cat, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setDecoderCategory(cat)}
-                  className={`px-3 py-1 rounded-xl text-[10px] font-black transition cursor-pointer flex-shrink-0 ${
-                    decoderCategory === cat 
-                      ? 'bg-indigo-600 text-white shadow-2xs' 
-                      : 'bg-white/80 text-black/70 hover:bg-white hover:text-black'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Dictionary Grid Cards */}
-          <div className="space-y-3">
-            {filteredTerms.length > 0 ? (
-              filteredTerms.map((item, idx) => (
-                <div 
-                  key={idx}
-                  className="p-4 rounded-3xl bg-white/85 backdrop-blur-md border border-sky-100 shadow-2xs space-y-2 hover:border-indigo-300 transition duration-200 text-left"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-black text-indigo-900">{item.term}</h4>
-                      <span className="px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 font-mono text-[9px] font-bold border border-indigo-100">
-                        {item.symbol}
+            ) : (
+              /* ================= LEVEL 3: PEMBAHASAN DETAIL ================= */
+              <div className="space-y-4">
+                
+                {/* Article Parchment Board */}
+                <div className="bg-[#fae8b6] border-4 border-[#221208] rounded-2xl p-4 md:p-5 shadow-[5px_5px_0_#1a0b03] text-[#2b1103] space-y-4">
+                  
+                  {/* Header & Voice Button */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between border-b-2 border-[#221208] pb-3 gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-pixel text-xs bg-[#361706] text-[#facc15] px-2 py-1 rounded border border-[#ca7c38]">
+                        {topics[selectedTopic].num}.{selectedSubTopic + 1}
                       </span>
+                      <div>
+                        <span className="font-pixel text-[7px] text-[#884318] uppercase block">
+                          {topics[selectedTopic].titleShort} &bull; SUB-BAB {selectedSubTopic + 1}
+                        </span>
+                        <h3 className="font-pixel text-[9.5px] md:text-[11px] text-[#361706] uppercase font-bold mt-0.5">
+                          {topics[selectedTopic].subTabs[selectedSubTopic].title}
+                        </h3>
+                      </div>
                     </div>
 
                     <button
-                      onClick={() => speakText(item.speechText)}
-                      className="p-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
-                      title="Dengarkan pengucapan istilah"
+                      onClick={() => {
+                        sound.playClick();
+                        if (isSpeaking) {
+                          stopSpeaking();
+                        } else {
+                          speakText(topics[selectedTopic].subTabs[selectedSubTopic].plainText);
+                        }
+                      }}
+                      className={`px-3 py-1.5 rounded-lg font-pixel text-[7.5px] uppercase transition cursor-pointer flex items-center justify-center gap-1.5 border-2 border-[#221208] shadow-xs ${
+                        isSpeaking ? 'bg-[#dc2626] text-white animate-pulse' : 'bg-[#16a34a] hover:bg-[#22c55e] text-white'
+                      }`}
+                    >
+                      {isSpeaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                      <span>{isSpeaking ? 'HENTIKAN' : 'DENGARKAN SUARA'}</span>
+                    </button>
+                  </div>
+
+                  {/* Illustration */}
+                  {topics[selectedTopic].subTabs[selectedSubTopic].illustration && !topics[selectedTopic].subTabs[selectedSubTopic].hideTopIllustration && (
+                    <div className="w-full h-40 bg-[#fff8e7] border-2 border-[#221208] rounded-xl flex items-center justify-center p-2 shadow-xs">
+                      <img 
+                        src={topics[selectedTopic].subTabs[selectedSubTopic].illustration.props.src} 
+                        alt={topics[selectedTopic].subTabs[selectedSubTopic].title}
+                        className="h-full w-auto object-contain image-pixelated"
+                      />
+                    </div>
+                  )}
+
+                  {/* Formatted Content */}
+                  <div className="bg-[#fff8e7] border-2 border-[#221208] rounded-xl p-3.5 shadow-xs">
+                    {topics[selectedTopic].subTabs[selectedSubTopic].content}
+                  </div>
+
+                </div>
+
+                {/* Bottom Navigation */}
+                <div className="flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => {
+                      sound.playClick();
+                      stopSpeaking();
+                      setSelectedSubTopic(selectedSubTopic > 0 ? selectedSubTopic - 1 : null);
+                    }}
+                    className="flex-1 py-2 rounded-lg bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#221208] text-[#2b1103] font-pixel text-[7.5px] uppercase shadow-xs cursor-pointer flex items-center justify-center gap-1 disabled:opacity-40"
+                    disabled={selectedTopic === 0 && selectedSubTopic === 0}
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>SEBELUMNYA</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      sound.playClick();
+                      stopSpeaking();
+                      setSelectedSubTopic(null);
+                    }}
+                    className="px-3 py-2 rounded-lg bg-[#fae8b6] hover:bg-[#fff8e7] border-2 border-[#221208] text-[#2b1103] font-pixel text-[7.5px] uppercase shadow-xs cursor-pointer"
+                  >
+                    DAFTAR SUB-BAB
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      sound.playClick();
+                      stopSpeaking();
+                      if (selectedSubTopic < 2) {
+                        setSelectedSubTopic(selectedSubTopic + 1);
+                      }
+                    }}
+                    className="flex-1 py-2 rounded-lg bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#221208] text-[#2b1103] font-pixel text-[7.5px] uppercase shadow-xs cursor-pointer flex items-center justify-center gap-1 disabled:opacity-40"
+                    disabled={selectedSubTopic === 2}
+                  >
+                    <span>BERIKUTNYA</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ================= TAB 2: DECODER & KAMUS ISTILAH ================= */}
+        {mainTab === 'decoder' && (
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl bg-[#fae8b6] border-4 border-[#221208] shadow-[4px_4px_0_#1a0b03] space-y-3 text-[#2b1103]">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔍</span>
+                <div>
+                  <h4 className="font-pixel text-[9px] text-[#361706] uppercase font-bold">
+                    DECODER & KAMUS ISTILAH GENETIKA
+                  </h4>
+                  <p className="text-[8px] text-[#543319]">Glosarium konsep, alel, dan terminologi persilangan</p>
+                </div>
+              </div>
+
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#884318]" />
+                <input
+                  type="text"
+                  placeholder="Cari istilah (contoh: Alel, Genotipe, Fenotipe, Segregasi)..."
+                  value={decoderSearch}
+                  onChange={(e) => setDecoderSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-[#fff8e7] border-2 border-[#221208] rounded-lg text-xs font-bold text-[#361706] placeholder-[#884318]/60 focus:outline-none focus:border-[#ca7c38]"
+                />
+              </div>
+
+              <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                {['All', 'Konsep', 'Sifat', 'Genotipe', 'Persilangan', 'Hukum'].map((cat, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      sound.playClick();
+                      setDecoderCategory(cat);
+                    }}
+                    className={`px-2.5 py-1 rounded-md text-[7.5px] font-pixel uppercase transition cursor-pointer flex-shrink-0 border ${
+                      decoderCategory === cat 
+                        ? 'bg-[#ca7c38] border-[#221208] text-[#2b1103] font-bold shadow-xs' 
+                        : 'bg-[#fff8e7] border-[#221208] text-[#543319] hover:bg-[#fae8b6]'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {filteredTerms.map((item, idx) => (
+                <div key={idx} className="p-3.5 rounded-xl bg-[#fae8b6] border-3 border-[#221208] shadow-[3px_3px_0_#1a0b03] space-y-1.5 text-[#2b1103]">
+                  <div className="flex items-center justify-between border-b border-[#221208]/20 pb-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-pixel text-[9px] text-[#361706] font-bold uppercase">{item.term}</h4>
+                      <span className="px-1.5 py-0.2 rounded bg-[#361706] text-[#facc15] font-pixel text-[7px]">{item.symbol}</span>
+                    </div>
+                    <button
+                      onClick={() => { sound.playClick(); speakText(item.speechText); }}
+                      className="p-1 rounded bg-[#ca7c38] hover:bg-[#df9b52] border border-[#221208] text-[#2b1103] cursor-pointer"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
-
-                  <p className="text-xs font-bold text-black leading-relaxed">
-                    {item.definition}
-                  </p>
-
-                  <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px]">
-                    <span className="text-slate-500 font-medium">Contoh: <strong className="text-slate-800">{item.example}</strong></span>
-                    <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-extrabold uppercase text-[8px]">
-                      {item.category}
-                    </span>
-                  </div>
+                  <p className="text-[9.5px] text-[#361706] leading-relaxed">{item.definition}</p>
                 </div>
-              ))
-            ) : (
-              <div className="p-8 text-center bg-white/70 rounded-3xl border border-slate-200 space-y-2">
-                <BookMarked className="w-8 h-8 text-slate-400 mx-auto" />
-                <p className="text-xs font-bold text-slate-600">Tidak ada istilah yang cocok dengan kata kunci "{decoderSearch}".</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ================= TAB 3: SEMANTIC SCHOLAR (100% REAL LIVE API SEARCH - ZERO FAKE DATA) ================= */}
-      {mainTab === 'scholar' && (
-        <div className="space-y-4 relative z-10 animate-fade-in">
-          {/* Search Header */}
-          <div className="p-4 rounded-3xl bg-gradient-to-br from-emerald-100/70 to-teal-50/50 backdrop-blur-md border border-white/80 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-emerald-700" />
-                <div>
-                  <h4 className="text-xs font-black text-black leading-tight">Semantic Scholar Live API</h4>
-                  <p className="text-[9px] text-black/70 font-bold">Pencarian jurnal ilmiah langsung dari server riset dunia</p>
-                </div>
-              </div>
-
-              {scholarApiSource && (
-                <span className="px-2 py-0.5 rounded-lg bg-emerald-600 text-white font-mono text-[8px] font-black flex items-center gap-1 shadow-2xs">
-                  <Globe className="w-3 h-3" />
-                  <span>LIVE API</span>
-                </span>
-              )}
-            </div>
-
-            {/* Scholar Search Form */}
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                fetchSemanticScholar(scholarQuery);
-              }}
-              className="flex gap-2"
-            >
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Ketik topik jurnal (contoh: Mendelian genetics, Punnett square, Pisum sativum)..."
-                  value={scholarQuery}
-                  onChange={(e) => setScholarQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-white border border-emerald-200 text-xs font-bold text-black focus:outline-none focus:border-emerald-500 shadow-2xs"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="px-4 py-2.5 rounded-2xl bg-emerald-600 text-white font-extrabold text-xs hover:bg-emerald-700 transition cursor-pointer flex items-center gap-1 shadow-2xs flex-shrink-0"
-                disabled={isScholarLoading}
-              >
-                {isScholarLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <span>Cari API</span>}
-              </button>
-            </form>
-
-            {/* Quick Search Chips */}
-            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-              {[
-                'Mendelian inheritance',
-                'Pisum sativum genetics',
-                'Dihybrid Punnett cross',
-                'Allele segregation'
-              ].map((chip, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setScholarQuery(chip);
-                    fetchSemanticScholar(chip);
-                  }}
-                  className="px-2.5 py-1 rounded-xl text-[9px] font-extrabold bg-white/80 text-emerald-800 hover:bg-emerald-600 hover:text-white transition cursor-pointer flex-shrink-0 shadow-3xs"
-                >
-                  {chip}
-                </button>
               ))}
             </div>
-
-            {scholarApiSource && (
-              <div className="text-[9px] font-bold text-emerald-800 bg-emerald-50/80 p-1.5 rounded-xl border border-emerald-200/60 text-center">
-                Terhubung ke API: <strong>{scholarApiSource}</strong>
-              </div>
-            )}
           </div>
+        )}
 
-          {/* Scholar Papers Live Results List */}
-          <div className="space-y-3">
-            {isScholarLoading ? (
-              <div className="p-10 text-center bg-white/70 rounded-3xl border border-slate-200 space-y-3">
-                <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin mx-auto" />
-                <p className="text-xs font-bold text-black">Mengambil data langsung (*live fetch*) dari Semantic Scholar & OpenAlex API...</p>
-              </div>
-            ) : scholarPapers.length > 0 ? (
-              scholarPapers.map((paper, idx) => (
-                <div 
-                  key={paper.id || idx}
-                  className="p-4 rounded-3xl bg-white/85 backdrop-blur-md border border-emerald-100 shadow-2xs space-y-2.5 text-left hover:border-emerald-300 transition duration-200"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-xs font-black text-black leading-snug flex-1">
-                      {paper.title}
-                    </h4>
-                    <span className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 font-mono text-[9px] font-black border border-emerald-200 flex-shrink-0">
-                      {paper.year || 'Riset'}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-3 text-[10px] text-slate-500 font-bold">
-                    <span>Penulis: <strong className="text-slate-800">{Array.isArray(paper.authors) ? paper.authors.slice(0, 2).join(', ') : 'Peneliti Ilmuwan'}</strong></span>
-                    {paper.citations !== undefined && (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-bold text-[9px]">
-                        Sitasi: {paper.citations}
-                      </span>
-                    )}
-                  </div>
-
-                  {paper.abstract && (
-                    <p className="text-[11px] font-medium text-black/80 line-clamp-3 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      {paper.abstract}
-                    </p>
-                  )}
-
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-100 gap-2">
-                    {paper.pdfUrl ? (
-                      <a
-                        href={paper.pdfUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-extrabold text-[10px] flex items-center gap-1.5 hover:bg-emerald-700 transition shadow-2xs"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Unduh PDF Open Access</span>
-                      </a>
-                    ) : (
-                      <span className="text-[9px] text-slate-400 font-bold">Jurnal Terdaftar Resmi</span>
-                    )}
-
-                    <a
-                      href={paper.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-[10px] flex items-center gap-1 hover:bg-slate-200 transition"
-                    >
-                      <span>Lihat Artikel Asli</span>
-                      <ExternalLink className="w-3 h-3 text-slate-500" />
-                    </a>
+        {/* ================= TAB 3: JURNAL RISET ILMIAH ================= */}
+        {mainTab === 'scholar' && (
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl bg-[#fae8b6] border-4 border-[#221208] shadow-[4px_4px_0_#1a0b03] space-y-3 text-[#2b1103]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-[#884318]" />
+                  <div>
+                    <h4 className="font-pixel text-[9px] text-[#361706] uppercase font-bold">JURNAL RISET ILMIAH (LIVE API)</h4>
+                    <p className="text-[8px] text-[#543319]">Database makalah genetika internasional resmi</p>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="p-8 text-center bg-white/70 rounded-3xl border border-slate-200 space-y-2">
-                <BookCheck className="w-8 h-8 text-emerald-600 mx-auto" />
-                <p className="text-xs font-bold text-slate-700">
-                  {scholarError || `Tidak ada data jurnal dari server API untuk kata kunci "${scholarQuery}".`}
-                </p>
+                {scholarApiSource && (
+                  <span className="px-2 py-0.5 rounded bg-[#16a34a] text-white font-pixel text-[7px] uppercase">
+                    {scholarApiSource}
+                  </span>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
 
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  fetchSemanticScholar(scholarQuery);
+                }}
+                className="flex gap-2"
+              >
+                <input
+                  type="text"
+                  placeholder="Ketik topik riset..."
+                  value={scholarQuery}
+                  onChange={(e) => setScholarQuery(e.target.value)}
+                  className="flex-1 px-3 py-2 bg-[#fff8e7] border-2 border-[#221208] rounded-lg text-xs font-bold text-[#361706]"
+                />
+                <button
+                  type="submit"
+                  className="px-3 py-2 bg-[#16a34a] hover:bg-[#22c55e] text-white font-pixel text-[8px] uppercase border-2 border-[#221208] rounded-lg shadow-xs cursor-pointer"
+                  disabled={isScholarLoading}
+                >
+                  {isScholarLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <span>CARI</span>}
+                </button>
+              </form>
+            </div>
+
+            <div className="space-y-3">
+              {scholarPapers.map((paper, idx) => (
+                <div key={idx} className="p-3.5 rounded-xl bg-[#fae8b6] border-3 border-[#221208] shadow-[3px_3px_0_#1a0b03] space-y-2 text-[#2b1103]">
+                  <h4 className="font-pixel text-[9px] text-[#361706] font-bold leading-snug">{paper.title}</h4>
+                  {paper.abstract && <p className="text-[9px] text-[#543319] bg-[#fff8e7] p-2 rounded-lg border border-[#221208]/30 line-clamp-3">{paper.abstract}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= BOTTOM NAVIGATION SHELF (4 TABS) ================= */}
+        <div className="grid grid-cols-4 bg-[#2b1103] p-1.5 rounded-2xl border-4 border-[#221208] shadow-[4px_4px_0_#1a0b03] gap-1.5 mt-4">
+          <button
+            onClick={() => { sound.playClick(); stopSpeaking(); navigateTo('main-menu'); }}
+            className="py-2 px-1 rounded-xl text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer bg-[#3a1d0b] hover:bg-[#4a2610] text-[#ffd699] border-2 border-transparent"
+          >
+            <span className="text-base sm:text-lg">🏠</span>
+            <span className="font-pixel text-[7px] sm:text-[8px] uppercase">HOME</span>
+          </button>
+
+          <button
+            onClick={() => { sound.playClick(); stopSpeaking(); setMainTab('materi'); setSelectedTopic(null); setSelectedSubTopic(null); }}
+            className={`py-2 px-1 rounded-xl text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer border-2 ${
+              mainTab === 'materi'
+                ? 'bg-[#ca7c38] border-[#fae8b6] text-[#2b1103] font-bold shadow-xs'
+                : 'bg-[#3a1d0b] hover:bg-[#4a2610] text-[#ffd699] border-transparent'
+            }`}
+          >
+            <span className="text-base sm:text-lg">📖</span>
+            <span className="font-pixel text-[7px] sm:text-[8px] uppercase">BELAJAR</span>
+          </button>
+
+          <button
+            onClick={() => { sound.playClick(); stopSpeaking(); setMainTab('decoder'); }}
+            className={`py-2 px-1 rounded-xl text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer border-2 ${
+              mainTab === 'decoder'
+                ? 'bg-[#ca7c38] border-[#fae8b6] text-[#2b1103] font-bold shadow-xs'
+                : 'bg-[#3a1d0b] hover:bg-[#4a2610] text-[#ffd699] border-transparent'
+            }`}
+          >
+            <span className="text-base sm:text-lg">👥</span>
+            <span className="font-pixel text-[7px] sm:text-[8px] uppercase">KAMUS</span>
+          </button>
+
+          <button
+            onClick={() => { sound.playClick(); stopSpeaking(); setMainTab('scholar'); }}
+            className={`py-2 px-1 rounded-xl text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer border-2 ${
+              mainTab === 'scholar'
+                ? 'bg-[#ca7c38] border-[#fae8b6] text-[#2b1103] font-bold shadow-xs'
+                : 'bg-[#3a1d0b] hover:bg-[#4a2610] text-[#ffd699] border-transparent'
+            }`}
+          >
+            <span className="text-base sm:text-lg">🏛️</span>
+            <span className="font-pixel text-[7px] sm:text-[8px] uppercase">JURNAL</span>
+          </button>
+        </div>
+
+      </div>
     </div>
   );
 };

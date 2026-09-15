@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
-import { Trophy, Star } from 'lucide-react';
+import { Trophy, Star, X } from 'lucide-react';
+import { sound } from '../../services/sound';
 
 export const LeaderboardModal = () => {
   const { isLeaderboardOpen, setIsLeaderboardOpen, userProgress, totalStars } = useGame();
@@ -16,61 +17,79 @@ export const LeaderboardModal = () => {
   ].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="travorra-card max-w-lg w-full p-6 rounded-3xl border border-slate-200 space-y-6 bg-white text-left shadow-2xl">
-        <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200">
-              <Trophy className="w-6 h-6" />
+    <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+      <div className="max-w-md w-full p-4 md:p-6 rounded-xl border-4 border-[#361706] space-y-4 bg-[#fae8b6] text-left shadow-[6px_6px_0_#1a0b03] text-[#2b1103]">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center border-b-2 border-[#361706] pb-2.5">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-lg bg-[#ca7c38] text-[#2b1103] border-2 border-[#361706] shadow-xs">
+              <Trophy className="w-5 h-5 text-[#ffd699]" />
             </div>
             <div>
-              <h3 className="text-xl font-serif-display font-extrabold text-slate-900">Papan Peringkat Kelas</h3>
-              <p className="text-xs text-slate-500 font-medium">Peringkat akumulasi skor teratas siswa</p>
+              <h3 className="text-xs md:text-sm font-pixel text-[#361706] uppercase font-bold">PAPAN PERINGKAT</h3>
+              <p className="text-[9px] text-[#884318] font-pixel mt-0.5">Top Skor Siswa</p>
             </div>
           </div>
           <button 
-            onClick={() => setIsLeaderboardOpen(false)} 
-            className="text-slate-400 hover:text-slate-900 p-2 rounded-full hover:bg-slate-100 text-xl font-bold"
+            onClick={() => {
+              sound.playClick();
+              setIsLeaderboardOpen(false);
+            }} 
+            className="p-1 bg-[#df9b52] hover:bg-[#ca7c38] border-2 border-[#361706] rounded text-[#2b1103] cursor-pointer"
           >
-            ✕
+            <X className="w-4 h-4 stroke-[2.5px]" />
           </button>
         </div>
 
-        <div className="space-y-2.5">
+        {/* List */}
+        <div className="space-y-2">
           {mockLeaderboard.map((item, idx) => (
             <div
               key={idx}
-              className={`p-3.5 rounded-2xl border flex items-center justify-between gap-3 transition ${
+              className={`p-2.5 rounded-lg border-2 border-[#361706] flex items-center justify-between gap-2.5 transition ${
                 item.isUser
-                  ? 'bg-blue-50 border-blue-300 text-blue-900 shadow-sm'
-                  : 'bg-slate-50 border-slate-200 text-slate-700'
+                  ? 'bg-[#fde68a] text-[#2b1103] shadow-[2px_2px_0_#361706]'
+                  : 'bg-[#fff8e7] text-[#361706]'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
-                  idx === 0 ? 'bg-amber-400 text-slate-950 font-black' :
-                  idx === 1 ? 'bg-slate-300 text-slate-900 font-extrabold' :
-                  idx === 2 ? 'bg-amber-700 text-white font-extrabold' : 'bg-slate-200 text-slate-600'
+              <div className="flex items-center gap-2.5">
+                <div className={`w-6 h-6 rounded-sm border border-[#361706] flex items-center justify-center font-pixel text-[8px] ${
+                  idx === 0 ? 'bg-[#facc15] text-[#2b1103] font-black' :
+                  idx === 1 ? 'bg-[#cbd5e1] text-[#2b1103]' :
+                  idx === 2 ? 'bg-[#d97706] text-white' : 'bg-[#e2e8f0] text-slate-700'
                 }`}>
                   {idx + 1}
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-xs text-slate-900 flex items-center gap-1.5">
-                    {item.name} {item.isUser && <span className="text-[10px] text-blue-600 font-mono font-bold">(ANDA)</span>}
+                  <h4 className="font-pixel text-[8px] md:text-[9px] text-[#361706] flex items-center gap-1 uppercase truncate max-w-[150px]">
+                    {item.name}
                   </h4>
-                  <span className="text-[10px] text-slate-500 font-medium">Lencana: {item.badge}</span>
+                  <span className="text-[8px] text-[#884318] block">{item.badge}</span>
                 </div>
               </div>
 
-              <div className="text-right">
-                <p className="font-mono font-black text-xs text-blue-700">{item.score} PTS</p>
-                <div className="flex items-center justify-end gap-1 text-[10px] text-amber-600 font-bold">
-                  <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+              <div className="text-right flex-shrink-0">
+                <p className="font-pixel text-[8px] text-[#361706]">{item.score} PTS</p>
+                <div className="flex items-center justify-end gap-1 text-[8px] text-[#884318] font-bold">
+                  <Star className="w-3 h-3 fill-[#facc15] text-[#facc15]" />
                   <span>{item.stars} ★</span>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="text-center pt-1 border-t border-[#361706]/20">
+          <button
+            onClick={() => {
+              sound.playClick();
+              setIsLeaderboardOpen(false);
+            }}
+            className="px-5 py-1.5 bg-[#ca7c38] hover:bg-[#df9b52] border-2 border-[#361706] rounded-md font-pixel text-[8px] text-[#2b1103] uppercase cursor-pointer shadow-xs"
+          >
+            TUTUP
+          </button>
         </div>
 
       </div>
