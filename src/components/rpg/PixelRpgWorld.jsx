@@ -394,7 +394,7 @@ const STATIONS = [
 ];
 
 // 5 Landmark Research Conclusions (Kesimpulan Pembelajaran Interaktif Kebun Biara)
-export const RESEARCH_CONCLUSIONS = [
+const RESEARCH_CONCLUSIONS = [
   {
     id: 'area_atas',
     key: 'area_atas',
@@ -2942,7 +2942,7 @@ const getNpcVnSprite = (npc) => {
 };
 
 // --- VIRTUAL ANALOG JOYSTICK (Khusus Pengguna HP / Layar Sentuh) ---
-const VirtualAnalogJoystick = ({ touchInputRef, isLandscape = false, isForcedLandscape = false }) => {
+const VirtualAnalogJoystick = ({ touchInputRef, isLandscape = false, isPortrait = false, isForcedLandscape = false }) => {
   const [knobPos, setKnobPos] = useState({ x: 0, y: 0 });
   const [isActive, setIsActive] = useState(false);
   const containerRef = useRef(null);
@@ -2970,7 +2970,7 @@ const VirtualAnalogJoystick = ({ touchInputRef, isLandscape = false, isForcedLan
     }
 
     const dist = Math.hypot(dx, dy);
-    const maxRadius = isLandscape ? 22 : 38;
+    const maxRadius = isLandscape ? 22 : isPortrait ? 24 : 38;
 
     let clampedX = dx;
     let clampedY = dy;
@@ -2981,13 +2981,13 @@ const VirtualAnalogJoystick = ({ touchInputRef, isLandscape = false, isForcedLan
 
     setKnobPos({ x: clampedX, y: clampedY });
 
-    // Deadzone check (4px in landscape, 8px in portrait)
-    const deadzone = isLandscape ? 4 : 8;
+    // Deadzone check (4px in landscape, 5px in portrait, 8px in default)
+    const deadzone = isLandscape ? 4 : isPortrait ? 5 : 8;
     touchInputRef.current.left = clampedX < -deadzone;
     touchInputRef.current.right = clampedX > deadzone;
     touchInputRef.current.up = clampedY < -deadzone;
     touchInputRef.current.down = clampedY > deadzone;
-  }, [touchInputRef, isLandscape, isForcedLandscape]);
+  }, [touchInputRef, isLandscape, isPortrait, isForcedLandscape]);
 
   const handlePointerDown = (e) => {
     e.preventDefault();
@@ -3023,32 +3023,32 @@ const VirtualAnalogJoystick = ({ touchInputRef, isLandscape = false, isForcedLan
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       className={`relative rpg-joystick-box ${
-        isLandscape ? 'w-[70px] h-[70px] border-2' : 'w-28 h-28 sm:w-32 sm:h-32 border-4'
+        isLandscape ? 'w-[70px] h-[70px] border-2' : isPortrait ? 'w-[76px] h-[76px] border-2' : 'w-28 h-28 sm:w-32 sm:h-32 border-4'
       } rounded-full border-[#3e1f0b] bg-[#1e293b]/85 backdrop-blur-sm shadow-[0_6px_16px_rgba(0,0,0,0.65)] flex items-center justify-center select-none touch-none cursor-pointer transition-transform ${
         isActive ? 'scale-105 border-amber-400' : 'opacity-90'
       }`}
       style={{ touchAction: 'none' }}
     >
       {/* Direction indicators */}
-      <div className={`absolute top-0.5 text-amber-300 font-pixel ${isLandscape ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>▲</div>
-      <div className={`absolute bottom-0.5 text-amber-300 font-pixel ${isLandscape ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>▼</div>
-      <div className={`absolute left-0.5 text-amber-300 font-pixel ${isLandscape ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>◀</div>
-      <div className={`absolute right-0.5 text-amber-300 font-pixel ${isLandscape ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>▶</div>
+      <div className={`absolute top-0.5 text-amber-300 font-pixel ${isLandscape || isPortrait ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>▲</div>
+      <div className={`absolute bottom-0.5 text-amber-300 font-pixel ${isLandscape || isPortrait ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>▼</div>
+      <div className={`absolute left-0.5 text-amber-300 font-pixel ${isLandscape || isPortrait ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>◀</div>
+      <div className={`absolute right-0.5 text-amber-300 font-pixel ${isLandscape || isPortrait ? 'text-[7px]' : 'text-[10px]'} select-none pointer-events-none`}>▶</div>
       
       {/* Inner guide ring */}
-      <div className={`${isLandscape ? 'w-8 h-8' : 'w-16 h-16'} rounded-full border border-dashed border-amber-400/35 pointer-events-none`} />
+      <div className={`${isLandscape ? 'w-8 h-8' : isPortrait ? 'w-9 h-9' : 'w-16 h-16'} rounded-full border border-dashed border-amber-400/35 pointer-events-none`} />
 
       {/* Floating Center Thumb Knob */}
       <div
         className={`absolute rpg-joystick-knob ${
-          isLandscape ? 'w-8 h-8' : 'w-13 h-13 sm:w-14 sm:h-14'
+          isLandscape || isPortrait ? 'w-8 h-8' : 'w-13 h-13 sm:w-14 sm:h-14'
         } rounded-full border-2 border-amber-200 bg-gradient-to-b from-amber-400 via-amber-600 to-amber-800 shadow-[0_4px_8px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-none transition-transform duration-75`}
         style={{
           transform: `translate(${knobPos.x}px, ${knobPos.y}px)`
         }}
       >
-        <div className={`${isLandscape ? 'w-3.5 h-3.5' : 'w-6 h-6'} rounded-full border border-amber-200/60 bg-amber-300/30 flex items-center justify-center`}>
-          <div className={`${isLandscape ? 'w-1 h-1' : 'w-2 h-2'} rounded-full bg-amber-100`} />
+        <div className={`${isLandscape || isPortrait ? 'w-3.5 h-3.5' : 'w-6 h-6'} rounded-full border border-amber-200/60 bg-amber-300/30 flex items-center justify-center`}>
+          <div className={`${isLandscape || isPortrait ? 'w-1 h-1' : 'w-2 h-2'} rounded-full bg-amber-100`} />
         </div>
       </div>
     </div>
@@ -5042,19 +5042,29 @@ export const PixelRpgWorld = () => {
     let animationFrameId;
 
     const loop = () => {
-      // 1. Dynamic Fullscreen Canvas Resize
-      if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
-      }
+      try {
+        // Zero-dimension guard: wait until layout computes non-zero dimensions
+        if (!canvas.clientWidth || !canvas.clientHeight) {
+          return;
+        }
 
-      const screenWidth = canvas.width;
-      const screenHeight = canvas.height;
-      const p = playerRef.current;
+        // 1. Dynamic Fullscreen Canvas Resize
+        if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+          canvas.width = canvas.clientWidth;
+          canvas.height = canvas.clientHeight;
+        }
 
-      // Clean canvas buffer on every frame to eliminate edge graphical glitches / buffer smearing
-      ctx.fillStyle = '#1b3211';
-      ctx.fillRect(0, 0, screenWidth, screenHeight);
+        const screenWidth = canvas.width;
+        const screenHeight = canvas.height;
+        if (screenWidth <= 0 || screenHeight <= 0) {
+          return;
+        }
+
+        const p = playerRef.current;
+
+        // Clean canvas buffer on every frame to eliminate edge graphical glitches / buffer smearing
+        ctx.fillStyle = '#1b3211';
+        ctx.fillRect(0, 0, screenWidth, screenHeight);
 
       // 1b. Scene Transition Fade State Progression
       if (fadeStateRef.current === 'fade_out') {
@@ -6242,10 +6252,14 @@ export const PixelRpgWorld = () => {
         ctx.fillRect(0, 0, screenWidth, screenHeight);
         ctx.restore();
       }
-
+    } catch (loopErr) {
+      console.error("Critical error in RPG render loop:", loopErr);
+    } finally {
       animationFrameId = requestAnimationFrame(loop);
-    };
+    }
+  };
 
+    animationFrameId = requestAnimationFrame(loop); // <- Start the loop!
     return () => cancelAnimationFrame(animationFrameId);
   }, [isStageUnlocked, mapLoaded]);
 
@@ -6294,74 +6308,76 @@ export const PixelRpgWorld = () => {
   }, [triggerStation]);
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden select-none bg-[#090704] flex flex-col justify-between z-30">
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden select-none bg-[#090704] flex flex-col justify-between z-30 pointer-events-none">
 
       {/* 1. Top RPG HUD Bar */}
-      <div className={`relative z-20 w-full rpg-hud-top ${isCompactLandscape ? 'p-1 px-2.5' : isPortrait ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-4'} flex items-center justify-between pointer-events-auto bg-gradient-to-b from-black/80 via-black/40 to-transparent`}>
+      <div className={`relative z-20 w-full rpg-hud-top ${isCompactLandscape ? 'p-1 px-2' : isPortrait ? 'p-1 px-1.5 pt-1' : 'p-2.5 sm:p-4'} flex items-center justify-between pointer-events-auto bg-gradient-to-b from-black/85 via-black/40 to-transparent`}>
         
         {/* Left: Back to Main Menu & Fast Map Switch */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
           <button
             onClick={() => { sound.playClick(); navigateTo('main-menu'); }}
-            className={`stardew-wood-btn rpg-wood-button ${isCompactLandscape || isPortrait ? 'px-2 py-0.5 text-[10px] rounded-lg' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} text-[#fffbeb] font-stardew tracking-wider cursor-pointer flex items-center gap-1 active:translate-y-0.5 border-2 border-[#361706] shadow-[0_2px_0_#1c0a02]`}
+            className={`stardew-wood-btn rpg-wood-button ${isCompactLandscape || isPortrait ? 'px-1.5 py-0.5 text-[8px] rounded-md' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} text-[#fffbeb] font-stardew tracking-wider cursor-pointer flex items-center gap-0.5 active:translate-y-0.5 border-2 border-[#361706] shadow-[0_2px_0_#1c0a02]`}
             title="Kembali ke Menu Utama"
           >
-            <ChevronLeft className={`${isCompactLandscape || isPortrait ? 'w-3 h-3' : 'w-4 h-4'} text-[#fef08a] stroke-[2.5]`} />
+            <ChevronLeft className={`${isCompactLandscape || isPortrait ? 'w-2.5 h-2.5' : 'w-4 h-4'} text-[#fef08a] stroke-[2.5]`} />
             <span className="stardew-gold-title">MENU</span>
           </button>
 
           {/* Quick Switch Button to Classic Map Mode */}
           <button
             onClick={() => { sound.playClick(); navigateTo('map'); }}
-            className={`rpg-wood-button ${isCompactLandscape || isPortrait ? 'px-2 py-0.5 text-[10px] rounded-lg' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} bg-gradient-to-b from-[#1e4d3a] via-[#143729] to-[#0c2219] hover:brightness-110 border-2 border-[#091811] text-[#bbf7d0] font-stardew tracking-wider cursor-pointer flex items-center gap-1 shadow-[0_2px_0_#06100c] active:translate-y-0.5 transition-all`}
+            className={`rpg-wood-button ${isCompactLandscape || isPortrait ? 'px-1.5 py-0.5 text-[8px] rounded-md' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} bg-gradient-to-b from-[#1e4d3a] via-[#143729] to-[#0c2219] hover:brightness-110 border-2 border-[#091811] text-[#bbf7d0] font-stardew tracking-wider cursor-pointer flex items-center gap-0.5 shadow-[0_2px_0_#06100c] active:translate-y-0.5 transition-all`}
             title="Buka Peta Stage Cepat"
           >
-            <MapPin className={`${isCompactLandscape || isPortrait ? 'w-3 h-3' : 'w-3.5 h-3.5'} text-[#86efac]`} />
-            <span className={isCompactLandscape || isPortrait ? "inline text-[9.5px]" : "hidden sm:inline"}>PETA CEPAT</span>
+            <MapPin className={`${isCompactLandscape || isPortrait ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5'} text-[#86efac]`} />
+            <span className={isCompactLandscape || isPortrait ? "inline text-[7.5px]" : "hidden sm:inline"}>
+              {isPortrait ? "PETA" : "PETA CEPAT"}
+            </span>
           </button>
         </div>
 
         {/* Right: Corner HUD Widget */}
         {(isCompactLandscape || isPortrait) ? (
           /* Sleek Single-Line Mobile Layout (Landscape or Portrait) */
-          <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto">
+          <div className="flex items-center gap-1 pointer-events-auto shrink-0">
             {/* Quick Utility Buttons */}
-            <div className="flex items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center gap-0.5">
               <button
                 onClick={() => { sound.playClick(); setWelcomeStep(1); }}
-                className="stardew-wood-btn rpg-utility-btn w-6.5 h-6.5 rounded-lg text-[#fef08a] cursor-pointer active:translate-y-0.5 flex items-center justify-center border-2 border-[#361706]"
+                className="stardew-wood-btn rpg-utility-btn w-5 h-5 rounded-md text-[#fef08a] cursor-pointer active:translate-y-0.5 flex items-center justify-center border-2 border-[#361706]"
                 title="Panduan Misi & Kontrol [?]"
               >
-                <HelpCircle className="w-3 h-3 text-amber-300" />
+                <HelpCircle className="w-2.5 h-2.5 text-amber-300" />
               </button>
               <button
                 onClick={toggleFullScreen}
-                className="stardew-wood-btn rpg-utility-btn w-6.5 h-6.5 rounded-lg text-[#fef08a] cursor-pointer active:translate-y-0.5 flex items-center justify-center border-2 border-[#361706]"
+                className="stardew-wood-btn rpg-utility-btn w-5 h-5 rounded-md text-[#fef08a] cursor-pointer active:translate-y-0.5 flex items-center justify-center border-2 border-[#361706]"
                 title={isFullscreen ? 'Keluar Fullscreen' : 'Layar Penuh'}
               >
-                {isFullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+                {isFullscreen ? <Minimize2 className="w-2.5 h-2.5" /> : <Maximize2 className="w-2.5 h-2.5" />}
               </button>
               <button
                 onClick={toggleSound}
-                className="stardew-wood-btn rpg-utility-btn w-6.5 h-6.5 rounded-lg text-white cursor-pointer active:translate-y-0.5 flex items-center justify-center border-2 border-[#361706]"
+                className="stardew-wood-btn rpg-utility-btn w-5 h-5 rounded-md text-white cursor-pointer active:translate-y-0.5 flex items-center justify-center border-2 border-[#361706]"
                 title={soundOn ? 'Mute' : 'Audio'}
               >
-                {soundOn ? <Volume2 className="w-3 h-3 text-[#86efac]" /> : <VolumeX className="w-3 h-3 text-rose-400" />}
+                {soundOn ? <Volume2 className="w-2.5 h-2.5 text-[#86efac]" /> : <VolumeX className="w-2.5 h-2.5 text-rose-400" />}
               </button>
             </div>
 
             {/* Compact 1-Line Stardew Plaque (Location + Stars) */}
-            <div className="stardew-hud-plaque rpg-location-plaque px-1.5 sm:px-2 py-0.5 rounded-lg flex items-center gap-1 sm:gap-1.5 shadow-xs">
-              <div className="flex items-center gap-1 text-[#fffbeb] font-stardew text-[9px] font-bold">
-                <span className="text-amber-300 text-[10px]">{currentScene === 'cabin_interior' ? '🏡' : '⚜'}</span>
-                <span className="stardew-gold-title truncate max-w-[50px] sm:max-w-[70px]">
+            <div className="stardew-hud-plaque rpg-location-plaque px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs">
+              <div className="flex items-center gap-0.5 text-[#fffbeb] font-stardew text-[7.5px] font-bold">
+                <span className="text-amber-300 text-[8px]">{currentScene === 'cabin_interior' ? '🏡' : '⚜'}</span>
+                <span className="stardew-gold-title truncate max-w-[36px]">
                   {currentScene === 'cabin_interior' ? 'KABIN' : 'BIARA'}
                 </span>
               </div>
-              <span className="text-[#361706]/40">•</span>
-              <div className="flex items-center gap-1">
-                <Star className="w-2.5 h-2.5 fill-[#fef08a] text-[#78350f]" />
-                <span className="font-stardew text-[9px] sm:text-[9.5px] font-bold text-[#facc15]">{totalStars}/24</span>
+              <span className="text-[#361706]/40 text-[7.5px]">•</span>
+              <div className="flex items-center gap-0.5">
+                <Star className="w-2 h-2 fill-[#fef08a] text-[#78350f]" />
+                <span className="font-stardew text-[7.5px] font-bold text-[#facc15]">{totalStars}/24</span>
               </div>
             </div>
 
@@ -6372,11 +6388,13 @@ export const PixelRpgWorld = () => {
                 setIsInventoryOpen(true);
                 triggerGuidanceBanner(7000);
               }}
-              className="stardew-journal-btn rpg-journal-btn px-2 py-0.5 rounded-lg flex items-center gap-1 border-2 border-[#ca8a04]/90 text-[#fef08a] cursor-pointer active:translate-y-0.5"
+              className="stardew-journal-btn rpg-journal-btn px-1.5 py-0.5 rounded-md flex items-center gap-0.5 border-2 border-[#ca8a04]/90 text-[#fef08a] cursor-pointer active:translate-y-0.5"
               title="Buku Misi & Jurnal [J]"
             >
-              <img src="/assets/rpg/quests/quest_icon.png" alt="Misi" className="w-3.5 h-3.5 object-contain" />
-              <span className="stardew-gold-title font-bold text-[9px] tracking-wide whitespace-nowrap">BUKU MISI</span>
+              <img src="/assets/rpg/quests/quest_icon.png" alt="Misi" className="w-3 h-3 object-contain" />
+              <span className="stardew-gold-title font-bold text-[7.5px] tracking-wide whitespace-nowrap">
+                {isPortrait ? "MISI" : "BUKU MISI"}
+              </span>
             </button>
           </div>
         ) : (
@@ -6501,272 +6519,150 @@ export const PixelRpgWorld = () => {
 
       </div>
 
-      {/* 2. Middle Interactive 2D World Canvas Viewport */}
-      {/* In Portrait: Fixed 16:9 landscape aspect ratio (video-like) in the center */}
-      {/* In Landscape / Desktop: Fullscreen inset-0 */}
-      <div className={`relative ${isPortrait ? 'w-full max-w-2xl mx-auto aspect-video max-h-[46vh] my-auto bg-black border-y-2 border-amber-600/40 shadow-[0_8px_32px_rgba(0,0,0,0.9)] overflow-hidden flex items-center justify-center' : 'absolute inset-0 w-full h-full'} z-0`}>
-        <canvas 
-          ref={canvasRef} 
-          onClick={handleCanvasClick}
-          className="w-full h-full cursor-pointer select-none"
-        />
+      {/* 2. Main Interactive 2D World Canvas (100% Fullscreen in both Portrait 9:16 and Landscape 16:9) */}
+      <canvas 
+        ref={canvasRef} 
+        onClick={handleCanvasClick}
+        className="absolute inset-0 w-full h-full block cursor-pointer select-none z-0 bg-[#1b3211] pointer-events-auto"
+      />
 
-        {/* 16:9 Landscape Video Indicator Tag in Portrait Mode */}
-        {isPortrait && (
-          <div className="absolute top-2 right-2 pointer-events-none z-10 flex items-center gap-1.5 bg-black/65 backdrop-blur-xs border border-amber-500/35 rounded-full px-2 py-0.5 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-pixel text-[7.5px] text-amber-200 uppercase tracking-widest font-bold">16:9 Landskap</span>
-          </div>
-        )}
-      </div>
-
-      {/* 3. Bottom Controls & Objective Area */}
-      {isPortrait ? (
-        /* ===== PORTRAIT HANDHELD CONSOLE DASHBOARD ===== */
-        <div className="relative z-20 w-full flex-1 max-w-md mx-auto px-4 py-2 flex flex-col justify-between pointer-events-auto">
-          {/* Objective Guide Card */}
-          <div className="w-full">
-            {(() => {
-              const guide = getNextObjectiveInfo();
-              return (
-                <div 
-                  onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
-                  className="bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 text-[#fef08a] px-3 py-1.5 rounded-xl shadow-md flex items-center justify-between gap-2 transition-all cursor-pointer group"
-                  title="Buku Misi & Petunjuk Lokasi"
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300">
-                      <Compass className="w-3.5 h-3.5 text-white animate-spin-slow" />
-                    </div>
-                    <div className="min-w-0 flex flex-col text-left">
-                      <div className="flex items-center gap-1">
-                        <span className="font-pixel text-[7.5px] bg-amber-950/80 px-1.5 py-0.2 rounded text-amber-300 border border-amber-500/40 uppercase font-bold">
-                          {guide.badge}
-                        </span>
-                        <span className="font-pixel text-[7.5px] text-[#86efac] font-bold">
-                          📍 {guide.direction}
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-white/95 font-sans font-medium truncate">
-                        {guide.instruction}
-                      </p>
-                    </div>
+      {/* 3. Floating Quest Guidance Banner (Both in Portrait and Landscape) */}
+      {!activeNpcDialogue && (
+        <div 
+          className={`relative z-20 w-full ${isPortrait ? 'max-w-xs sm:max-w-sm px-2 pt-0.5' : isCompactLandscape ? 'max-w-md px-2 pt-1' : 'max-w-xl px-3.5 pt-2'} mx-auto transition-all duration-700 ease-out pointer-events-none ${
+            showGuidanceBanner ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+          }`}
+        >
+          {(() => {
+            const guide = getNextObjectiveInfo();
+            return (
+              <div 
+                onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
+                className={`pointer-events-auto bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 hover:border-[#facc15] text-[#fef08a] ${isPortrait ? 'px-2 py-1 rounded-lg gap-1.5' : 'px-3.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl gap-2.5'} shadow-[0_4px_16px_rgba(0,0,0,0.65)] flex items-center justify-between transition-all cursor-pointer group`}
+                title="Klik untuk membuka Buku Misi & Petunjuk Lokasi Lengkap"
+              >
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                  <div className={`${isPortrait ? 'w-5.5 h-5.5 rounded-md' : 'w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl'} bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300 shadow-xs`}>
+                    <Compass className={`${isPortrait ? 'w-3 h-3' : 'w-3.5 h-3.5 sm:w-4 sm:h-4'} text-white animate-spin-slow`} />
                   </div>
-                  <div className="flex items-center gap-0.5 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0">
-                    <span>MISI</span>
-                    <ChevronRight className="w-3 h-3 text-amber-400" />
+                  <div className="min-w-0 flex flex-col text-left">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <span className={`font-pixel ${isPortrait ? 'text-[7px] px-1 py-0' : 'text-[7.5px] sm:text-[9px] px-1.5 sm:px-2 py-0.2 sm:py-0.5'} bg-amber-950/80 rounded text-amber-300 border border-amber-500/40 uppercase font-bold tracking-wider`}>
+                        {guide.badge}
+                      </span>
+                      <span className={`font-pixel ${isPortrait ? 'text-[7px]' : 'text-[7.5px] sm:text-[9px]'} text-[#86efac] font-bold tracking-wide truncate`}>
+                        📍 {guide.direction}
+                      </span>
+                    </div>
+                    <p className={`${isPortrait ? 'text-[8.5px]' : 'text-[10px] sm:text-xs'} text-white/95 font-sans font-medium truncate mt-0.5`}>
+                      {guide.instruction}
+                    </p>
                   </div>
                 </div>
-              );
-            })()}
+
+                <div className="hidden sm:flex items-center gap-1 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0 group-hover:text-amber-200">
+                  <span>BUKU MISI</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* 4. Bottom In-World Controls: Floating over 100% Fullscreen RPG Canvas */}
+      <div className={`relative z-20 w-full rpg-bottom-bar ${isCompactLandscape ? 'p-1 px-2 pb-1' : isPortrait ? 'p-1.5 px-2 pb-3' : 'p-3 sm:p-6'} flex items-end justify-between pointer-events-none select-none`}>
+        
+        {/* Left Control: Virtual Analog Joystick on Mobile/Portrait / Keyboard Legend on Desktop PC */}
+        {(isMobileDevice || isPortrait) ? (
+          <div className="pointer-events-auto flex items-center justify-center p-0.5">
+            <VirtualAnalogJoystick 
+              touchInputRef={touchInputRef} 
+              isLandscape={isCompactLandscape} 
+              isForcedLandscape={false} 
+              isPortrait={isPortrait}
+            />
           </div>
-
-          {/* Dual-Thumb Handheld Controls (Analog Left, Action Buttons Right) */}
-          <div className="w-full flex items-center justify-between px-2 my-auto">
-            {/* Left Thumb: Virtual Analog Joystick */}
-            <div className="flex items-center justify-center">
-              <VirtualAnalogJoystick 
-                touchInputRef={touchInputRef} 
-                isLandscape={false} 
-                isForcedLandscape={false} 
-              />
-            </div>
-
-            {/* Right Thumb: [E] and [SPASI] Action Buttons */}
-            <div className="flex items-center gap-3">
-              {/* [E] BICARA / AMBIL Button */}
-              <button
-                onClick={handleActionE}
-                className={`w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-xl relative transition-all duration-200 border-2 ${
-                  nearbyQuestItem
-                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-yellow-300 ring-4 ring-yellow-400/80 shadow-[0_0_26px_rgba(250,204,21,0.95)] scale-105 animate-bounce text-white'
-                    : nearbyNpc
-                      ? (nearbyNpc.questStatus === 'turn_in'
-                          ? 'bg-gradient-to-b from-amber-600 to-amber-800 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
-                          : 'bg-[#15803d] border-[#4ade80] ring-4 ring-[#4ade80]/70 shadow-[0_0_24px_rgba(74,222,128,0.85)] scale-105 animate-pulse text-white')
-                      : nearbyConclusion
-                        ? 'bg-[#b45309] border-[#fde047] ring-4 ring-[#fde047]/75 shadow-[0_0_24px_rgba(253,224,71,0.9)] scale-105 animate-pulse text-white'
-                        : 'bg-[#14532d]/90 border-[#22c55e]/60 hover:bg-[#15803d] text-[#bbf7d0]'
-                }`}
-                title={nearbyQuestItem ? `Ambil ${nearbyQuestItem.name} [E]` : (nearbyConclusion && !nearbyNpc ? "Baca Kesimpulan [E]" : "Bicara dengan Karakter [E]")}
-              >
-                {nearbyQuestItem ? (
-                  <Package className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-200 mb-0.5 animate-pulse" />
-                ) : (
-                  <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac] mb-0.5" />
-                )}
-                <span className="font-pixel text-[9px] sm:text-[9.5px] font-black leading-none text-white">
-                  [E]
-                </span>
-                <span className="font-pixel text-[6px] sm:text-[6.5px] text-[#fde047] uppercase tracking-wider leading-none mt-0.5">
-                  {nearbyQuestItem 
-                    ? 'AMBIL' 
-                    : (nearbyNpc 
-                        ? (nearbyNpc.questStatus === 'turn_in' ? 'SERAHKAN' : 'BICARA') 
-                        : (nearbyConclusion ? 'SIMPULAN' : 'BICARA'))}
-                </span>
-              </button>
-
-              {/* [SPASI] MAIN STAGE Button */}
-              <button
-                onClick={handleActionSpace}
-                className={`w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-xl relative transition-all duration-200 border-2 ${
-                  nearbyStation
-                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
-                    : 'bg-gradient-to-b from-amber-800/90 to-amber-950/90 border-amber-500/50 hover:brightness-110 text-amber-200'
-                }`}
-                title="Mainkan Stage Stasiun [SPASI]"
-              >
-                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-300 text-amber-300 ml-0.5 mb-0.5" />
-                <span className="font-pixel text-[9px] sm:text-[9.5px] font-black leading-none text-[#fef08a]">
-                  [SPASI]
-                </span>
-                <span className="font-pixel text-[6px] sm:text-[6.5px] text-amber-200 uppercase tracking-wider leading-none mt-0.5">
-                  MAIN
-                </span>
-              </button>
-            </div>
+        ) : (
+          <div className="pointer-events-auto hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#241206]/85 border-2 border-[#854d0e]/60 text-amber-200 font-pixel text-[10px] shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-xs">
+            <span className="text-sm">⌨️</span>
+            <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">WASD / Panah</span>
+            <span>Jalan</span>
+            <span className="text-amber-400 mx-0.5">•</span>
+            <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[E]</span>
+            <span>Bicara/Ambil</span>
+            <span className="text-amber-400 mx-0.5">•</span>
+            <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[SPASI]</span>
+            <span>Aksi Lab</span>
           </div>
+        )}
 
-          {/* Bottom Landscape Hint */}
-          <div className="w-full flex items-center justify-center gap-1.5 py-1 text-center opacity-70">
-            <span className="text-xs">📱</span>
-            <span className="font-pixel text-[8px] text-amber-200/80 uppercase tracking-wider">
-              Miringkan HP ke landscape untuk layar penuh
+        {/* Center Orientation Hint in Portrait Mode - only visible on wide screens */}
+        {isPortrait && (
+          <div className="pointer-events-none hidden sm:flex items-center gap-1 pb-1 opacity-60 text-center">
+            <span className="text-[10px]">📱</span>
+            <span className="font-pixel text-[7.5px] text-amber-200/90 uppercase tracking-widest">
+              Layar Penuh
             </span>
           </div>
-        </div>
-      ) : (
-        /* ===== LANDSCAPE & DESKTOP BOTTOM BAR ===== */
-        <>
-          {/* 2b. Interactive Dynamic Quest Guidance Banner */}
-          {!activeNpcDialogue && (
-            <div 
-              className={`absolute ${isCompactLandscape ? 'top-10 max-w-md px-2' : 'top-16 sm:top-20 max-w-xl px-3.5'} left-1/2 -translate-x-1/2 z-20 w-full transition-all duration-1000 ease-out ${
-                showGuidanceBanner ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-3 pointer-events-none'
-              }`}
-            >
-              {(() => {
-                const guide = getNextObjectiveInfo();
-                return (
-                  <div 
-                    onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
-                    className="bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 hover:border-[#facc15] text-[#fef08a] px-3.5 py-2 rounded-2xl shadow-[0_6px_16px_rgba(0,0,0,0.65)] flex items-center justify-between gap-2.5 transition-all cursor-pointer group"
-                    title="Klik untuk membuka Buku Misi & Petunjuk Lokasi Lengkap"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300 shadow-xs">
-                        <Compass className="w-4 h-4 text-white animate-spin-slow" />
-                      </div>
-                      <div className="min-w-0 flex flex-col text-left">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-pixel text-[8px] sm:text-[9px] bg-amber-950/80 px-2 py-0.5 rounded text-amber-300 border border-amber-500/40 uppercase font-bold tracking-wider">
-                            {guide.badge}
-                          </span>
-                          <span className="font-pixel text-[8px] sm:text-[9px] text-[#86efac] font-bold tracking-wide">
-                            📍 {guide.direction}
-                          </span>
-                        </div>
-                        <p className="text-[10px] sm:text-xs text-white/95 font-sans font-medium truncate mt-0.5">
-                          {guide.instruction}
-                        </p>
-                      </div>
-                    </div>
+        )}
 
-                    <div className="hidden sm:flex items-center gap-1 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0 group-hover:text-amber-200">
-                      <span>BUKU MISI</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-          )}
-
-          {/* 3. Bottom In-World Controls: Virtual Analog for Mobile, Minimalist Badge for Desktop */}
-          <div className={`relative z-20 w-full rpg-bottom-bar ${isCompactLandscape ? 'p-1 px-2.5 pb-1.5' : 'p-3 sm:p-6'} flex items-end justify-between pointer-events-none select-none`}>
-            
-            {/* Left Control: Virtual Analog Joystick on Mobile / Clean Keycap Legend on Desktop */}
-            {isMobileDevice ? (
-              <div className="pointer-events-auto flex items-center justify-center p-0.5">
-                <VirtualAnalogJoystick 
-                  touchInputRef={touchInputRef} 
-                  isLandscape={isCompactLandscape} 
-                  isForcedLandscape={false} 
-                />
-              </div>
+        {/* Right Controls: [E] BICARA and [SPASI] MAIN STAGE Action Buttons */}
+        <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2.5">
+          {/* 1. BICARA / AMBIL ITEM Button ([E]) */}
+          <button
+            onClick={handleActionE}
+            className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : isPortrait ? 'w-11 h-11 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-xl relative transition-all duration-200 border-2 ${
+              nearbyQuestItem
+                ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-yellow-300 ring-4 ring-yellow-400/80 shadow-[0_0_26px_rgba(250,204,21,0.95)] scale-110 animate-bounce text-white'
+                : nearbyNpc
+                  ? (nearbyNpc.questStatus === 'turn_in'
+                      ? 'bg-gradient-to-b from-amber-600 to-amber-800 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
+                      : 'bg-[#15803d] border-[#4ade80] ring-4 ring-[#4ade80]/70 shadow-[0_0_24px_rgba(74,222,128,0.85)] scale-105 animate-pulse text-white')
+                  : nearbyConclusion
+                    ? 'bg-[#b45309] border-[#fde047] ring-4 ring-[#fde047]/75 shadow-[0_0_24px_rgba(253,224,71,0.9)] scale-105 animate-pulse text-white'
+                    : 'bg-[#14532d]/90 border-[#22c55e]/60 hover:bg-[#15803d] text-[#bbf7d0] opacity-90 hover:opacity-100'
+            }`}
+            title={nearbyQuestItem ? `Ambil ${nearbyQuestItem.name} [E]` : (nearbyConclusion && !nearbyNpc ? "Baca Kesimpulan [E]" : "Bicara dengan Karakter [E]")}
+          >
+            {nearbyQuestItem ? (
+              <Package className={`${isCompactLandscape || isPortrait ? 'w-3.5 h-3.5' : 'w-5 h-5'} text-yellow-200 mb-0.5 animate-pulse`} />
             ) : (
-              <div className="pointer-events-auto hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#241206]/85 border-2 border-[#854d0e]/60 text-amber-200 font-pixel text-[10px] shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-xs">
-                <span className="text-sm">⌨️</span>
-                <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">WASD / Panah</span>
-                <span>Jalan</span>
-                <span className="text-amber-400 mx-0.5">•</span>
-                <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[E]</span>
-                <span>Bicara/Ambil</span>
-                <span className="text-amber-400 mx-0.5">•</span>
-                <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[SPASI]</span>
-                <span>Aksi Lab</span>
-              </div>
+              <MessageSquare className={`${isCompactLandscape || isPortrait ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} text-[#86efac] mb-0.5`} />
             )}
+            <span className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-white`}>
+              [E]
+            </span>
+            <span className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-[#fde047] uppercase tracking-wider leading-none mt-0.5`}>
+              {nearbyQuestItem 
+                ? 'AMBIL' 
+                : (nearbyNpc 
+                    ? (nearbyNpc.questStatus === 'turn_in' ? 'SERAHKAN' : 'BICARA') 
+                    : (nearbyConclusion ? 'SIMPULAN' : 'BICARA'))}
+            </span>
+          </button>
 
-            {/* Distinct Controls: [E] BICARA and [SPASI] MAIN STAGE */}
-            <div className="pointer-events-auto flex items-center gap-1 sm:gap-2.5">
-              {/* 1. BICARA / AMBIL ITEM Button ([E]) */}
-              <button
-                onClick={handleActionE}
-                className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-lg relative transition-all duration-200 border-2 ${
-                  nearbyQuestItem
-                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-yellow-300 ring-4 ring-yellow-400/80 shadow-[0_0_26px_rgba(250,204,21,0.95)] scale-110 animate-bounce text-white'
-                    : nearbyNpc
-                      ? (nearbyNpc.questStatus === 'turn_in'
-                          ? 'bg-gradient-to-b from-amber-600 to-amber-800 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
-                          : 'bg-[#15803d] border-[#4ade80] ring-4 ring-[#4ade80]/70 shadow-[0_0_24px_rgba(74,222,128,0.85)] scale-105 animate-pulse text-white')
-                      : nearbyConclusion
-                        ? 'bg-[#b45309] border-[#fde047] ring-4 ring-[#fde047]/75 shadow-[0_0_24px_rgba(253,224,71,0.9)] scale-105 animate-pulse text-white'
-                        : 'bg-[#14532d]/85 border-[#22c55e]/50 hover:bg-[#15803d]/90 text-[#bbf7d0] opacity-85 hover:opacity-100'
-                }`}
-                title={nearbyQuestItem ? `Ambil ${nearbyQuestItem.name} [E]` : (nearbyConclusion && !nearbyNpc ? "Baca Kesimpulan [E]" : "Bicara dengan Karakter [E]")}
-              >
-                {nearbyQuestItem ? (
-                  <Package className={`${isCompactLandscape ? 'w-3.5 h-3.5' : 'w-5 h-5'} text-yellow-200 mb-0.5 animate-pulse`} />
-                ) : (
-                  <MessageSquare className={`${isCompactLandscape ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} text-[#86efac] mb-0.5`} />
-                )}
-                <span className={`font-pixel ${isCompactLandscape ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-white`}>
-                  [E]
-                </span>
-                <span className={`font-pixel ${isCompactLandscape ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-[#fde047] uppercase tracking-wider leading-none mt-0.5`}>
-                  {nearbyQuestItem 
-                    ? 'AMBIL' 
-                    : (nearbyNpc 
-                        ? (nearbyNpc.questStatus === 'turn_in' ? 'SERAHKAN' : 'BICARA') 
-                        : (nearbyConclusion ? 'SIMPULAN' : 'BICARA'))}
-                </span>
-              </button>
+          {/* 2. MAIN STAGE Button ([SPASI]) */}
+          <button
+            onClick={handleActionSpace}
+            className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : isPortrait ? 'w-11 h-11 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-xl relative transition-all duration-200 border-2 ${
+              nearbyStation
+                ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
+                : 'bg-gradient-to-b from-amber-800/90 to-amber-950/90 border-amber-500/50 hover:brightness-110 text-amber-200 opacity-90 hover:opacity-100'
+            }`}
+            title="Mainkan Stage Stasiun [SPASI]"
+          >
+            <Play className={`${isCompactLandscape || isPortrait ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} fill-amber-300 text-amber-300 ml-0.5 mb-0.5`} />
+            <span className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-[#fef08a]`}>
+              [SPASI]
+            </span>
+            <span className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-amber-200 uppercase tracking-wider leading-none mt-0.5`}>
+              MAIN
+            </span>
+          </button>
+        </div>
 
-              {/* 2. MAIN STAGE Button ([SPASI]) */}
-              <button
-                onClick={handleActionSpace}
-                className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-lg relative transition-all duration-200 border-2 ${
-                  nearbyStation
-                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
-                    : 'bg-gradient-to-b from-amber-800/85 to-amber-950/85 border-amber-500/40 hover:brightness-110 text-amber-200 opacity-85 hover:opacity-100'
-                }`}
-                title="Mainkan Stage Stasiun [SPASI]"
-              >
-                <Play className={`${isCompactLandscape ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} fill-amber-300 text-amber-300 ml-0.5 mb-0.5`} />
-                <span className={`font-pixel ${isCompactLandscape ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-[#fef08a]`}>
-                  [SPASI]
-                </span>
-                <span className={`font-pixel ${isCompactLandscape ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-amber-200 uppercase tracking-wider leading-none mt-0.5`}>
-                  MAIN
-                </span>
-              </button>
-            </div>
-
-          </div>
-        </>
-      )}
+      </div>
 
       {/* 3b. Visual Novel Character Interaction Scene (Dynamic 2-Way Conversation) */}
       {activeNpcDialogue && (() => {
@@ -6792,7 +6688,7 @@ export const PixelRpgWorld = () => {
             <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.55)_100%)]" />
 
             {/* 2. Top Header Bar: Stage Info & Close Button */}
-            <div className={`relative z-30 w-full ${isCompactLandscape ? 'p-2 px-3' : 'p-3 sm:p-5'} flex items-center justify-between pointer-events-auto`}>
+            <div className={`relative z-30 w-full ${isCompactLandscape || isPortrait ? 'p-1.5 px-2.5' : 'p-3 sm:p-5'} flex items-center justify-between pointer-events-auto`}>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#175225]/90 border-2 border-[#4ade80] rounded-full shadow-md backdrop-blur-xs">
                 <Sparkles className="w-3 h-3 text-[#facc15] animate-pulse" />
                 <span className="font-pixel text-[7.5px] sm:text-[9px] text-[#f0fdf4] uppercase tracking-wider font-bold">
@@ -6809,7 +6705,7 @@ export const PixelRpgWorld = () => {
                   activeNpcDialogueRef.current = null;
                   setActiveNpcDialogue(null);
                 }}
-                className={`flex items-center gap-1 bg-red-600/90 hover:bg-red-700 text-white border-2 border-white ${isCompactLandscape ? 'px-2 py-0.5 text-[7.5px] rounded-lg' : 'px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-[8px] sm:text-[10px]'} shadow-[0_4px_10px_rgba(220,38,38,0.5)] font-pixel tracking-wider uppercase transition-all cursor-pointer active:translate-y-0.5`}
+                className={`flex items-center gap-1 bg-red-600/90 hover:bg-red-700 text-white border-2 border-white ${isCompactLandscape || isPortrait ? 'px-2 py-0.5 text-[7.5px] rounded-lg' : 'px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-[8px] sm:text-[10px]'} shadow-[0_4px_10px_rgba(220,38,38,0.5)] font-pixel tracking-wider uppercase transition-all cursor-pointer active:translate-y-0.5`}
                 title="Tutup Percakapan [Esc]"
               >
                 <span>Tutup</span>
@@ -6821,12 +6717,12 @@ export const PixelRpgWorld = () => {
             <div className="relative z-20 w-full flex-1 max-w-5xl mx-auto px-3 sm:px-10 flex items-end justify-between pointer-events-none">
               
               {/* LEFT: Player Character (Facing Right toward NPC) */}
-              <div className={`flex flex-col items-center transition-all duration-300 pointer-events-none ${isCompactLandscape ? '-mb-4 sm:-mb-6' : '-mb-8 sm:-mb-12 md:-mb-14'} ${
+              <div className={`flex flex-col items-center transition-all duration-300 pointer-events-none ${isCompactLandscape || isPortrait ? '-mb-3 sm:-mb-6' : '-mb-8 sm:-mb-12 md:-mb-14'} ${
                 isPlayerSpeaking 
                   ? 'scale-105 drop-shadow-[0_0_20px_rgba(52,211,153,0.8)] brightness-105 z-10' 
                   : 'scale-95 brightness-[0.7] saturate-[0.85] z-0'
               }`}>
-                <div className={`${isCompactLandscape ? 'w-[95px] sm:w-[130px] max-h-[34vh]' : 'w-[140px] sm:w-[185px] md:w-[225px] lg:w-[250px] max-h-[46vh]'} flex items-end justify-center`}>
+                <div className={`${isCompactLandscape || isPortrait ? 'w-[85px] sm:w-[120px] max-h-[26vh]' : 'w-[140px] sm:w-[185px] md:w-[225px] lg:w-[250px] max-h-[46vh]'} flex items-end justify-center`}>
                   <img
                     src={activePlayerPortrait}
                     alt={`${activePlayerName} (Player)`}
@@ -6838,12 +6734,12 @@ export const PixelRpgWorld = () => {
               </div>
 
               {/* RIGHT: NPC Character (Facing Left toward Player) */}
-              <div className={`flex flex-col items-center transition-all duration-300 pointer-events-none ${isCompactLandscape ? '-mb-4 sm:-mb-6' : '-mb-8 sm:-mb-12 md:-mb-14'} ${
+              <div className={`flex flex-col items-center transition-all duration-300 pointer-events-none ${isCompactLandscape || isPortrait ? '-mb-3 sm:-mb-6' : '-mb-8 sm:-mb-12 md:-mb-14'} ${
                 !isPlayerSpeaking 
                   ? 'scale-105 drop-shadow-[0_0_20px_rgba(74,222,128,0.8)] brightness-105 z-10' 
                   : 'scale-95 brightness-[0.7] saturate-[0.85] z-0'
               }`}>
-                <div className={`${isCompactLandscape ? 'w-[95px] sm:w-[130px] max-h-[34vh]' : 'w-[140px] sm:w-[185px] md:w-[225px] lg:w-[250px] max-h-[46vh]'} flex items-end justify-center`}>
+                <div className={`${isCompactLandscape || isPortrait ? 'w-[85px] sm:w-[120px] max-h-[26vh]' : 'w-[140px] sm:w-[185px] md:w-[225px] lg:w-[250px] max-h-[46vh]'} flex items-end justify-center`}>
                   <img
                     src={getNpcVnSprite(activeNpcDialogue)}
                     alt={activeNpcDialogue.name}
@@ -6857,22 +6753,22 @@ export const PixelRpgWorld = () => {
             </div>
 
             {/* 4. Bottom: Visual Novel Dialogue Box (Matching Reference Screenshot) */}
-            <div className={`relative z-30 w-full ${isCompactLandscape ? 'p-1.5 sm:p-3 pb-2' : 'p-3 sm:p-5 md:p-6'} pointer-events-auto`}>
-              <div className={`relative max-w-5xl mx-auto bg-[#175225]/95 sm:bg-[#195a28]/95 border-t-4 border-[#3ca956] ${isCompactLandscape ? 'rounded-xl p-3 sm:p-4 shadow-[0_-6px_16px_rgba(0,0,0,0.65)]' : 'rounded-t-2xl sm:rounded-2xl p-5 sm:p-6 md:p-7 shadow-[0_-10px_25px_rgba(0,0,0,0.65)]'} backdrop-blur-xs text-left`}>
+            <div className={`relative z-30 w-full ${isCompactLandscape || isPortrait ? 'p-1.5 pb-2' : 'p-3 sm:p-5 md:p-6'} pointer-events-auto`}>
+              <div className={`relative max-w-5xl mx-auto bg-[#175225]/95 sm:bg-[#195a28]/95 border-t-4 border-[#3ca956] ${isCompactLandscape || isPortrait ? 'rounded-xl p-2.5 sm:p-4 shadow-[0_-6px_16px_rgba(0,0,0,0.65)]' : 'rounded-t-2xl sm:rounded-2xl p-5 sm:p-6 md:p-7 shadow-[0_-10px_25px_rgba(0,0,0,0.65)]'} backdrop-blur-xs text-left`}>
                 
                 {/* Name Tag Pill Badge (Top-Left of Box) - Dynamically indicates who is speaking */}
-                <div className={`absolute ${isCompactLandscape ? '-top-3.5 left-4' : '-top-5 left-5 sm:left-8'}`}>
-                  <div className={`border-2 ${isCompactLandscape ? 'px-2.5 py-0.5 rounded-lg' : 'px-4 py-1.5 rounded-xl'} shadow-md flex items-center gap-1.5 transition-all ${
+                <div className={`absolute ${isCompactLandscape || isPortrait ? '-top-3 left-3' : '-top-5 left-5 sm:left-8'}`}>
+                  <div className={`border-2 ${isCompactLandscape || isPortrait ? 'px-2 py-0.5 rounded-lg' : 'px-4 py-1.5 rounded-xl'} shadow-md flex items-center gap-1.5 transition-all ${
                     isPlayerSpeaking 
                       ? 'bg-[#d1fae5] border-[#059669]' 
                       : 'bg-[#dcfce7] border-[#15803d]'
                   }`}>
-                    <span className={`font-pixel ${isCompactLandscape ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs md:text-sm'} font-black uppercase tracking-wide ${
+                    <span className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[8.5px] sm:text-[10px]' : 'text-[10px] sm:text-xs md:text-sm'} font-black uppercase tracking-wide ${
                       isPlayerSpeaking ? 'text-[#065f46]' : 'text-[#14532d]'
                     }`}>
                       {speakerName}
                     </span>
-                    <span className={`font-pixel ${isCompactLandscape ? 'text-[7px]' : 'text-[8px] sm:text-[9px]'} px-1.5 py-0.2 rounded uppercase font-bold text-white ${
+                    <span className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[7px]' : 'text-[8px] sm:text-[9px]'} px-1.5 py-0.2 rounded uppercase font-bold text-white ${
                       isPlayerSpeaking ? 'bg-[#059669]' : 'bg-[#15803d]'
                     }`}>
                       {isPlayerSpeaking ? 'KAMU' : `STAGE ${activeNpcDialogue.stageId}`}
@@ -6881,8 +6777,8 @@ export const PixelRpgWorld = () => {
                 </div>
 
                 {/* Dialogue Text Content with Smooth Typewriter */}
-                <div className={`${isCompactLandscape ? 'pt-1 min-h-[48px]' : 'pt-2 min-h-[75px] sm:min-h-[90px] md:min-h-[105px]'} flex flex-col justify-center`}>
-                  <p className={`text-white ${isCompactLandscape ? 'text-[11px] sm:text-xs leading-snug' : 'text-xs sm:text-sm md:text-base leading-relaxed sm:leading-loose'} font-medium font-sans drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]`}>
+                <div className={`${isCompactLandscape || isPortrait ? 'pt-1 min-h-[44px]' : 'pt-2 min-h-[75px] sm:min-h-[90px] md:min-h-[105px]'} flex flex-col justify-center`}>
+                  <p className={`text-white ${isCompactLandscape || isPortrait ? 'text-[11px] leading-snug' : 'text-xs sm:text-sm md:text-base leading-relaxed sm:leading-loose'} font-medium font-sans drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]`}>
                     <span>{currentFullText.slice(0, dialogueCharIndex)}</span>
                     {isDialogueTyping && (
                       <span className="inline-block w-2 h-3.5 bg-[#4ade80] ml-1 animate-pulse align-middle" />
@@ -6895,7 +6791,7 @@ export const PixelRpgWorld = () => {
                 </div>
 
                 {/* Bottom Footer Indicators & Action Button */}
-                <div className={`${isCompactLandscape ? 'mt-1.5 pt-1.5' : 'mt-3 pt-2.5'} border-t border-[#3ca956]/40 flex flex-wrap items-center justify-between gap-2 text-[9px] sm:text-[11px] text-[#bbf7d0] font-sans`}>
+                <div className={`${isCompactLandscape || isPortrait ? 'mt-1.5 pt-1.5' : 'mt-3 pt-2.5'} border-t border-[#3ca956]/40 flex flex-wrap items-center justify-between gap-2 text-[9px] sm:text-[11px] text-[#bbf7d0] font-sans`}>
                   <div className="flex items-center gap-2">
                     <span className="font-pixel text-[7.5px] sm:text-[9px] bg-[#14532d] px-2 py-0.5 rounded text-[#86efac] border border-[#22c55e] font-bold">
                       {dialogueStep + 1} / {dialogues.length}
@@ -6915,11 +6811,11 @@ export const PixelRpgWorld = () => {
                           setActiveNpcDialogue(null);
                           launchStageGame(stId);
                         }}
-                        className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 border border-amber-300 text-amber-100 font-pixel text-[8px] sm:text-[10px] tracking-wider cursor-pointer active:translate-y-0.5 flex items-center gap-1.5 uppercase font-bold transition-all"
+                        className={`rounded-lg sm:rounded-xl bg-amber-600/80 hover:bg-amber-600 border border-amber-300 text-amber-100 font-pixel ${isCompactLandscape || isPortrait ? 'px-2.5 py-1 text-[7.5px]' : 'px-3 sm:px-3.5 py-1.5 sm:py-2 text-[8px] sm:text-[10px]'} tracking-wider cursor-pointer active:translate-y-0.5 flex items-center gap-1 uppercase font-bold transition-all`}
                         title="Lewati percakapan & langsung mainkan stage"
                       >
-                        <Play className="w-3 h-3 fill-current text-amber-300" />
-                        <span>Lewati & Main</span>
+                        <Play className="w-2.5 h-2.5 fill-current text-amber-300" />
+                        <span>Lewati</span>
                       </button>
                     )}
 
@@ -6929,7 +6825,7 @@ export const PixelRpgWorld = () => {
                         e.stopPropagation();
                         handleDialogueNext();
                       }}
-                      className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl border-2 font-pixel text-[9px] sm:text-xs tracking-wider cursor-pointer shadow-md active:translate-y-0.5 flex items-center gap-1.5 transition-all uppercase font-bold ${
+                      className={`rounded-lg sm:rounded-xl border-2 font-pixel ${isCompactLandscape || isPortrait ? 'px-3 py-1 text-[8px]' : 'px-4 sm:px-5 py-1.5 sm:py-2 text-[9px] sm:text-xs'} tracking-wider cursor-pointer shadow-md active:translate-y-0.5 flex items-center gap-1.5 transition-all uppercase font-bold ${
                         !isDialogueTyping && dialogueStep >= dialogues.length - 1
                           ? (activeNpcDialogue.activePhase === 'completed'
                               ? 'bg-gradient-to-b from-emerald-500 to-green-700 hover:brightness-110 border-emerald-300 text-white shadow-[0_0_20px_rgba(16,185,129,0.85)]'
@@ -6973,11 +6869,11 @@ export const PixelRpgWorld = () => {
             sound.playClick();
             setActiveConclusion(null);
           }}
-          className="fixed inset-0 z-50 overflow-y-auto select-none bg-black/65 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-5 pointer-events-auto animate-fade-in"
+          className={`fixed inset-0 z-50 overflow-y-auto select-none bg-black/65 backdrop-blur-[2px] flex items-center justify-center ${isPortrait || isCompactLandscape ? 'p-2.5' : 'p-3 sm:p-5'} pointer-events-auto animate-fade-in`}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-xl bg-[#241206] border-4 border-[#ca8a04] rounded-2xl p-5 sm:p-7 shadow-[0_0_35px_rgba(202,138,4,0.45)] text-amber-100 flex flex-col gap-4 font-sans text-left max-h-[92vh] overflow-y-auto"
+            className={`relative w-full max-w-xl bg-[#241206] border-4 border-[#ca8a04] rounded-2xl ${isPortrait || isCompactLandscape ? 'p-3.5 sm:p-5' : 'p-5 sm:p-7'} shadow-[0_0_35px_rgba(202,138,4,0.45)] text-amber-100 flex flex-col gap-3 sm:gap-4 font-sans text-left max-h-[92vh] overflow-y-auto`}
           >
             {/* Corner Decorative Studs */}
             <div className="absolute top-2.5 left-2.5 w-3 h-3 rounded-full bg-[#fde047] border border-[#78350f] shadow-xs" />
@@ -6991,7 +6887,7 @@ export const PixelRpgWorld = () => {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/90 border border-amber-500/50 text-[10px] sm:text-xs font-pixel font-bold uppercase tracking-wider text-amber-300 shadow-xs mb-1.5">
                   <span>{activeConclusion.badge}</span>
                 </div>
-                <h2 className="font-pixel text-xl sm:text-2xl text-[#fef08a] font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-wide">
+                <h2 className={`font-pixel ${isPortrait || isCompactLandscape ? 'text-base sm:text-xl' : 'text-xl sm:text-2xl'} text-[#fef08a] font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-wide`}>
                   {activeConclusion.title}
                 </h2>
                 <p className="text-xs sm:text-sm text-amber-200/90 font-medium">
@@ -7016,16 +6912,16 @@ export const PixelRpgWorld = () => {
               {activeConclusion.points?.map((pt, idx) => (
                 <div
                   key={idx}
-                  className="bg-[#361a0a]/80 border border-amber-700/50 rounded-xl p-3 sm:p-3.5 flex items-start gap-3 shadow-inner"
+                  className={`bg-[#361a0a]/80 border border-amber-700/50 rounded-xl ${isPortrait || isCompactLandscape ? 'p-2 sm:p-3 gap-2' : 'p-3 sm:p-3.5 gap-3'} flex items-start shadow-inner`}
                 >
-                  <span className="text-xl sm:text-2xl p-1.5 bg-[#200e04] rounded-lg border border-amber-900/60 shrink-0">
+                  <span className={`${isPortrait || isCompactLandscape ? 'text-lg sm:text-2xl p-1' : 'text-xl sm:text-2xl p-1.5'} bg-[#200e04] rounded-lg border border-amber-900/60 shrink-0`}>
                     {pt.icon}
                   </span>
                   <div className="flex-1">
-                    <h3 className="font-pixel text-xs sm:text-sm text-[#fef08a] font-bold tracking-wide mb-0.5">
+                    <h3 className={`font-pixel ${isPortrait || isCompactLandscape ? 'text-xs' : 'text-xs sm:text-sm'} text-[#fef08a] font-bold tracking-wide mb-0.5`}>
                       {pt.title}
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-amber-100/90 leading-relaxed font-sans">
+                    <p className={`${isPortrait || isCompactLandscape ? 'text-[10px] sm:text-xs' : 'text-[11px] sm:text-xs'} text-amber-100/90 leading-relaxed font-sans`}>
                       {pt.desc}
                     </p>
                   </div>
@@ -7058,7 +6954,7 @@ export const PixelRpgWorld = () => {
                 sound.playClick();
                 setActiveConclusion(null);
               }}
-              className="mt-1 w-full py-2.5 sm:py-3 rounded-xl bg-gradient-to-b from-amber-600 to-amber-800 hover:from-amber-500 hover:to-amber-700 border-2 border-amber-300 text-white font-pixel text-xs sm:text-sm tracking-wider uppercase font-bold shadow-[0_4px_0_#451a03] active:translate-y-1 cursor-pointer transition-all flex items-center justify-center gap-2"
+              className={`mt-1 w-full ${isPortrait || isCompactLandscape ? 'py-2 text-xs' : 'py-2.5 sm:py-3 text-xs sm:text-sm'} rounded-xl bg-gradient-to-b from-amber-600 to-amber-800 hover:from-amber-500 hover:to-amber-700 border-2 border-amber-300 text-white font-pixel tracking-wider uppercase font-bold shadow-[0_4px_0_#451a03] active:translate-y-1 cursor-pointer transition-all flex items-center justify-center gap-2`}
             >
               <CheckCircle2 className="w-4 h-4 text-emerald-300" />
               <span>SAYA PAHAM KESIMPULAN INI</span>
@@ -7069,9 +6965,9 @@ export const PixelRpgWorld = () => {
 
       {/* 3d. Celebratory Quest Item Pickup Notification Toast */}
       {pickupToast && (
-        <div className="fixed top-28 sm:top-32 left-1/2 -translate-x-1/2 z-50 animate-bounce pointer-events-none px-3 w-full max-w-md">
-          <div className="bg-[#1c0a02]/95 border-2 border-[#facc15] text-[#fef08a] px-4 py-3 rounded-2xl shadow-[0_0_30px_rgba(250,204,21,0.7)] flex items-center gap-3.5 backdrop-blur-md text-left">
-            <div className="w-12 h-12 shrink-0 p-1.5 bg-[#361706] rounded-xl border-2 border-amber-500/50 shadow-inner flex items-center justify-center">
+        <div className={`fixed ${isPortrait || isCompactLandscape ? 'top-14 max-w-xs px-2' : 'top-28 sm:top-32 max-w-md px-3'} left-1/2 -translate-x-1/2 z-50 animate-bounce pointer-events-none w-full`}>
+          <div className={`bg-[#1c0a02]/95 border-2 border-[#facc15] text-[#fef08a] ${isPortrait || isCompactLandscape ? 'px-2.5 py-2 rounded-xl gap-2' : 'px-4 py-3 rounded-2xl gap-3.5'} shadow-[0_0_30px_rgba(250,204,21,0.7)] flex items-center backdrop-blur-md text-left`}>
+            <div className={`${isPortrait || isCompactLandscape ? 'w-9 h-9 p-1' : 'w-12 h-12 p-1.5'} shrink-0 bg-[#361706] rounded-xl border-2 border-amber-500/50 shadow-inner flex items-center justify-center`}>
               <img src={pickupToast.item.iconSrc} alt={pickupToast.item.name} className="w-full h-full object-contain" />
             </div>
             <div className="min-w-0 flex-1">
@@ -7180,17 +7076,17 @@ export const PixelRpgWorld = () => {
               setIsInventoryOpen(false);
               setSelectedJournalQuestId(null);
             }}
-            className="fixed inset-0 z-50 select-none bg-black/70 backdrop-blur-[3px] flex items-center justify-center p-6 sm:p-8 md:p-10 pointer-events-auto animate-fade-in overflow-y-auto"
+            className={`fixed inset-0 z-50 select-none bg-black/70 backdrop-blur-[3px] flex items-center justify-center ${isPortrait || isCompactLandscape ? 'p-2' : 'p-6 sm:p-8 md:p-10'} pointer-events-auto animate-fade-in overflow-y-auto`}
           >
             {/* Main Stardew Journal Board (overflow-visible ensures ribbon & close button are NEVER clipped) */}
             <div
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-lg sm:max-w-xl md:max-w-2xl stardew-journal-board rounded-2xl p-5 sm:p-7 text-[#3b1704] flex flex-col font-sans text-left shadow-2xl overflow-visible my-auto"
+              className={`relative w-full max-w-lg sm:max-w-xl md:max-w-2xl stardew-journal-board rounded-2xl ${isPortrait || isCompactLandscape ? 'p-3.5 pt-4' : 'p-5 sm:p-7'} text-[#3b1704] flex flex-col font-sans text-left shadow-2xl overflow-visible my-auto`}
             >
               {/* Top Parchment Ribbon Scroll: "Journal" (Matching Stardew Valley) - z-30 & overflow-visible prevents cut-off */}
               <div className="absolute -top-5 sm:-top-5.5 left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none z-30">
-                <div className="stardew-scroll-banner px-8 sm:px-12 py-1 sm:py-1.5 rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.5)] flex items-center gap-2">
-                  <span className="font-stardew font-black text-base sm:text-xl text-[#4a1d04] tracking-widest uppercase drop-shadow-xs">
+                <div className={`stardew-scroll-banner ${isPortrait || isCompactLandscape ? 'px-6 py-0.5' : 'px-8 sm:px-12 py-1 sm:py-1.5'} rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.5)] flex items-center gap-2`}>
+                  <span className={`font-stardew font-black ${isPortrait || isCompactLandscape ? 'text-sm' : 'text-base sm:text-xl'} text-[#4a1d04] tracking-widest uppercase drop-shadow-xs`}>
                     Journal
                   </span>
                 </div>
@@ -7203,10 +7099,10 @@ export const PixelRpgWorld = () => {
                   setIsInventoryOpen(false);
                   setSelectedJournalQuestId(null);
                 }}
-                className="absolute -top-3.5 -right-3.5 w-9 h-9 sm:w-10 sm:h-10 rounded-xl stardew-close-btn flex items-center justify-center cursor-pointer text-[#fffbeb] shadow-[0_4px_8px_rgba(0,0,0,0.6)] z-30 hover:scale-105 active:scale-95 transition-transform"
+                className={`absolute -top-3 -right-3 ${isPortrait || isCompactLandscape ? 'w-7 h-7' : 'w-9 h-9 sm:w-10 sm:h-10'} rounded-xl stardew-close-btn flex items-center justify-center cursor-pointer text-[#fffbeb] shadow-[0_4px_8px_rgba(0,0,0,0.6)] z-30 hover:scale-105 active:scale-95 transition-transform`}
                 title="Tutup Jurnal [ESC / J]"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
+                <X className={`${isPortrait || isCompactLandscape ? 'w-4 h-4' : 'w-5 h-5 sm:w-6 sm:h-6'} stroke-[3]`} />
               </button>
 
               {/* Left Back Arrow Tab: Displayed when viewing Quest Detail Pop-Up (Matching Stardew Valley Screenshot) */}
@@ -7216,10 +7112,10 @@ export const PixelRpgWorld = () => {
                     sound.playClick();
                     setSelectedJournalQuestId(null);
                   }}
-                  className="absolute top-1/2 -left-3.5 sm:-left-4.5 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-lg stardew-back-btn flex items-center justify-center cursor-pointer text-[#fffbeb] shadow-[0_4px_8px_rgba(0,0,0,0.6)] z-30 group hover:scale-110 active:scale-95 transition-transform"
+                  className={`absolute top-1/2 ${isPortrait || isCompactLandscape ? '-left-2.5 w-7 h-7' : '-left-3.5 sm:-left-4.5 w-8 h-8 sm:w-9 sm:h-9'} -translate-y-1/2 rounded-lg stardew-back-btn flex items-center justify-center cursor-pointer text-[#fffbeb] shadow-[0_4px_8px_rgba(0,0,0,0.6)] z-30 group hover:scale-110 active:scale-95 transition-transform`}
                   title="Kembali ke Daftar Misi"
                 >
-                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3] group-hover:-translate-x-0.5 transition-transform" />
+                  <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 stroke-[3] group-hover:-translate-x-0.5 transition-transform" />
                 </button>
               )}
 
@@ -7236,7 +7132,7 @@ export const PixelRpgWorld = () => {
                     </div>
 
                     {/* Stack of Stardew Wooden Quest Bars */}
-                    <div className="flex flex-col gap-2.5 mt-1">
+                    <div className="flex flex-col gap-2 mt-1">
                       {allQuests.map((quest) => (
                         <button
                           key={quest.id}
@@ -7244,40 +7140,40 @@ export const PixelRpgWorld = () => {
                             sound.playClick();
                             setSelectedJournalQuestId(quest.id);
                           }}
-                          className="w-full stardew-quest-bar rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between cursor-pointer group text-left transition-transform hover:scale-[1.01] active:scale-[0.99]"
+                          className={`w-full stardew-quest-bar rounded-xl ${isPortrait || isCompactLandscape ? 'px-2.5 py-2' : 'px-3.5 sm:px-4 py-2.5 sm:py-3'} flex items-center justify-between cursor-pointer group text-left transition-transform hover:scale-[1.01] active:scale-[0.99]`}
                         >
-                          <div className="flex items-center gap-3 min-w-0 pr-2">
+                          <div className="flex items-center gap-2 sm:gap-3 min-w-0 pr-2">
                             {/* Dark Brown Exclamation Mark in Left Slot */}
-                            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md flex items-center justify-center bg-[#fdf0d5] border-2 border-[#5c2a08] shrink-0 shadow-xs">
-                              <span className="font-serif font-black text-[#4a1d04] text-sm sm:text-base leading-none">!</span>
+                            <div className={`${isPortrait || isCompactLandscape ? 'w-5.5 h-5.5' : 'w-6 h-6 sm:w-7 sm:h-7'} rounded-md flex items-center justify-center bg-[#fdf0d5] border-2 border-[#5c2a08] shrink-0 shadow-xs`}>
+                              <span className="font-serif font-black text-[#4a1d04] text-xs sm:text-base leading-none">!</span>
                             </div>
 
                             {/* Quest Title */}
-                            <span className="font-stardew font-bold text-xs sm:text-sm md:text-base text-[#3b1704] truncate tracking-wide">
+                            <span className={`font-stardew font-bold ${isPortrait || isCompactLandscape ? 'text-xs' : 'text-xs sm:text-sm md:text-base'} text-[#3b1704] truncate tracking-wide`}>
                               {quest.title}
                             </span>
                           </div>
 
                           {/* Status Badge */}
-                          <div className="flex items-center gap-2 shrink-0">
+                          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                             {quest.isCompleted ? (
-                              <span className="font-pixel text-[8px] sm:text-[9px] px-2 py-0.5 rounded-md bg-emerald-800 border border-[#2b1003] text-emerald-100 font-bold uppercase shadow-xs">
+                              <span className="font-pixel text-[7.5px] sm:text-[9px] px-1.5 sm:px-2 py-0.5 rounded-md bg-emerald-800 border border-[#2b1003] text-emerald-100 font-bold uppercase shadow-xs">
                                 Selesai ✓
                               </span>
                             ) : quest.isTurnedIn ? (
-                              <span className="font-pixel text-[8px] sm:text-[9px] px-2 py-0.5 rounded-md bg-teal-800 border border-[#2b1003] text-teal-100 font-bold uppercase shadow-xs">
+                              <span className="font-pixel text-[7.5px] sm:text-[9px] px-1.5 sm:px-2 py-0.5 rounded-md bg-teal-800 border border-[#2b1003] text-teal-100 font-bold uppercase shadow-xs">
                                 Diserahkan
                               </span>
                             ) : quest.isCollected ? (
-                              <span className="font-pixel text-[8px] sm:text-[9px] px-2 py-0.5 rounded-md bg-amber-600 border border-[#2b1003] text-amber-100 font-bold uppercase animate-pulse shadow-xs">
+                              <span className="font-pixel text-[7.5px] sm:text-[9px] px-1.5 sm:px-2 py-0.5 rounded-md bg-amber-600 border border-[#2b1003] text-amber-100 font-bold uppercase animate-pulse shadow-xs">
                                 Item di Tas!
                               </span>
                             ) : (
-                              <span className="font-pixel text-[8px] sm:text-[9px] px-2 py-0.5 rounded-md bg-[#8d4715] border border-[#2b1003] text-amber-100 font-bold uppercase shadow-xs">
+                              <span className="font-pixel text-[7.5px] sm:text-[9px] px-1.5 sm:px-2 py-0.5 rounded-md bg-[#8d4715] border border-[#2b1003] text-amber-100 font-bold uppercase shadow-xs">
                                 {quest.badge || 'Sedang Dicari'}
                               </span>
                             )}
-                            <ChevronRight className="w-4 h-4 text-[#5c2a08] group-hover:translate-x-0.5 transition-transform" />
+                            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#5c2a08] group-hover:translate-x-0.5 transition-transform" />
                           </div>
                         </button>
                       ))}
@@ -7286,7 +7182,7 @@ export const PixelRpgWorld = () => {
                       {Array.from({ length: Math.max(0, 5 - allQuests.length) }).map((_, idx) => (
                         <div
                           key={`empty_${idx}`}
-                          className="w-full h-11 sm:h-12 rounded-xl stardew-empty-slot flex items-center px-4 opacity-50"
+                          className="w-full h-9 sm:h-12 rounded-xl stardew-empty-slot flex items-center px-4 opacity-50"
                         >
                           <span className="font-serif font-bold text-[#6d3512] text-sm opacity-60">!</span>
                         </div>
@@ -7294,15 +7190,15 @@ export const PixelRpgWorld = () => {
                     </div>
 
                     {/* Bottom Close Bar */}
-                    <div className="mt-2 pt-2 border-t-2 border-[#5c2a08]/30 flex items-center justify-between text-[10px] sm:text-xs text-[#4a1d04] font-stardew">
-                      <span>Tekan [ESC] atau [J] untuk kembali ke kebun biara</span>
+                    <div className="mt-2 pt-2 border-t-2 border-[#5c2a08]/30 flex items-center justify-between text-[9px] sm:text-xs text-[#4a1d04] font-stardew">
+                      <span>Tekan [ESC] atau [J] untuk kembali</span>
                       <button
                         onClick={() => {
                           sound.playClick();
                           setIsInventoryOpen(false);
                           setSelectedJournalQuestId(null);
                         }}
-                        className="px-4 py-1.5 rounded-lg bg-[#b45309] hover:bg-[#853706] text-[#fffbeb] font-stardew font-bold cursor-pointer active:translate-y-0.5 border border-[#3b1704]"
+                        className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg bg-[#b45309] hover:bg-[#853706] text-[#fffbeb] font-stardew font-bold cursor-pointer active:translate-y-0.5 border border-[#3b1704]"
                       >
                         Tutup
                       </button>
@@ -7310,57 +7206,57 @@ export const PixelRpgWorld = () => {
                   </>
                 ) : (
                   /* ================= 2. POPUP DETAIL VIEW (Exact Stardew Valley Layout) ================= */
-                  <div className="stardew-quest-parchment rounded-xl p-4 sm:p-6 text-[#3b1704] flex flex-col justify-between min-h-[320px] sm:min-h-[360px] animate-fade-in">
-                    <div className="space-y-4">
+                  <div className={`stardew-quest-parchment rounded-xl ${isPortrait || isCompactLandscape ? 'p-2.5 min-h-[260px]' : 'p-4 sm:p-6 min-h-[320px] sm:min-h-[360px]'} text-[#3b1704] flex flex-col justify-between animate-fade-in`}>
+                    <div className="space-y-3 sm:space-y-4">
                       {/* Centered Quest Title (Stardew Style) */}
-                      <div className="text-center border-b border-[#a85817]/30 pb-2">
-                        <h2 className="font-stardew font-bold text-lg sm:text-xl md:text-2xl text-[#3b1704] tracking-wide">
+                      <div className="text-center border-b border-[#a85817]/30 pb-1.5 sm:pb-2">
+                        <h2 className={`font-stardew font-bold ${isPortrait || isCompactLandscape ? 'text-sm sm:text-base' : 'text-lg sm:text-xl md:text-2xl'} text-[#3b1704] tracking-wide`}>
                           {selectedQuest.title}
                         </h2>
                         {selectedQuest.subtitle && (
-                          <p className="font-serif italic text-xs text-[#78350f] mt-0.5">
+                          <p className="font-serif italic text-[11px] sm:text-xs text-[#78350f] mt-0.5">
                             {selectedQuest.subtitle}
                           </p>
                         )}
                       </div>
 
                       {/* Story / Narrative Description (Clean, warm, readable, matching Stardew body text) */}
-                      <p className="text-xs sm:text-sm md:text-base text-[#3b1704] leading-relaxed font-serif text-justify sm:text-left px-1">
+                      <p className={`${isPortrait || isCompactLandscape ? 'text-[11px]' : 'text-xs sm:text-sm md:text-base'} text-[#3b1704] leading-relaxed font-serif text-justify sm:text-left px-1`}>
                         {selectedQuest.description}
                       </p>
 
                       {/* Quest Giver & Target Item Card */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-[#f5dfb8]/70 border border-[#a85817]/40 text-xs">
-                        <div className="flex items-center gap-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded-lg bg-[#f5dfb8]/70 border border-[#a85817]/40 text-xs">
+                        <div className="flex items-center gap-2">
                           {selectedQuest.giverPortrait && (
                             <img
                               src={selectedQuest.giverPortrait}
                               alt={selectedQuest.giver}
-                              className="w-9 h-9 rounded-lg object-contain bg-[#e8be89] border border-[#5c2a08] shrink-0 p-0.5"
+                              className="w-8 h-8 rounded-lg object-contain bg-[#e8be89] border border-[#5c2a08] shrink-0 p-0.5"
                             />
                           )}
                           <div>
                             <div className="font-stardew font-bold text-[#4a1d04] text-xs sm:text-sm">
                               Pemberi Misi: {selectedQuest.giver}
                             </div>
-                            <div className="text-[10px] sm:text-[11px] text-[#78350f] font-pixel">
+                            <div className="text-[9px] sm:text-[11px] text-[#78350f] font-pixel">
                               {selectedQuest.giverRole}
                             </div>
                           </div>
                         </div>
 
                         {selectedQuest.targetItem && (
-                          <div className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#fff3db] border border-[#8a4313]/60 shadow-xs">
+                          <div className="flex items-center gap-2 px-2 py-0.5 rounded-md bg-[#fff3db] border border-[#8a4313]/60 shadow-xs">
                             <img
                               src={selectedQuest.targetItem.iconSrc}
                               alt={selectedQuest.targetItem.name}
-                              className="w-5 h-5 object-contain"
+                              className="w-4.5 h-4.5 object-contain"
                             />
                             <div className="text-left">
-                              <span className="font-stardew font-bold text-[11px] text-[#4a1d04] block leading-tight">
+                              <span className="font-stardew font-bold text-[10px] sm:text-[11px] text-[#4a1d04] block leading-tight">
                                 {selectedQuest.targetItem.name}
                               </span>
-                              <span className="font-pixel text-[8px] text-[#78350f]">
+                              <span className="font-pixel text-[7.5px] sm:text-[8px] text-[#78350f]">
                                 {selectedQuest.isCollected || selectedQuest.isTurnedIn || selectedQuest.isCompleted ? '✓ Ditemukan' : 'Hilang di Kebun'}
                               </span>
                             </div>
@@ -7369,14 +7265,14 @@ export const PixelRpgWorld = () => {
                       </div>
 
                       {/* Objectives Checklist with Stardew Valley Golden Arrowheads ▶ */}
-                      <div className="space-y-2.5 pt-1 px-1">
-                        <div className="font-stardew text-xs sm:text-sm text-[#4a1d04] font-bold uppercase tracking-wider mb-2">
+                      <div className="space-y-2 pt-1 px-1">
+                        <div className="font-stardew text-xs sm:text-sm text-[#4a1d04] font-bold uppercase tracking-wider mb-1.5">
                           Sasaran Misi:
                         </div>
                         {selectedQuest.checklist.map((chk, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm md:text-base leading-snug">
+                          <div key={idx} className={`flex items-start gap-2 ${isPortrait || isCompactLandscape ? 'text-[11px] sm:text-xs' : 'text-xs sm:text-sm md:text-base'} leading-snug`}>
                             {chk.done ? (
-                              <span className="text-emerald-700 font-bold shrink-0 text-base leading-none">✓</span>
+                              <span className="text-emerald-700 font-bold shrink-0 text-sm sm:text-base leading-none">✓</span>
                             ) : (
                               <span className="text-[#b45309] font-black shrink-0 text-xs sm:text-sm leading-none mt-0.5">▶</span>
                             )}
@@ -7389,35 +7285,35 @@ export const PixelRpgWorld = () => {
                     </div>
 
                     {/* Bottom Navigation & Status Bar */}
-                    <div className="mt-5 pt-3 border-t border-[#a85817]/30 flex items-center justify-between">
+                    <div className="mt-4 pt-2.5 border-t border-[#a85817]/30 flex items-center justify-between">
                       {/* Left: Back to Journal List button */}
                       <button
                         onClick={() => {
                           sound.playClick();
                           setSelectedJournalQuestId(null);
                         }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#e2ad71]/50 hover:bg-[#e2ad71]/80 text-[#3b1704] font-stardew font-bold text-xs sm:text-sm border border-[#8a4313]/60 cursor-pointer active:translate-y-0.5 transition-colors"
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#e2ad71]/50 hover:bg-[#e2ad71]/80 text-[#3b1704] font-stardew font-bold text-[11px] sm:text-sm border border-[#8a4313]/60 cursor-pointer active:translate-y-0.5 transition-colors"
                       >
-                        <ChevronLeft className="w-4 h-4 stroke-[3]" />
-                        Kembali ke Daftar
+                        <ChevronLeft className="w-3.5 h-3.5 stroke-[3]" />
+                        Kembali
                       </button>
 
                       {/* Right: Quest Status Badge */}
                       <div>
                         {selectedQuest.isCompleted ? (
-                          <span className="font-pixel text-[9px] sm:text-[10px] px-3 py-1 rounded-md bg-emerald-800 border border-[#2b1003] text-emerald-100 font-bold uppercase shadow-xs">
+                          <span className="font-pixel text-[8px] sm:text-[10px] px-2 sm:px-3 py-0.5 sm:py-1 rounded-md bg-emerald-800 border border-[#2b1003] text-emerald-100 font-bold uppercase shadow-xs">
                             Misi Selesai ✓
                           </span>
                         ) : selectedQuest.isTurnedIn ? (
-                          <span className="font-pixel text-[9px] sm:text-[10px] px-3 py-1 rounded-md bg-teal-800 border border-[#2b1003] text-teal-100 font-bold uppercase shadow-xs">
-                            Diserahkan ke Pemberi
+                          <span className="font-pixel text-[8px] sm:text-[10px] px-2 sm:px-3 py-0.5 sm:py-1 rounded-md bg-teal-800 border border-[#2b1003] text-teal-100 font-bold uppercase shadow-xs">
+                            Diserahkan
                           </span>
                         ) : selectedQuest.isCollected ? (
-                          <span className="font-pixel text-[9px] sm:text-[10px] px-3 py-1 rounded-md bg-amber-600 border border-[#2b1003] text-amber-100 font-bold uppercase animate-pulse shadow-xs">
+                          <span className="font-pixel text-[8px] sm:text-[10px] px-2 sm:px-3 py-0.5 sm:py-1 rounded-md bg-amber-600 border border-[#2b1003] text-amber-100 font-bold uppercase animate-pulse shadow-xs">
                             Item Siap Diserahkan!
                           </span>
                         ) : (
-                          <span className="font-pixel text-[9px] sm:text-[10px] px-3 py-1 rounded-md bg-[#8d4715] border border-[#2b1003] text-amber-100 font-bold uppercase shadow-xs">
+                          <span className="font-pixel text-[8px] sm:text-[10px] px-2 sm:px-3 py-0.5 sm:py-1 rounded-md bg-[#8d4715] border border-[#2b1003] text-amber-100 font-bold uppercase shadow-xs">
                             {selectedQuest.badge || 'Sedang Berjalan'}
                           </span>
                         )}
@@ -7434,13 +7330,13 @@ export const PixelRpgWorld = () => {
       {/* 4a. Welcome & First Quest Onboarding Modal (Step 1: Sambutan Datang di 1865 & Misi Pertama, Step 2: Petunjuk Tanda Seru ! di Kepala NPC) */}
       {welcomeStep && (
         <div 
-          className={`fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none`}
+          className={`fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape || isPortrait ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none`}
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className={`w-full ${isCompactLandscape ? 'max-w-md max-h-[96vh] overflow-y-auto p-1.5' : 'max-w-lg p-2 sm:p-2.5'} rounded-2xl sm:rounded-3xl border-4 border-[#3e1f0b] bg-[#b07844] shadow-[0_16px_40px_rgba(0,0,0,0.8)] relative animate-scale-up modal-landscape-compact`}
+            className={`w-full ${isCompactLandscape || isPortrait ? 'max-w-md max-h-[96vh] overflow-y-auto p-1.5' : 'max-w-lg p-2 sm:p-2.5'} rounded-2xl sm:rounded-3xl border-4 border-[#3e1f0b] bg-[#b07844] shadow-[0_16px_40px_rgba(0,0,0,0.8)] relative animate-scale-up modal-landscape-compact`}
           >
-            <div className={`w-full rounded-xl sm:rounded-2xl bg-[#fae8b6] border-2 border-[#834f24] ${isCompactLandscape ? 'p-2.5 sm:p-3' : 'p-4 sm:p-6'} text-center text-[#2a1306] flex flex-col items-center`}>
+            <div className={`w-full rounded-xl sm:rounded-2xl bg-[#fae8b6] border-2 border-[#834f24] ${isCompactLandscape || isPortrait ? 'p-2.5 sm:p-3' : 'p-4 sm:p-6'} text-center text-[#2a1306] flex flex-col items-center`}>
               
               {/* Wooden [X] Close Button */}
               <button
@@ -7451,7 +7347,7 @@ export const PixelRpgWorld = () => {
                     sessionStorage.setItem('genetic_odyssey_rpg_welcome_seen', 'true');
                   } catch (e) {}
                 }}
-                className={`absolute ${isCompactLandscape ? 'top-2 right-2 w-6 h-6 text-xs' : 'top-4 sm:top-5 right-4 sm:right-5 w-7 h-7 sm:w-8 sm:h-8 text-sm sm:text-base'} rounded-lg bg-[#b07844] hover:bg-[#c98e57] active:bg-[#976435] border-2 border-[#3e1f0b] shadow-[2px_2px_0px_#3e1f0b] text-[#2a1306] font-mono font-black flex items-center justify-center cursor-pointer transition-all z-10`}
+                className={`absolute ${isCompactLandscape || isPortrait ? 'top-2 right-2 w-6 h-6 text-xs' : 'top-4 sm:top-5 right-4 sm:right-5 w-7 h-7 sm:w-8 sm:h-8 text-sm sm:text-base'} rounded-lg bg-[#b07844] hover:bg-[#c98e57] active:bg-[#976435] border-2 border-[#3e1f0b] shadow-[2px_2px_0px_#3e1f0b] text-[#2a1306] font-mono font-black flex items-center justify-center cursor-pointer transition-all z-10`}
                 title="Tutup Sambutan"
               >
                 ✕
@@ -7467,28 +7363,28 @@ export const PixelRpgWorld = () => {
                   </div>
 
                   {/* Main Title */}
-                  <h2 className={`font-pixel ${isCompactLandscape ? 'text-sm sm:text-base' : 'text-base sm:text-xl md:text-2xl'} font-black text-[#2b1103] leading-tight mb-1`}>
+                  <h2 className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-sm sm:text-base' : 'text-base sm:text-xl md:text-2xl'} font-black text-[#2b1103] leading-tight mb-1`}>
                     SELAMAT DATANG DI TAHUN 1865!
                   </h2>
-                  <p className={`font-pixel ${isCompactLandscape ? 'text-[8px] mb-2' : 'text-[9px] sm:text-[10.5px] mb-3'} text-[#78350f] font-bold`}>
+                  <p className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[8px] mb-2' : 'text-[9px] sm:text-[10.5px] mb-3'} text-[#78350f] font-bold`}>
                     Kamu telah terlempar ke masa lalu di Kebun Biara Santo Thomas!
                   </p>
 
                   {/* Hero Icons Row */}
-                  <div className={`flex items-center justify-center gap-2.5 ${isCompactLandscape ? 'mb-2' : 'mb-3.5'}`}>
-                    <div className={`${isCompactLandscape ? 'w-9 h-9 text-lg' : 'w-11 h-11 sm:w-12 sm:h-12 text-2xl'} rounded-xl bg-[#ecd8b0] border-2 border-[#834f24] flex items-center justify-center shadow-xs`}>
+                  <div className={`flex items-center justify-center gap-2.5 ${isCompactLandscape || isPortrait ? 'mb-2' : 'mb-3.5'}`}>
+                    <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8 text-base' : 'w-11 h-11 sm:w-12 sm:h-12 text-2xl'} rounded-xl bg-[#ecd8b0] border-2 border-[#834f24] flex items-center justify-center shadow-xs`}>
                       🌱
                     </div>
-                    <div className={`${isCompactLandscape ? 'w-9 h-9 text-lg' : 'w-11 h-11 sm:w-12 sm:h-12 text-2xl'} rounded-xl bg-[#ecd8b0] border-2 border-[#834f24] flex items-center justify-center shadow-xs`}>
+                    <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8 text-base' : 'w-11 h-11 sm:w-12 sm:h-12 text-2xl'} rounded-xl bg-[#ecd8b0] border-2 border-[#834f24] flex items-center justify-center shadow-xs`}>
                       📜
                     </div>
-                    <div className={`${isCompactLandscape ? 'w-9 h-9 text-lg' : 'w-11 h-11 sm:w-12 sm:h-12 text-2xl'} rounded-xl bg-[#ecd8b0] border-2 border-[#834f24] flex items-center justify-center shadow-xs`}>
+                    <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8 text-base' : 'w-11 h-11 sm:w-12 sm:h-12 text-2xl'} rounded-xl bg-[#ecd8b0] border-2 border-[#834f24] flex items-center justify-center shadow-xs`}>
                       🔬
                     </div>
                   </div>
 
                   {/* Mission 1 Golden Box */}
-                  <div className={`w-full rounded-xl bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-2 border-[#d97706] ${isCompactLandscape ? 'p-2 mb-2' : 'p-3 sm:p-4 mb-3'} text-left shadow-xs`}>
+                  <div className={`w-full rounded-xl bg-gradient-to-b from-[#fffbeb] to-[#fef3c7] border-2 border-[#d97706] ${isCompactLandscape || isPortrait ? 'p-2 mb-2' : 'p-3 sm:p-4 mb-3'} text-left shadow-xs`}>
                     <div className="flex items-center gap-2 mb-1.5 border-b border-[#d97706]/30 pb-1.5">
                       <div className="w-5 h-5 rounded bg-[#d97706] text-white flex items-center justify-center font-pixel font-black text-[10px]">
                         ★
@@ -7497,13 +7393,13 @@ export const PixelRpgWorld = () => {
                         <span className="font-pixel text-[7px] sm:text-[8px] text-[#92400e] uppercase tracking-wider block font-bold">
                           ORIENTASI RISET AWAL
                         </span>
-                        <h3 className={`font-pixel ${isCompactLandscape ? 'text-[10px]' : 'text-xs sm:text-sm'} font-black text-[#78350f] uppercase`}>
+                        <h3 className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[9.5px]' : 'text-xs sm:text-sm'} font-black text-[#78350f] uppercase`}>
                           MISI PERTAMA: BERKENALAN DENGAN SEMUA ORANG
                         </h3>
                       </div>
                     </div>
 
-                    <p className={`font-pixel ${isCompactLandscape ? 'text-[8px] leading-snug mb-1.5' : 'text-[9px] sm:text-[10.5px] leading-relaxed mb-2'} text-[#451a03]`}>
+                    <p className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[8px] leading-snug mb-1.5' : 'text-[9px] sm:text-[10.5px] leading-relaxed mb-2'} text-[#451a03]`}>
                       Sebelum memulai eksperimen persilangan genetika, berjalanlah mengelilingi kebun biara dan berkenalan dengan seluruh warga & rekan peneliti di sini.
                     </p>
 
@@ -7535,7 +7431,7 @@ export const PixelRpgWorld = () => {
                   </div>
 
                   {/* Progress Status */}
-                  <div className={`w-full flex items-center justify-between font-pixel ${isCompactLandscape ? 'text-[8px] mb-2' : 'text-[9px] sm:text-[10px] mb-3'} text-[#78350f] font-bold px-1`}>
+                  <div className={`w-full flex items-center justify-between font-pixel ${isCompactLandscape || isPortrait ? 'text-[8px] mb-2' : 'text-[9px] sm:text-[10px] mb-3'} text-[#78350f] font-bold px-1`}>
                     <span>Status Perkenalan:</span>
                     <span className="text-[#052e16] bg-[#86efac] px-2 py-0.5 rounded border border-[#16a34a]">
                       {Math.min(5, (greetedNpcs || []).length)} / 5 Orang Ditemui
@@ -7548,7 +7444,7 @@ export const PixelRpgWorld = () => {
                       sound.playClick();
                       setWelcomeStep(2);
                     }}
-                    className={`w-full ${isCompactLandscape ? 'py-2 px-3 text-[10px]' : 'py-2.5 sm:py-3 px-5 text-xs sm:text-sm'} bg-gradient-to-b from-[#ca7c38] to-[#9a531b] hover:brightness-110 active:translate-y-0.5 text-white font-pixel font-black uppercase tracking-wider rounded-xl border-2 border-[#361706] shadow-[0_3px_0_#2b1103] flex items-center justify-center gap-2 cursor-pointer transition`}
+                    className={`w-full ${isCompactLandscape || isPortrait ? 'py-1.5 px-3 text-[9px]' : 'py-2.5 sm:py-3 px-5 text-xs sm:text-sm'} bg-gradient-to-b from-[#ca7c38] to-[#9a531b] hover:brightness-110 active:translate-y-0.5 text-white font-pixel font-black uppercase tracking-wider rounded-xl border-2 border-[#361706] shadow-[0_3px_0_#2b1103] flex items-center justify-center gap-2 cursor-pointer transition`}
                   >
                     <span>LANJUT: LIHAT PETUNJUK TANDA SERU</span>
                     <span>➜</span>
@@ -7564,15 +7460,15 @@ export const PixelRpgWorld = () => {
                   </div>
 
                   {/* Main Title */}
-                  <h2 className={`font-pixel ${isCompactLandscape ? 'text-sm sm:text-base' : 'text-base sm:text-xl md:text-2xl'} font-black text-[#2b1103] leading-tight mb-1`}>
+                  <h2 className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-sm sm:text-base' : 'text-base sm:text-xl md:text-2xl'} font-black text-[#2b1103] leading-tight mb-1`}>
                     CARI TANDA SERU (!) DI ATAS KEPALA NPC!
                   </h2>
-                  <p className={`font-pixel ${isCompactLandscape ? 'text-[8px] mb-2' : 'text-[9px] sm:text-[10.5px] mb-3'} text-[#78350f] font-bold`}>
+                  <p className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[8px] mb-1.5' : 'text-[9px] sm:text-[10.5px] mb-3'} text-[#78350f] font-bold`}>
                     Karakter yang memiliki misi atau belum kamu ajak bicara ditandai tanda seru melayang.
                   </p>
 
                   {/* Big Animated Graphic: Floating Exclamation Mark Indicator */}
-                  <div className={`w-full rounded-2xl bg-[#dfc597]/80 border-2 border-[#834f24]/50 ${isCompactLandscape ? 'p-2 my-1' : 'p-3 sm:p-4 my-2'} flex flex-col items-center justify-center relative overflow-hidden`}>
+                  <div className={`w-full rounded-2xl bg-[#dfc597]/80 border-2 border-[#834f24]/50 ${isCompactLandscape || isPortrait ? 'p-2 my-1' : 'p-3 sm:p-4 my-2'} flex flex-col items-center justify-center relative overflow-hidden`}>
                     
                     {/* Overhead Animated Exclamation Point Mockup */}
                     <div className="flex flex-col items-center my-1 animate-bounce">
@@ -7581,14 +7477,14 @@ export const PixelRpgWorld = () => {
                         <div className="w-10 h-10 rounded-full bg-amber-400/40 animate-ping absolute inset-0 m-auto" />
                         
                         {/* Golden Circle Bubble */}
-                        <div className={`${isCompactLandscape ? 'w-8 h-8' : 'w-10 h-10 sm:w-11 sm:h-11'} rounded-full bg-gradient-to-b from-[#fef08a] to-[#facc15] border-3 border-[#78350f] shadow-[0_4px_12px_rgba(250,204,21,0.6)] flex items-center justify-center relative z-10`}>
-                          <span className={`font-mono font-black ${isCompactLandscape ? 'text-xl' : 'text-2xl sm:text-3xl'} text-[#451a03] leading-none`}>!</span>
+                        <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8' : 'w-10 h-10 sm:w-11 sm:h-11'} rounded-full bg-gradient-to-b from-[#fef08a] to-[#facc15] border-3 border-[#78350f] shadow-[0_4px_12px_rgba(250,204,21,0.6)] flex items-center justify-center relative z-10`}>
+                          <span className={`font-mono font-black ${isCompactLandscape || isPortrait ? 'text-lg' : 'text-2xl sm:text-3xl'} text-[#451a03] leading-none`}>!</span>
                         </div>
                       </div>
                       
                       {/* Mock Character Icon below it */}
                       <div className="mt-1 flex flex-col items-center">
-                        <span className={isCompactLandscape ? "text-2xl" : "text-3xl"}>👨‍🌾</span>
+                        <span className={isCompactLandscape || isPortrait ? "text-xl" : "text-3xl"}>👨‍🌾</span>
                         <div className="mt-0.5 px-2 py-0.5 rounded bg-[#361706] text-[#fef08a] font-pixel text-[7.5px] sm:text-[8.5px] font-bold shadow-xs">
                           [E] Bicara • Bruder Thomas
                         </div>
@@ -7601,7 +7497,7 @@ export const PixelRpgWorld = () => {
                   </div>
 
                   {/* 3 Step Interactive Instructions */}
-                  <div className={`w-full space-y-1.5 text-left ${isCompactLandscape ? 'mb-2' : 'mb-3.5'}`}>
+                  <div className={`w-full space-y-1.5 text-left ${isCompactLandscape || isPortrait ? 'mb-2' : 'mb-3.5'}`}>
                     <div className="flex items-start gap-2 bg-[#ecd8b0] p-1.5 sm:p-2 rounded-xl border border-[#834f24]/30">
                       <div className="w-4.5 h-4.5 rounded-full bg-[#ca7c38] text-white flex items-center justify-center font-pixel font-bold text-[8.5px] flex-shrink-0 mt-0.5">
                         1
@@ -7637,7 +7533,7 @@ export const PixelRpgWorld = () => {
                         sound.playClick();
                         setWelcomeStep(1);
                       }}
-                      className={`px-3 py-2 bg-[#ecd8b0] hover:bg-[#dfc597] active:translate-y-0.5 text-[#361706] font-pixel ${isCompactLandscape ? 'text-[9px]' : 'text-xs'} font-bold uppercase rounded-xl border-2 border-[#834f24] cursor-pointer`}
+                      className={`px-3 py-2 bg-[#ecd8b0] hover:bg-[#dfc597] active:translate-y-0.5 text-[#361706] font-pixel ${isCompactLandscape || isPortrait ? 'text-[8.5px]' : 'text-xs'} font-bold uppercase rounded-xl border-2 border-[#834f24] cursor-pointer`}
                     >
                       Kembali
                     </button>
@@ -7652,7 +7548,7 @@ export const PixelRpgWorld = () => {
                         } catch (e) {}
                         triggerGuidanceBanner(7000);
                       }}
-                      className={`flex-1 py-2 sm:py-2.5 px-4 bg-gradient-to-b from-[#15803d] to-[#14532d] hover:brightness-110 active:translate-y-0.5 text-[#bbf7d0] font-pixel ${isCompactLandscape ? 'text-[10px]' : 'text-xs sm:text-sm'} font-black uppercase tracking-wider rounded-xl border-2 border-[#092213] shadow-[0_2.5px_0_#06150c] flex items-center justify-center gap-1.5 cursor-pointer transition`}
+                      className={`flex-1 py-2 sm:py-2.5 px-4 bg-gradient-to-b from-[#15803d] to-[#14532d] hover:brightness-110 active:translate-y-0.5 text-[#bbf7d0] font-pixel ${isCompactLandscape || isPortrait ? 'text-[9px]' : 'text-xs sm:text-sm'} font-black uppercase tracking-wider rounded-xl border-2 border-[#092213] shadow-[0_2.5px_0_#06150c] flex items-center justify-center gap-1.5 cursor-pointer transition`}
                     >
                       <span>SIAP, MULAI JELAJAH KEBUN! 🌿</span>
                     </button>
@@ -7673,15 +7569,15 @@ export const PixelRpgWorld = () => {
             setShowControlsTutorial(false);
             try { localStorage.setItem('genetic_odyssey_rpg_controls_tutorial_seen', 'true'); } catch(e) {}
           }}
-          className={`fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none`}
+          className={`fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape || isPortrait ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none`}
         >
           {/* Retro Pixel Wooden Frame (Replicating user screenshot) */}
           <div 
             onClick={(e) => e.stopPropagation()}
-            className={`w-full ${isCompactLandscape ? 'max-w-lg max-h-[95vh] overflow-y-auto p-1.5' : 'max-w-sm sm:max-w-md md:max-w-lg p-2 sm:p-2.5'} rounded-2xl sm:rounded-3xl border-4 border-[#3e1f0b] bg-[#b07844] shadow-[0_12px_32px_rgba(0,0,0,0.75)] relative animate-scale-up modal-landscape-compact`}
+            className={`w-full ${isCompactLandscape || isPortrait ? 'max-w-md max-h-[95vh] overflow-y-auto p-1.5' : 'max-w-sm sm:max-w-md md:max-w-lg p-2 sm:p-2.5'} rounded-2xl sm:rounded-3xl border-4 border-[#3e1f0b] bg-[#b07844] shadow-[0_12px_32px_rgba(0,0,0,0.75)] relative animate-scale-up modal-landscape-compact`}
           >
             {/* Inner Parchment Card */}
-            <div className={`w-full rounded-xl sm:rounded-2xl bg-[#ecd8b0] border-2 border-[#834f24] ${isCompactLandscape ? 'p-2.5 sm:p-3' : 'p-4 sm:p-6'} text-center text-[#2a1306] flex flex-col items-center`}>
+            <div className={`w-full rounded-xl sm:rounded-2xl bg-[#ecd8b0] border-2 border-[#834f24] ${isCompactLandscape || isPortrait ? 'p-2.5 sm:p-3' : 'p-4 sm:p-6'} text-center text-[#2a1306] flex flex-col items-center`}>
               
               {/* Wooden [X] Close Button at Top-Right */}
               <button
@@ -7690,18 +7586,18 @@ export const PixelRpgWorld = () => {
                   setShowControlsTutorial(false);
                   try { localStorage.setItem('genetic_odyssey_rpg_controls_tutorial_seen', 'true'); } catch(e) {}
                 }}
-                className={`absolute ${isCompactLandscape ? 'top-2 right-2 w-6 h-6 text-xs' : 'top-4 sm:top-5 right-4 sm:right-5 w-7 h-7 sm:w-8 sm:h-8 text-sm sm:text-base'} rounded-lg bg-[#b07844] hover:bg-[#c98e57] active:bg-[#976435] border-2 border-[#3e1f0b] shadow-[2px_2px_0px_#3e1f0b] text-[#2a1306] font-mono font-black flex items-center justify-center cursor-pointer transition-all z-10`}
+                className={`absolute ${isCompactLandscape || isPortrait ? 'top-2 right-2 w-6 h-6 text-xs' : 'top-4 sm:top-5 right-4 sm:right-5 w-7 h-7 sm:w-8 sm:h-8 text-sm sm:text-base'} rounded-lg bg-[#b07844] hover:bg-[#c98e57] active:bg-[#976435] border-2 border-[#3e1f0b] shadow-[2px_2px_0px_#3e1f0b] text-[#2a1306] font-mono font-black flex items-center justify-center cursor-pointer transition-all z-10`}
                 title="Tutup Panduan"
               >
                 ✕
               </button>
 
               {/* Title based on Device */}
-              <div className={`${isCompactLandscape ? 'mb-1.5 pr-6' : 'mb-3 sm:mb-4 pr-6 sm:pr-8'}`}>
+              <div className={`${isCompactLandscape || isPortrait ? 'mb-1.5 pr-6' : 'mb-3 sm:mb-4 pr-6 sm:pr-8'}`}>
                 <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#834f24]/15 border border-[#834f24]/30 text-[8px] sm:text-[9px] font-pixel text-[#5c3010] uppercase tracking-wider mb-1 font-bold">
                   {isMobileDevice ? '📱 Terdeteksi: Ponsel / Layar Sentuh (Mobile)' : '💻 Terdeteksi: Laptop / Komputer (PC)'}
                 </div>
-                <h2 className={`font-pixel ${isCompactLandscape ? 'text-xs sm:text-sm' : 'text-sm sm:text-base md:text-lg'} font-black text-[#2a1306] leading-tight`}>
+                <h2 className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-xs sm:text-sm' : 'text-sm sm:text-base md:text-lg'} font-black text-[#2a1306] leading-tight`}>
                   {isMobileDevice 
                     ? 'Gunakan Analog di Layar untuk menggerakkan Karaktermu'
                     : 'Gunakan WASD di Keyboard untuk menggerakkan Karaktermu'}
@@ -7711,16 +7607,16 @@ export const PixelRpgWorld = () => {
               {/* Center Graphic Illustration */}
               {!isMobileDevice ? (
                 /* DESKTOP KEYBOARD DIAGRAM (WASD 3D Pixel Style matching user screenshot) */
-                <div className={`${isCompactLandscape ? 'my-1 p-2' : 'my-1.5 p-3 sm:p-4'} rounded-2xl bg-[#dfc597]/75 border-2 border-[#834f24]/40 w-full flex flex-col items-center`}>
+                <div className={`${isCompactLandscape || isPortrait ? 'my-1 p-2' : 'my-1.5 p-3 sm:p-4'} rounded-2xl bg-[#dfc597]/75 border-2 border-[#834f24]/40 w-full flex flex-col items-center`}>
                   
                   {/* WASD Cluster */}
-                  <div className={`flex flex-col items-center gap-1 ${isCompactLandscape ? 'my-1' : 'my-2'}`}>
+                  <div className={`flex flex-col items-center gap-1 ${isCompactLandscape || isPortrait ? 'my-1' : 'my-2'}`}>
                     {/* W Key */}
                     <div className="relative flex flex-col items-center">
-                      <span className={`${isCompactLandscape ? 'text-[8px] mb-0.5' : 'text-[9px] sm:text-[10px] mb-1'} font-pixel text-[#4a2408] font-bold flex items-center gap-0.5`}>
+                      <span className={`${isCompactLandscape || isPortrait ? 'text-[8px] mb-0.5' : 'text-[9px] sm:text-[10px] mb-1'} font-pixel text-[#4a2408] font-bold flex items-center gap-0.5`}>
                         ↑ Atas
                       </span>
-                      <div className={`${isCompactLandscape ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
+                      <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
                         W
                       </div>
                     </div>
@@ -7729,30 +7625,30 @@ export const PixelRpgWorld = () => {
                     <div className="flex items-center gap-1.5 sm:gap-2.5 mt-0.5">
                       {/* A Key */}
                       <div className="relative flex flex-col items-center">
-                        <div className={`${isCompactLandscape ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
+                        <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
                           A
                         </div>
-                        <span className={`${isCompactLandscape ? 'text-[7.5px]' : 'text-[8.5px] sm:text-[9.5px]'} font-pixel text-[#4a2408] font-bold mt-0.5`}>
+                        <span className={`${isCompactLandscape || isPortrait ? 'text-[7.5px]' : 'text-[8.5px] sm:text-[9.5px]'} font-pixel text-[#4a2408] font-bold mt-0.5`}>
                           ← Kiri
                         </span>
                       </div>
 
                       {/* S Key */}
                       <div className="relative flex flex-col items-center">
-                        <div className={`${isCompactLandscape ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
+                        <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
                           S
                         </div>
-                        <span className={`${isCompactLandscape ? 'text-[7.5px]' : 'text-[8.5px] sm:text-[9.5px]'} font-pixel text-[#4a2408] font-bold mt-0.5`}>
+                        <span className={`${isCompactLandscape || isPortrait ? 'text-[7.5px]' : 'text-[8.5px] sm:text-[9.5px]'} font-pixel text-[#4a2408] font-bold mt-0.5`}>
                           ↓ Bawah
                         </span>
                       </div>
 
                       {/* D Key */}
                       <div className="relative flex flex-col items-center">
-                        <div className={`${isCompactLandscape ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
+                        <div className={`${isCompactLandscape || isPortrait ? 'w-8 h-8 sm:w-9 sm:h-9 text-sm' : 'w-11 h-11 sm:w-13 sm:h-13 text-lg sm:text-xl'} rounded-xl bg-[#596073] border-2 border-[#2b2e38] shadow-[0_3px_0_#1e2027] text-white font-mono font-black flex items-center justify-center`}>
                           D
                         </div>
-                        <span className={`${isCompactLandscape ? 'text-[7.5px]' : 'text-[8.5px] sm:text-[9.5px]'} font-pixel text-[#4a2408] font-bold mt-0.5`}>
+                        <span className={`${isCompactLandscape || isPortrait ? 'text-[7.5px]' : 'text-[8.5px] sm:text-[9.5px]'} font-pixel text-[#4a2408] font-bold mt-0.5`}>
                           → Kanan
                         </span>
                       </div>
@@ -7760,7 +7656,7 @@ export const PixelRpgWorld = () => {
                   </div>
 
                   {/* Secondary Interaction Keys */}
-                  <div className={`${isCompactLandscape ? 'mt-2 pt-1.5' : 'mt-4 pt-3'} border-t border-[#834f24]/30 w-full flex flex-wrap justify-center sm:justify-around gap-2 text-left`}>
+                  <div className={`${isCompactLandscape || isPortrait ? 'mt-2 pt-1.5' : 'mt-4 pt-3'} border-t border-[#834f24]/30 w-full flex flex-wrap justify-center sm:justify-around gap-2 text-left`}>
                     <div className="flex items-center gap-1.5 bg-[#ecd8b0] px-2 py-0.5 rounded-lg border border-[#834f24]/30">
                       <span className="px-1.5 py-0.2 rounded bg-[#596073] border border-[#2b2e38] text-white font-mono font-black text-[9px]">
                         E
@@ -7781,25 +7677,25 @@ export const PixelRpgWorld = () => {
                 </div>
               ) : (
                 /* MOBILE ANALOG DIAGRAM */
-                <div className={`${isCompactLandscape ? 'my-1 p-2' : 'my-1.5 p-3 sm:p-4'} rounded-2xl bg-[#dfc597]/75 border-2 border-[#834f24]/40 w-full flex flex-col items-center`}>
+                <div className={`${isCompactLandscape || isPortrait ? 'my-1 p-2' : 'my-1.5 p-3 sm:p-4'} rounded-2xl bg-[#dfc597]/75 border-2 border-[#834f24]/40 w-full flex flex-col items-center`}>
                   
                   {/* Visual Analog Diagram */}
-                  <div className={`relative ${isCompactLandscape ? 'w-20 h-20 my-1' : 'w-28 h-28 sm:w-32 sm:h-32 my-2'} rounded-full border-3 border-[#3e1f0b] bg-[#1e293b]/85 shadow-inner flex items-center justify-center`}>
+                  <div className={`relative ${isCompactLandscape || isPortrait ? 'w-20 h-20 my-1' : 'w-28 h-28 sm:w-32 sm:h-32 my-2'} rounded-full border-3 border-[#3e1f0b] bg-[#1e293b]/85 shadow-inner flex items-center justify-center`}>
                     <div className="absolute top-1 text-amber-300 font-pixel text-[8px] font-bold">▲ Atas</div>
                     <div className="absolute bottom-1 text-amber-300 font-pixel text-[8px] font-bold">▼ Bawah</div>
                     <div className="absolute left-1 text-amber-300 font-pixel text-[8px] font-bold">◀ Kiri</div>
                     <div className="absolute right-1 text-amber-300 font-pixel text-[8px] font-bold">▶ Kanan</div>
-                    <div className={`${isCompactLandscape ? 'w-9 h-9' : 'w-13 h-13'} rounded-full border-2 border-amber-200 bg-gradient-to-b from-amber-400 to-amber-700 shadow-md flex items-center justify-center animate-pulse`}>
+                    <div className={`${isCompactLandscape || isPortrait ? 'w-9 h-9' : 'w-13 h-13'} rounded-full border-2 border-amber-200 bg-gradient-to-b from-amber-400 to-amber-700 shadow-md flex items-center justify-center animate-pulse`}>
                       <div className="w-2.5 h-2.5 rounded-full bg-amber-100" />
                     </div>
                   </div>
 
-                  <p className={`font-pixel ${isCompactLandscape ? 'text-[8px]' : 'text-[9px] sm:text-[10px]'} text-[#4a2408] font-bold mt-1`}>
+                  <p className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[8px]' : 'text-[9px] sm:text-[10px]'} text-[#4a2408] font-bold mt-1`}>
                     Sentuh dan geser Analog di kiri bawah layar untuk menggerakkan karakter
                   </p>
 
                   {/* Mobile Action Buttons */}
-                  <div className={`${isCompactLandscape ? 'mt-1.5 pt-1.5' : 'mt-3 pt-3'} border-t border-[#834f24]/30 w-full flex justify-around gap-2`}>
+                  <div className={`${isCompactLandscape || isPortrait ? 'mt-1.5 pt-1.5' : 'mt-3 pt-3'} border-t border-[#834f24]/30 w-full flex justify-around gap-2`}>
                     <div className="flex items-center gap-1.5 bg-[#ecd8b0] px-2 py-0.5 rounded-lg border border-[#834f24]/30">
                       <span className="w-6 h-6 rounded-md bg-emerald-700 border border-emerald-950 text-white font-pixel font-black text-[8px] flex items-center justify-center shadow-xs">
                         [E]
@@ -7821,20 +7717,20 @@ export const PixelRpgWorld = () => {
               )}
 
               {/* Subtitle / Objective Text (matching screenshot style) */}
-              <p className={`font-pixel ${isCompactLandscape ? 'text-[8px] mt-1' : 'text-[10px] sm:text-xs mt-2'} text-[#5c3010] font-bold`}>
+              <p className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[8px] mt-1' : 'text-[10px] sm:text-xs mt-2'} text-[#5c3010] font-bold`}>
                 {isMobileDevice 
                   ? 'Cobalah dengan menggeser analog virtual di kiri bawah layar ke arah rekan terdekat!' 
                   : 'Cobalah dengan bergerak ke arah rekan atau meja riset terdekat!'}
               </p>
 
               {/* Switch Mode & Start Button */}
-              <div className={`${isCompactLandscape ? 'mt-2 pt-1.5' : 'mt-3.5 pt-2'} flex flex-col sm:flex-row items-center gap-2 w-full justify-between border-t border-[#834f24]/30`}>
+              <div className={`${isCompactLandscape || isPortrait ? 'mt-2 pt-1.5' : 'mt-3.5 pt-2'} flex flex-col sm:flex-row items-center gap-2 w-full justify-between border-t border-[#834f24]/30`}>
                 <button
                   onClick={() => {
                     sound.playClick();
                     setIsMobileDevice(prev => !prev);
                   }}
-                  className={`font-pixel ${isCompactLandscape ? 'text-[8px]' : 'text-[9px] sm:text-[10px]'} text-[#6e3913] hover:text-[#2a1306] underline cursor-pointer`}
+                  className={`font-pixel ${isCompactLandscape || isPortrait ? 'text-[8px]' : 'text-[9px] sm:text-[10px]'} text-[#6e3913] hover:text-[#2a1306] underline cursor-pointer`}
                 >
                   {isMobileDevice 
                     ? 'Lihat Panduan Keyboard Laptop (WASD) 💻' 
@@ -7847,7 +7743,7 @@ export const PixelRpgWorld = () => {
                     setShowControlsTutorial(false);
                     try { localStorage.setItem('genetic_odyssey_rpg_controls_tutorial_seen', 'true'); } catch(e) {}
                   }}
-                  className={`w-full sm:w-auto ${isCompactLandscape ? 'px-3.5 py-1.5 text-[10px] rounded-lg' : 'px-5 py-2.5 text-xs sm:text-sm rounded-xl'} bg-gradient-to-b from-[#15803d] to-[#14532d] hover:brightness-110 active:translate-y-0.5 text-[#bbf7d0] font-pixel font-black tracking-wider border-2 border-[#092213] shadow-[0_2px_0_#06150c] cursor-pointer`}
+                  className={`w-full sm:w-auto ${isCompactLandscape || isPortrait ? 'px-3.5 py-1.5 text-[9.5px] rounded-lg' : 'px-5 py-2.5 text-xs sm:text-sm rounded-xl'} bg-gradient-to-b from-[#15803d] to-[#14532d] hover:brightness-110 active:translate-y-0.5 text-[#bbf7d0] font-pixel font-black tracking-wider border-2 border-[#092213] shadow-[0_2px_0_#06150c] cursor-pointer`}
                 >
                   MENGERTI & MULAI BERPETUALANG!
                 </button>
