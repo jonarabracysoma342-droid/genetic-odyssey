@@ -2,8 +2,8 @@
 // 8 Thematic NPCs corresponding to each stage in Genetic Odyssey
 // Includes multi-turn conversational dialogue between Player (Peneliti Muda) and NPC
 
-export const PLAYER_PORTRAIT = '/assets/portraits/player_female_portrait.png';
-export const PLAYER_MALE_PORTRAIT = '/assets/portraits/player_male_portrait.png';
+export const PLAYER_PORTRAIT = '/assets/portraits/player_female_portrait.webp';
+export const PLAYER_MALE_PORTRAIT = '/assets/portraits/player_male_portrait.webp';
 
 export const NPCS = [
   {
@@ -12,7 +12,7 @@ export const NPCS = [
     role: 'Biarawan Perawat Kebun',
     avatar: '👨‍🌾',
     spriteSrc: '/assets/rpg/npc/npc_1_monk.png',
-    portraitSrc: '/assets/portraits/npc_thomas_portrait.png',
+    portraitSrc: '/assets/portraits/npc_thomas_portrait.webp',
     stageId: 1,
     homeX: 356,
     homeY: 175,
@@ -54,7 +54,7 @@ export const NPCS = [
     role: 'Ahli Genetika Molekuler',
     avatar: '👩‍🔬',
     spriteSrc: '/assets/rpg/npc/npc_2_geneticist.png',
-    portraitSrc: '/assets/portraits/npc_rosalind_portrait.png',
+    portraitSrc: '/assets/portraits/npc_rosalind_portrait.webp',
     stageId: 2,
     homeX: 170,
     homeY: 215,
@@ -96,7 +96,7 @@ export const NPCS = [
     role: 'Montir Mesin Pemilah Gen',
     avatar: '🔧',
     spriteSrc: '/assets/rpg/npc/npc_3_mechanic.png',
-    portraitSrc: '/assets/portraits/npc_gigi_portrait.png',
+    portraitSrc: '/assets/portraits/npc_gigi_portrait.webp',
     stageId: 3,
     homeX: 320,
     homeY: 410,
@@ -138,7 +138,7 @@ export const NPCS = [
     role: 'Bapak Genetika Modern',
     avatar: '🌿',
     spriteSrc: '/assets/rpg/npc/npc_4_mendel.png',
-    portraitSrc: '/assets/portraits/npc_mendel_portrait.png',
+    portraitSrc: '/assets/portraits/npc_mendel_portrait.webp',
     stageId: 4,
     homeX: 195,
     homeY: 375,
@@ -180,7 +180,7 @@ export const NPCS = [
     role: 'Petani Senior Biara',
     avatar: '🌾',
     spriteSrc: '/assets/rpg/npc/npc_5_farmer.png',
-    portraitSrc: '/assets/portraits/npc_barnaby_portrait.png',
+    portraitSrc: '/assets/portraits/npc_barnaby_portrait.webp',
     stageId: 5,
     homeX: 800,
     homeY: 395,
@@ -222,7 +222,7 @@ export const NPCS = [
     role: 'Asisten Riset Dihibrid',
     avatar: '🏡',
     spriteSrc: '/assets/rpg/npc/npc_6_assistant.png',
-    portraitSrc: '/assets/portraits/npc_fafa_portrait.png',
+    portraitSrc: '/assets/portraits/npc_fafa_portrait.webp',
     stageId: 6,
     homeX: 825,
     homeY: 236,
@@ -264,7 +264,7 @@ export const NPCS = [
     role: 'Detektor Anomali Genetik',
     avatar: '🤖',
     spriteSrc: '/assets/rpg/npc/npc_7_drone.png',
-    portraitSrc: '/assets/portraits/npc_drone_portrait.png',
+    portraitSrc: '/assets/portraits/npc_drone_portrait.webp',
     stageId: 7,
     homeX: 635,
     homeY: 390,
@@ -307,7 +307,7 @@ export const NPCS = [
     role: 'Rival Master Genetika',
     avatar: '👑',
     spriteSrc: '/assets/rpg/npc/npc_8_chaos.png',
-    portraitSrc: '/assets/portraits/npc_chaos_portrait.png',
+    portraitSrc: '/assets/portraits/npc_chaos_portrait.webp',
     stageId: 8,
     homeX: 512,
     homeY: 78,

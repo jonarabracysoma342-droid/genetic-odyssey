@@ -1915,6 +1915,8 @@ const drawQuestGroundItem = (ctx, item, p, animTimer, isNearby) => {
     const badgeY = iy - 26 + promptBob;
     const label = `Ambil • ${item.name}`;
     ctx.font = 'bold 8px "Pixelify Sans", "Jersey 10", sans-serif';
+    const textW = ctx.measureText(label).width; // ← FIX: hitung lebar teks dulu
+    const badgeH = 15;                           // ← FIX: deklarasikan tinggi badge
     // Keycap [SPASI / E]
     const keyCapW = 38;
     const badgeW = textW + keyCapW + 16;
@@ -2919,21 +2921,21 @@ const getNpcVnSprite = (npc) => {
   if (npc.portraitSrc) return npc.portraitSrc;
   switch (npc.id) {
     case 'npc_1_monk':
-      return '/assets/portraits/npc_thomas_portrait.png';
+      return '/assets/portraits/npc_thomas_portrait.webp';
     case 'npc_2_geneticist':
-      return '/assets/portraits/npc_rosalind_portrait.png';
+      return '/assets/portraits/npc_rosalind_portrait.webp';
     case 'npc_3_mechanic':
-      return '/assets/portraits/npc_gigi_portrait.png';
+      return '/assets/portraits/npc_gigi_portrait.webp';
     case 'npc_4_mendel':
-      return '/assets/portraits/npc_mendel_portrait.png';
+      return '/assets/portraits/npc_mendel_portrait.webp';
     case 'npc_5_farmer':
-      return '/assets/portraits/npc_barnaby_portrait.png';
+      return '/assets/portraits/npc_barnaby_portrait.webp';
     case 'npc_6_assistant':
-      return '/assets/portraits/npc_fafa_portrait.png';
+      return '/assets/portraits/npc_fafa_portrait.webp';
     case 'npc_7_drone':
-      return '/assets/portraits/npc_drone_portrait.png';
+      return '/assets/portraits/npc_drone_portrait.webp';
     case 'npc_8_chaos':
-      return '/assets/portraits/npc_chaos_portrait.png';
+      return '/assets/portraits/npc_chaos_portrait.webp';
     default:
       return npc.spriteSrc || '/assets/rpg/npc/fafa/wave_0.png';
   }
@@ -7005,7 +7007,7 @@ export const PixelRpgWorld = () => {
           subtitle: 'Introductions',
           giver: 'Biara Santo Thomas Mendel',
           giverRole: 'Orientasi Peneliti Baru',
-          giverPortrait: '/assets/portraits/npc_thomas_portrait.png',
+          giverPortrait: '/assets/portraits/npc_thomas_portrait.webp',
           description: `Selamat datang di Biara Santo Thomas! Sebelum larut dalam eksperimen mendalam, berjalanlah mengelilingi biara untuk menyapa dan memperkenalkan dirimu (${activePlayerName}) kepada 5 rekan peneliti dan biarawan di sini.`,
           isCompleted: isIntroDone,
           isTurnedIn: false,

@@ -4,11 +4,20 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Genetic Odyssey - Media Pembelajaran Genetika Interaktif berbasis Hukum Mendel, Universitas Palangka Raya" />
     
-    <!-- Google Fonts for Stardew Valley & Pixel Art Aesthetic -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- Preconnect untuk Google Fonts & Firebase (kurangi latensi) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://www.googleapis.com" crossorigin />
+    <!-- Google Fonts: font-display=swap mencegah render-blocking -->
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" /></noscript>
+    
+    <!-- LCP Preload: background utama halaman login (gambar terbesar yg tampil pertama) -->
+    <link rel="preload" href="/assets/loading_bg.jpg" as="image" fetchpriority="high" />
+    <link rel="preload" href="/assets/upr_logo.png" as="image" />
     
     <title>Genetic Odyssey - Hukum Mendel</title>
   </head>

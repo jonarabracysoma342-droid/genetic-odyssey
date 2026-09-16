@@ -251,7 +251,7 @@ export const PlayModeModal = ({ isOpen, onClose, onSelectMode }) => {
                 )}
                 <div className="w-20 h-24 sm:w-24 sm:h-28 flex items-center justify-center overflow-hidden rounded-lg bg-rose-50/60 p-1 border border-rose-200">
                   <img 
-                    src="/assets/portraits/player_female_portrait.png" 
+                    src="/assets/portraits/player_female_portrait.webp" 
                     alt="Peneliti Putri" 
                     className="w-full h-full object-contain image-pixelated drop-shadow-md hover:scale-105 transition-transform" 
                   />
@@ -282,7 +282,7 @@ export const PlayModeModal = ({ isOpen, onClose, onSelectMode }) => {
                 )}
                 <div className="w-20 h-24 sm:w-24 sm:h-28 flex items-center justify-center overflow-hidden rounded-lg bg-sky-50/60 p-1 border border-sky-200">
                   <img 
-                    src="/assets/portraits/player_male_portrait.png" 
+                    src="/assets/portraits/player_male_portrait.webp" 
                     alt="Peneliti Putra" 
                     className="w-full h-full object-contain image-pixelated drop-shadow-md hover:scale-105 transition-transform" 
                   />
@@ -328,7 +328,7 @@ export const PlayModeModal = ({ isOpen, onClose, onSelectMode }) => {
             <div className="bg-[#fff8e7] border-2 border-[#361706] rounded-xl p-3 flex items-center gap-3 shadow-inner">
               <div className="w-12 h-14 rounded-lg bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0 overflow-hidden">
                 <img 
-                  src={selectedGender === 'male' ? '/assets/portraits/player_male_portrait.png' : '/assets/portraits/player_female_portrait.png'} 
+                  src={selectedGender === 'male' ? '/assets/portraits/player_male_portrait.webp' : '/assets/portraits/player_female_portrait.webp'} 
                   alt="Karakter Terpilih" 
                   className="w-full h-full object-contain image-pixelated" 
                 />
