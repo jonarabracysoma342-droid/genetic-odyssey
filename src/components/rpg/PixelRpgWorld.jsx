@@ -3106,18 +3106,11 @@ export const PixelRpgWorld = () => {
     };
   }, []);
 
-  // Attempt native screen orientation lock to landscape if browser supports it
-  useEffect(() => {
-    try {
-      if (window.screen?.orientation?.lock) {
-        window.screen.orientation.lock('landscape').catch(() => {});
-      }
-    } catch (e) {}
-  }, []);
-
-  // When device is in portrait, force virtual landscape mode so the RPG is NEVER displayed as a portrait slit
-  const isForcedLandscape = isPortrait;
-  const isCompactLandscape = Boolean(isForcedLandscape || isLandscapeMobile || isLocalLandscape);
+  // Orientation state:
+  // - isPortrait = true: upright phone/narrow viewport -> 16:9 landscape video frame in portrait layout
+  // - !isPortrait: horizontal phone or desktop -> fullscreen canvas with compact or desktop UI
+  const isForcedLandscape = false;
+  const isCompactLandscape = Boolean(isLandscapeMobile || isLocalLandscape);
 
   const isTransitioningRef = useRef(false);
   isTransitioningRef.current = isTransitioning;
@@ -6253,66 +6246,84 @@ export const PixelRpgWorld = () => {
       animationFrameId = requestAnimationFrame(loop);
     };
 
-    animationFrameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animationFrameId);
   }, [isStageUnlocked, mapLoaded]);
 
+  // Unified Action Button Handlers (used by both Portrait Handheld and Landscape/Desktop controls)
+  const handleActionE = useCallback(() => {
+    if (activeNpcDialogue) {
+      handleDialogueNext();
+    } else if (nearbyQuestItemRef.current) {
+      triggerItemPickup(nearbyQuestItemRef.current);
+    } else if (nearbyNpcRef.current) {
+      openNpcDialogue(nearbyNpcRef.current);
+    } else if (nearbyConclusionRef.current) {
+      sound.playClick();
+      setActiveConclusion(nearbyConclusionRef.current);
+    } else if (currentSceneRef.current === 'cabin_interior') {
+      const p = playerRef.current;
+      if (p.y >= 710 && Math.abs(p.x - 512) <= 65) {
+        triggerDoorTransition('outdoor', 868, 222, 'down');
+      } else {
+        sound.playClick();
+      }
+    } else {
+      const distToDoor = Math.hypot(playerRef.current.x - 868, playerRef.current.y - 204);
+      if (distToDoor <= 28) {
+        triggerDoorTransition('cabin_interior', 512, 700, 'up');
+      } else {
+        sound.playClick();
+      }
+    }
+  }, [activeNpcDialogue, handleDialogueNext, triggerItemPickup, openNpcDialogue, triggerDoorTransition]);
+
+  const handleActionSpace = useCallback(() => {
+    if (currentSceneRef.current === 'cabin_interior') {
+      const p = playerRef.current;
+      if (Math.hypot(p.x - 512, p.y - 400) <= 85) {
+        const st6 = STATIONS.find(s => s.id === 6);
+        if (st6) triggerStation(st6);
+      } else {
+        sound.playClick();
+      }
+    } else if (nearbyStationRef.current) {
+      triggerStation(nearbyStationRef.current);
+    } else {
+      sound.playClick();
+    }
+  }, [triggerStation]);
+
   return (
-    <div 
-      className={`fixed ${isForcedLandscape ? 'w-[100vh] h-[100vw]' : 'inset-0 w-screen h-screen'} overflow-hidden select-none bg-[#1a0b03] flex flex-col justify-between z-30`}
-      style={isForcedLandscape ? {
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%) rotate(90deg)',
-        transformOrigin: 'center center'
-      } : undefined}
-    >
-      
-      {/* 1. Main Interactive 2D World Canvas (covers 100% full screen) */}
-      <canvas 
-        ref={canvasRef} 
-        onClick={handleCanvasClick}
-        className="absolute inset-0 w-full h-full cursor-pointer z-0"
-      />
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden select-none bg-[#090704] flex flex-col justify-between z-30">
 
-      {/* Forced Landscape Orientation Reminder */}
-      {isForcedLandscape && (
-        <div className="absolute top-11 sm:top-12 left-1/2 -translate-x-1/2 z-30 pointer-events-none bg-[#241206]/92 border border-amber-500/60 rounded-full px-3 py-0.5 sm:py-1 flex items-center gap-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.7)] backdrop-blur-xs">
-          <span className="text-[10px]">🔄</span>
-          <span className="font-pixel text-[7.5px] sm:text-[8.5px] text-amber-200 uppercase tracking-wider font-bold">
-            Landscape Aktif • Pegang HP Mendatar
-          </span>
-        </div>
-      )}
-
-      {/* 2. Top RPG HUD Bar */}
-      <div className={`relative z-20 w-full rpg-hud-top ${isCompactLandscape ? 'p-1 px-2.5' : 'p-2.5 sm:p-4'} flex items-center justify-between pointer-events-auto bg-gradient-to-b from-black/60 via-black/25 to-transparent`}>
+      {/* 1. Top RPG HUD Bar */}
+      <div className={`relative z-20 w-full rpg-hud-top ${isCompactLandscape ? 'p-1 px-2.5' : isPortrait ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-4'} flex items-center justify-between pointer-events-auto bg-gradient-to-b from-black/80 via-black/40 to-transparent`}>
         
         {/* Left: Back to Main Menu & Fast Map Switch */}
         <div className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={() => { sound.playClick(); navigateTo('main-menu'); }}
-            className={`stardew-wood-btn rpg-wood-button ${isCompactLandscape ? 'px-2 py-0.5 text-[10px] rounded-lg' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} text-[#fffbeb] font-stardew tracking-wider cursor-pointer flex items-center gap-1 active:translate-y-0.5 border-2 border-[#361706] shadow-[0_2px_0_#1c0a02]`}
+            className={`stardew-wood-btn rpg-wood-button ${isCompactLandscape || isPortrait ? 'px-2 py-0.5 text-[10px] rounded-lg' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} text-[#fffbeb] font-stardew tracking-wider cursor-pointer flex items-center gap-1 active:translate-y-0.5 border-2 border-[#361706] shadow-[0_2px_0_#1c0a02]`}
             title="Kembali ke Menu Utama"
           >
-            <ChevronLeft className={`${isCompactLandscape ? 'w-3 h-3' : 'w-4 h-4'} text-[#fef08a] stroke-[2.5]`} />
+            <ChevronLeft className={`${isCompactLandscape || isPortrait ? 'w-3 h-3' : 'w-4 h-4'} text-[#fef08a] stroke-[2.5]`} />
             <span className="stardew-gold-title">MENU</span>
           </button>
 
           {/* Quick Switch Button to Classic Map Mode */}
           <button
             onClick={() => { sound.playClick(); navigateTo('map'); }}
-            className={`rpg-wood-button ${isCompactLandscape ? 'px-2 py-0.5 text-[10px] rounded-lg' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} bg-gradient-to-b from-[#1e4d3a] via-[#143729] to-[#0c2219] hover:brightness-110 border-2 border-[#091811] text-[#bbf7d0] font-stardew tracking-wider cursor-pointer flex items-center gap-1 shadow-[0_2px_0_#06100c] active:translate-y-0.5 transition-all`}
+            className={`rpg-wood-button ${isCompactLandscape || isPortrait ? 'px-2 py-0.5 text-[10px] rounded-lg' : 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm'} bg-gradient-to-b from-[#1e4d3a] via-[#143729] to-[#0c2219] hover:brightness-110 border-2 border-[#091811] text-[#bbf7d0] font-stardew tracking-wider cursor-pointer flex items-center gap-1 shadow-[0_2px_0_#06100c] active:translate-y-0.5 transition-all`}
             title="Buka Peta Stage Cepat"
           >
-            <MapPin className={`${isCompactLandscape ? 'w-3 h-3' : 'w-3.5 h-3.5'} text-[#86efac]`} />
-            <span className={isCompactLandscape ? "inline text-[9.5px]" : "hidden sm:inline"}>PETA CEPAT</span>
+            <MapPin className={`${isCompactLandscape || isPortrait ? 'w-3 h-3' : 'w-3.5 h-3.5'} text-[#86efac]`} />
+            <span className={isCompactLandscape || isPortrait ? "inline text-[9.5px]" : "hidden sm:inline"}>PETA CEPAT</span>
           </button>
         </div>
 
         {/* Right: Corner HUD Widget */}
-        {isCompactLandscape ? (
-          /* Sleek Single-Line Landscape Layout (Everything in one 28px horizontal row) */
+        {(isCompactLandscape || isPortrait) ? (
+          /* Sleek Single-Line Mobile Layout (Landscape or Portrait) */
           <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto">
             {/* Quick Utility Buttons */}
             <div className="flex items-center gap-0.5 sm:gap-1">
@@ -6322,13 +6333,6 @@ export const PixelRpgWorld = () => {
                 title="Panduan Misi & Kontrol [?]"
               >
                 <HelpCircle className="w-3 h-3 text-amber-300" />
-              </button>
-              <button
-                onClick={() => { sound.playClick(); setIsMobileDevice(prev => !prev); }}
-                className="stardew-wood-btn rpg-utility-btn w-6.5 h-6.5 rounded-lg text-amber-200 cursor-pointer active:translate-y-0.5 flex items-center justify-center border-2 border-[#361706]"
-                title={isMobileDevice ? "Mode PC (WASD)" : "Mode HP (Analog)"}
-              >
-                {isMobileDevice ? <Smartphone className="w-3 h-3 text-emerald-400" /> : <Monitor className="w-3 h-3 text-sky-400" />}
               </button>
               <button
                 onClick={toggleFullScreen}
@@ -6347,17 +6351,17 @@ export const PixelRpgWorld = () => {
             </div>
 
             {/* Compact 1-Line Stardew Plaque (Location + Stars) */}
-            <div className="stardew-hud-plaque rpg-location-plaque px-2 py-0.5 rounded-lg flex items-center gap-1.5 shadow-xs">
+            <div className="stardew-hud-plaque rpg-location-plaque px-1.5 sm:px-2 py-0.5 rounded-lg flex items-center gap-1 sm:gap-1.5 shadow-xs">
               <div className="flex items-center gap-1 text-[#fffbeb] font-stardew text-[9px] font-bold">
                 <span className="text-amber-300 text-[10px]">{currentScene === 'cabin_interior' ? '🏡' : '⚜'}</span>
-                <span className="stardew-gold-title truncate max-w-[70px] sm:max-w-none">
+                <span className="stardew-gold-title truncate max-w-[50px] sm:max-w-[70px]">
                   {currentScene === 'cabin_interior' ? 'KABIN' : 'BIARA'}
                 </span>
               </div>
               <span className="text-[#361706]/40">•</span>
               <div className="flex items-center gap-1">
                 <Star className="w-2.5 h-2.5 fill-[#fef08a] text-[#78350f]" />
-                <span className="font-stardew text-[9.5px] font-bold text-[#facc15]">{totalStars}/24</span>
+                <span className="font-stardew text-[9px] sm:text-[9.5px] font-bold text-[#facc15]">{totalStars}/24</span>
               </div>
             </div>
 
@@ -6376,7 +6380,7 @@ export const PixelRpgWorld = () => {
             </button>
           </div>
         ) : (
-          /* Standard Desktop / Portrait Two-Tier Layout */
+          /* Standard Desktop Two-Tier Layout */
           <div className="flex flex-col items-end gap-1 sm:gap-2 pointer-events-auto">
             <div className="flex items-start gap-1 sm:gap-2">
               <div className="flex items-center gap-1 sm:gap-1.5 pt-0.5">
@@ -6497,171 +6501,272 @@ export const PixelRpgWorld = () => {
 
       </div>
 
-      {/* 2b. Interactive Dynamic Quest Guidance Banner (Muncul diawal ~7 detik lalu memudar halus) */}
-      {!activeNpcDialogue && (
-        <div 
-          className={`absolute ${isCompactLandscape ? 'top-10 max-w-md px-2' : 'top-16 sm:top-20 max-w-xl px-3.5'} left-1/2 -translate-x-1/2 z-20 w-full transition-all duration-1000 ease-out ${
-            showGuidanceBanner ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-3 pointer-events-none'
-          }`}
-        >
-          {(() => {
-            const guide = getNextObjectiveInfo();
-            return (
-              <div 
-                onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
-                className="bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 hover:border-[#facc15] text-[#fef08a] px-3.5 py-2 rounded-2xl shadow-[0_6px_16px_rgba(0,0,0,0.65)] flex items-center justify-between gap-2.5 transition-all cursor-pointer group"
-                title="Klik untuk membuka Buku Misi & Petunjuk Lokasi Lengkap"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300 shadow-xs">
-                    <Compass className="w-4 h-4 text-white animate-spin-slow" />
-                  </div>
-                  <div className="min-w-0 flex flex-col text-left">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-pixel text-[8px] sm:text-[9px] bg-amber-950/80 px-2 py-0.5 rounded text-amber-300 border border-amber-500/40 uppercase font-bold tracking-wider">
-                        {guide.badge}
-                      </span>
-                      <span className="font-pixel text-[8px] sm:text-[9px] text-[#86efac] font-bold tracking-wide">
-                        📍 {guide.direction}
-                      </span>
-                    </div>
-                    <p className="text-[10px] sm:text-xs text-white/95 font-sans font-medium truncate mt-0.5">
-                      {guide.instruction}
-                    </p>
-                  </div>
-                </div>
+      {/* 2. Middle Interactive 2D World Canvas Viewport */}
+      {/* In Portrait: Fixed 16:9 landscape aspect ratio (video-like) in the center */}
+      {/* In Landscape / Desktop: Fullscreen inset-0 */}
+      <div className={`relative ${isPortrait ? 'w-full max-w-2xl mx-auto aspect-video max-h-[46vh] my-auto bg-black border-y-2 border-amber-600/40 shadow-[0_8px_32px_rgba(0,0,0,0.9)] overflow-hidden flex items-center justify-center' : 'absolute inset-0 w-full h-full'} z-0`}>
+        <canvas 
+          ref={canvasRef} 
+          onClick={handleCanvasClick}
+          className="w-full h-full cursor-pointer select-none"
+        />
 
-                <div className="hidden sm:flex items-center gap-1 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0 group-hover:text-amber-200">
-                  <span>BUKU MISI</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* 3. Bottom In-World Controls: Virtual Analog for Mobile, Minimalist Badge for Desktop */}
-      <div className={`relative z-20 w-full rpg-bottom-bar ${isCompactLandscape ? 'p-1 px-2.5 pb-1.5' : 'p-3 sm:p-6'} flex items-end justify-between pointer-events-none select-none`}>
-        
-        {/* Left Control: Virtual Analog Joystick on Mobile / Clean Keycap Legend on Desktop */}
-        {isMobileDevice ? (
-          <div className="pointer-events-auto flex items-center justify-center p-0.5">
-            <VirtualAnalogJoystick 
-              touchInputRef={touchInputRef} 
-              isLandscape={isCompactLandscape} 
-              isForcedLandscape={isForcedLandscape} 
-            />
-          </div>
-        ) : (
-          <div className="pointer-events-auto hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#241206]/85 border-2 border-[#854d0e]/60 text-amber-200 font-pixel text-[10px] shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-xs">
-            <span className="text-sm">⌨️</span>
-            <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">WASD / Panah</span>
-            <span>Jalan</span>
-            <span className="text-amber-400 mx-0.5">•</span>
-            <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[E]</span>
-            <span>Bicara/Ambil</span>
-            <span className="text-amber-400 mx-0.5">•</span>
-            <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[SPASI]</span>
-            <span>Aksi Lab</span>
+        {/* 16:9 Landscape Video Indicator Tag in Portrait Mode */}
+        {isPortrait && (
+          <div className="absolute top-2 right-2 pointer-events-none z-10 flex items-center gap-1.5 bg-black/65 backdrop-blur-xs border border-amber-500/35 rounded-full px-2 py-0.5 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-pixel text-[7.5px] text-amber-200 uppercase tracking-widest font-bold">16:9 Landskap</span>
           </div>
         )}
-
-        {/* Distinct Controls: [E] BICARA and [SPASI] MAIN STAGE */}
-        <div className="pointer-events-auto flex items-center gap-1 sm:gap-2.5">
-          {/* 1. BICARA / AMBIL ITEM Button ([E]) */}
-          <button
-            onClick={() => {
-              if (activeNpcDialogue) {
-                handleDialogueNext();
-              } else if (nearbyQuestItemRef.current) {
-                triggerItemPickup(nearbyQuestItemRef.current);
-              } else if (nearbyNpcRef.current) {
-                openNpcDialogue(nearbyNpcRef.current);
-              } else if (nearbyConclusionRef.current) {
-                sound.playClick();
-                setActiveConclusion(nearbyConclusionRef.current);
-              } else if (currentSceneRef.current === 'cabin_interior') {
-                const p = playerRef.current;
-                if (p.y >= 710 && Math.abs(p.x - 512) <= 65) {
-                  triggerDoorTransition('outdoor', 868, 222, 'down');
-                } else {
-                  sound.playClick();
-                }
-              } else {
-                const distToDoor = Math.hypot(playerRef.current.x - 868, playerRef.current.y - 204);
-                if (distToDoor <= 28) {
-                  triggerDoorTransition('cabin_interior', 512, 700, 'up');
-                } else {
-                  sound.playClick();
-                }
-              }
-            }}
-            className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-lg relative transition-all duration-200 border-2 ${
-              nearbyQuestItem
-                ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-yellow-300 ring-4 ring-yellow-400/80 shadow-[0_0_26px_rgba(250,204,21,0.95)] scale-110 animate-bounce text-white'
-                : nearbyNpc
-                  ? (nearbyNpc.questStatus === 'turn_in'
-                      ? 'bg-gradient-to-b from-amber-600 to-amber-800 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
-                      : 'bg-[#15803d] border-[#4ade80] ring-4 ring-[#4ade80]/70 shadow-[0_0_24px_rgba(74,222,128,0.85)] scale-105 animate-pulse text-white')
-                  : nearbyConclusion
-                    ? 'bg-[#b45309] border-[#fde047] ring-4 ring-[#fde047]/75 shadow-[0_0_24px_rgba(253,224,71,0.9)] scale-105 animate-pulse text-white'
-                    : 'bg-[#14532d]/85 border-[#22c55e]/50 hover:bg-[#15803d]/90 text-[#bbf7d0] opacity-85 hover:opacity-100'
-            }`}
-            title={nearbyQuestItem ? `Ambil ${nearbyQuestItem.name} [E]` : (nearbyConclusion && !nearbyNpc ? "Baca Kesimpulan [E]" : "Bicara dengan Karakter [E]")}
-          >
-            {nearbyQuestItem ? (
-              <Package className={`${isCompactLandscape ? 'w-3.5 h-3.5' : 'w-5 h-5'} text-yellow-200 mb-0.5 animate-pulse`} />
-            ) : (
-              <MessageSquare className={`${isCompactLandscape ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} text-[#86efac] mb-0.5`} />
-            )}
-            <span className={`font-pixel ${isCompactLandscape ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-white`}>
-              [E]
-            </span>
-            <span className={`font-pixel ${isCompactLandscape ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-[#fde047] uppercase tracking-wider leading-none mt-0.5`}>
-              {nearbyQuestItem 
-                ? 'AMBIL' 
-                : (nearbyNpc 
-                    ? (nearbyNpc.questStatus === 'turn_in' ? 'SERAHKAN' : 'BICARA') 
-                    : (nearbyConclusion ? 'SIMPULAN' : 'BICARA'))}
-            </span>
-          </button>
-
-          {/* 2. MAIN STAGE Button ([SPASI]) */}
-          <button
-            onClick={() => {
-              if (currentSceneRef.current === 'cabin_interior') {
-                const p = playerRef.current;
-                if (Math.hypot(p.x - 512, p.y - 400) <= 85) {
-                  const st6 = STATIONS.find(s => s.id === 6);
-                  if (st6) triggerStation(st6);
-                } else {
-                  sound.playClick();
-                }
-              } else if (nearbyStationRef.current) {
-                triggerStation(nearbyStationRef.current);
-              } else {
-                sound.playClick();
-              }
-            }}
-            className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-lg relative transition-all duration-200 border-2 ${
-              nearbyStation
-                ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
-                : 'bg-gradient-to-b from-amber-800/85 to-amber-950/85 border-amber-500/40 hover:brightness-110 text-amber-200 opacity-85 hover:opacity-100'
-            }`}
-            title="Mainkan Stage Stasiun [SPASI]"
-          >
-            <Play className={`${isCompactLandscape ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} fill-amber-300 text-amber-300 ml-0.5 mb-0.5`} />
-            <span className={`font-pixel ${isCompactLandscape ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-[#fef08a]`}>
-              [SPASI]
-            </span>
-            <span className={`font-pixel ${isCompactLandscape ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-amber-200 uppercase tracking-wider leading-none mt-0.5`}>
-              MAIN
-            </span>
-          </button>
-        </div>
-
       </div>
+
+      {/* 3. Bottom Controls & Objective Area */}
+      {isPortrait ? (
+        /* ===== PORTRAIT HANDHELD CONSOLE DASHBOARD ===== */
+        <div className="relative z-20 w-full flex-1 max-w-md mx-auto px-4 py-2 flex flex-col justify-between pointer-events-auto">
+          {/* Objective Guide Card */}
+          <div className="w-full">
+            {(() => {
+              const guide = getNextObjectiveInfo();
+              return (
+                <div 
+                  onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
+                  className="bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 text-[#fef08a] px-3 py-1.5 rounded-xl shadow-md flex items-center justify-between gap-2 transition-all cursor-pointer group"
+                  title="Buku Misi & Petunjuk Lokasi"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300">
+                      <Compass className="w-3.5 h-3.5 text-white animate-spin-slow" />
+                    </div>
+                    <div className="min-w-0 flex flex-col text-left">
+                      <div className="flex items-center gap-1">
+                        <span className="font-pixel text-[7.5px] bg-amber-950/80 px-1.5 py-0.2 rounded text-amber-300 border border-amber-500/40 uppercase font-bold">
+                          {guide.badge}
+                        </span>
+                        <span className="font-pixel text-[7.5px] text-[#86efac] font-bold">
+                          📍 {guide.direction}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-white/95 font-sans font-medium truncate">
+                        {guide.instruction}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-0.5 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0">
+                    <span>MISI</span>
+                    <ChevronRight className="w-3 h-3 text-amber-400" />
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Dual-Thumb Handheld Controls (Analog Left, Action Buttons Right) */}
+          <div className="w-full flex items-center justify-between px-2 my-auto">
+            {/* Left Thumb: Virtual Analog Joystick */}
+            <div className="flex items-center justify-center">
+              <VirtualAnalogJoystick 
+                touchInputRef={touchInputRef} 
+                isLandscape={false} 
+                isForcedLandscape={false} 
+              />
+            </div>
+
+            {/* Right Thumb: [E] and [SPASI] Action Buttons */}
+            <div className="flex items-center gap-3">
+              {/* [E] BICARA / AMBIL Button */}
+              <button
+                onClick={handleActionE}
+                className={`w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-xl relative transition-all duration-200 border-2 ${
+                  nearbyQuestItem
+                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-yellow-300 ring-4 ring-yellow-400/80 shadow-[0_0_26px_rgba(250,204,21,0.95)] scale-105 animate-bounce text-white'
+                    : nearbyNpc
+                      ? (nearbyNpc.questStatus === 'turn_in'
+                          ? 'bg-gradient-to-b from-amber-600 to-amber-800 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
+                          : 'bg-[#15803d] border-[#4ade80] ring-4 ring-[#4ade80]/70 shadow-[0_0_24px_rgba(74,222,128,0.85)] scale-105 animate-pulse text-white')
+                      : nearbyConclusion
+                        ? 'bg-[#b45309] border-[#fde047] ring-4 ring-[#fde047]/75 shadow-[0_0_24px_rgba(253,224,71,0.9)] scale-105 animate-pulse text-white'
+                        : 'bg-[#14532d]/90 border-[#22c55e]/60 hover:bg-[#15803d] text-[#bbf7d0]'
+                }`}
+                title={nearbyQuestItem ? `Ambil ${nearbyQuestItem.name} [E]` : (nearbyConclusion && !nearbyNpc ? "Baca Kesimpulan [E]" : "Bicara dengan Karakter [E]")}
+              >
+                {nearbyQuestItem ? (
+                  <Package className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-200 mb-0.5 animate-pulse" />
+                ) : (
+                  <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac] mb-0.5" />
+                )}
+                <span className="font-pixel text-[9px] sm:text-[9.5px] font-black leading-none text-white">
+                  [E]
+                </span>
+                <span className="font-pixel text-[6px] sm:text-[6.5px] text-[#fde047] uppercase tracking-wider leading-none mt-0.5">
+                  {nearbyQuestItem 
+                    ? 'AMBIL' 
+                    : (nearbyNpc 
+                        ? (nearbyNpc.questStatus === 'turn_in' ? 'SERAHKAN' : 'BICARA') 
+                        : (nearbyConclusion ? 'SIMPULAN' : 'BICARA'))}
+                </span>
+              </button>
+
+              {/* [SPASI] MAIN STAGE Button */}
+              <button
+                onClick={handleActionSpace}
+                className={`w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-xl relative transition-all duration-200 border-2 ${
+                  nearbyStation
+                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
+                    : 'bg-gradient-to-b from-amber-800/90 to-amber-950/90 border-amber-500/50 hover:brightness-110 text-amber-200'
+                }`}
+                title="Mainkan Stage Stasiun [SPASI]"
+              >
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-300 text-amber-300 ml-0.5 mb-0.5" />
+                <span className="font-pixel text-[9px] sm:text-[9.5px] font-black leading-none text-[#fef08a]">
+                  [SPASI]
+                </span>
+                <span className="font-pixel text-[6px] sm:text-[6.5px] text-amber-200 uppercase tracking-wider leading-none mt-0.5">
+                  MAIN
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Landscape Hint */}
+          <div className="w-full flex items-center justify-center gap-1.5 py-1 text-center opacity-70">
+            <span className="text-xs">📱</span>
+            <span className="font-pixel text-[8px] text-amber-200/80 uppercase tracking-wider">
+              Miringkan HP ke landscape untuk layar penuh
+            </span>
+          </div>
+        </div>
+      ) : (
+        /* ===== LANDSCAPE & DESKTOP BOTTOM BAR ===== */
+        <>
+          {/* 2b. Interactive Dynamic Quest Guidance Banner */}
+          {!activeNpcDialogue && (
+            <div 
+              className={`absolute ${isCompactLandscape ? 'top-10 max-w-md px-2' : 'top-16 sm:top-20 max-w-xl px-3.5'} left-1/2 -translate-x-1/2 z-20 w-full transition-all duration-1000 ease-out ${
+                showGuidanceBanner ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-3 pointer-events-none'
+              }`}
+            >
+              {(() => {
+                const guide = getNextObjectiveInfo();
+                return (
+                  <div 
+                    onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
+                    className="bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 hover:border-[#facc15] text-[#fef08a] px-3.5 py-2 rounded-2xl shadow-[0_6px_16px_rgba(0,0,0,0.65)] flex items-center justify-between gap-2.5 transition-all cursor-pointer group"
+                    title="Klik untuk membuka Buku Misi & Petunjuk Lokasi Lengkap"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300 shadow-xs">
+                        <Compass className="w-4 h-4 text-white animate-spin-slow" />
+                      </div>
+                      <div className="min-w-0 flex flex-col text-left">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-pixel text-[8px] sm:text-[9px] bg-amber-950/80 px-2 py-0.5 rounded text-amber-300 border border-amber-500/40 uppercase font-bold tracking-wider">
+                            {guide.badge}
+                          </span>
+                          <span className="font-pixel text-[8px] sm:text-[9px] text-[#86efac] font-bold tracking-wide">
+                            📍 {guide.direction}
+                          </span>
+                        </div>
+                        <p className="text-[10px] sm:text-xs text-white/95 font-sans font-medium truncate mt-0.5">
+                          {guide.instruction}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="hidden sm:flex items-center gap-1 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0 group-hover:text-amber-200">
+                      <span>BUKU MISI</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* 3. Bottom In-World Controls: Virtual Analog for Mobile, Minimalist Badge for Desktop */}
+          <div className={`relative z-20 w-full rpg-bottom-bar ${isCompactLandscape ? 'p-1 px-2.5 pb-1.5' : 'p-3 sm:p-6'} flex items-end justify-between pointer-events-none select-none`}>
+            
+            {/* Left Control: Virtual Analog Joystick on Mobile / Clean Keycap Legend on Desktop */}
+            {isMobileDevice ? (
+              <div className="pointer-events-auto flex items-center justify-center p-0.5">
+                <VirtualAnalogJoystick 
+                  touchInputRef={touchInputRef} 
+                  isLandscape={isCompactLandscape} 
+                  isForcedLandscape={false} 
+                />
+              </div>
+            ) : (
+              <div className="pointer-events-auto hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#241206]/85 border-2 border-[#854d0e]/60 text-amber-200 font-pixel text-[10px] shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-xs">
+                <span className="text-sm">⌨️</span>
+                <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">WASD / Panah</span>
+                <span>Jalan</span>
+                <span className="text-amber-400 mx-0.5">•</span>
+                <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[E]</span>
+                <span>Bicara/Ambil</span>
+                <span className="text-amber-400 mx-0.5">•</span>
+                <span className="text-white font-bold bg-[#3e1f0b] px-1.5 py-0.5 rounded border border-[#854d0e]/50">[SPASI]</span>
+                <span>Aksi Lab</span>
+              </div>
+            )}
+
+            {/* Distinct Controls: [E] BICARA and [SPASI] MAIN STAGE */}
+            <div className="pointer-events-auto flex items-center gap-1 sm:gap-2.5">
+              {/* 1. BICARA / AMBIL ITEM Button ([E]) */}
+              <button
+                onClick={handleActionE}
+                className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-lg relative transition-all duration-200 border-2 ${
+                  nearbyQuestItem
+                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-yellow-300 ring-4 ring-yellow-400/80 shadow-[0_0_26px_rgba(250,204,21,0.95)] scale-110 animate-bounce text-white'
+                    : nearbyNpc
+                      ? (nearbyNpc.questStatus === 'turn_in'
+                          ? 'bg-gradient-to-b from-amber-600 to-amber-800 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
+                          : 'bg-[#15803d] border-[#4ade80] ring-4 ring-[#4ade80]/70 shadow-[0_0_24px_rgba(74,222,128,0.85)] scale-105 animate-pulse text-white')
+                      : nearbyConclusion
+                        ? 'bg-[#b45309] border-[#fde047] ring-4 ring-[#fde047]/75 shadow-[0_0_24px_rgba(253,224,71,0.9)] scale-105 animate-pulse text-white'
+                        : 'bg-[#14532d]/85 border-[#22c55e]/50 hover:bg-[#15803d]/90 text-[#bbf7d0] opacity-85 hover:opacity-100'
+                }`}
+                title={nearbyQuestItem ? `Ambil ${nearbyQuestItem.name} [E]` : (nearbyConclusion && !nearbyNpc ? "Baca Kesimpulan [E]" : "Bicara dengan Karakter [E]")}
+              >
+                {nearbyQuestItem ? (
+                  <Package className={`${isCompactLandscape ? 'w-3.5 h-3.5' : 'w-5 h-5'} text-yellow-200 mb-0.5 animate-pulse`} />
+                ) : (
+                  <MessageSquare className={`${isCompactLandscape ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} text-[#86efac] mb-0.5`} />
+                )}
+                <span className={`font-pixel ${isCompactLandscape ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-white`}>
+                  [E]
+                </span>
+                <span className={`font-pixel ${isCompactLandscape ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-[#fde047] uppercase tracking-wider leading-none mt-0.5`}>
+                  {nearbyQuestItem 
+                    ? 'AMBIL' 
+                    : (nearbyNpc 
+                        ? (nearbyNpc.questStatus === 'turn_in' ? 'SERAHKAN' : 'BICARA') 
+                        : (nearbyConclusion ? 'SIMPULAN' : 'BICARA'))}
+                </span>
+              </button>
+
+              {/* 2. MAIN STAGE Button ([SPASI]) */}
+              <button
+                onClick={handleActionSpace}
+                className={`rpg-action-button ${isCompactLandscape ? 'w-10 h-10 rounded-xl' : 'w-14 h-14 sm:w-16 sm:h-16 rounded-2xl'} flex flex-col items-center justify-center cursor-pointer active:scale-95 shadow-lg relative transition-all duration-200 border-2 ${
+                  nearbyStation
+                    ? 'bg-gradient-to-b from-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/75 shadow-[0_0_24px_rgba(251,191,36,0.9)] scale-105 animate-pulse text-white'
+                    : 'bg-gradient-to-b from-amber-800/85 to-amber-950/85 border-amber-500/40 hover:brightness-110 text-amber-200 opacity-85 hover:opacity-100'
+                }`}
+                title="Mainkan Stage Stasiun [SPASI]"
+              >
+                <Play className={`${isCompactLandscape ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5'} fill-amber-300 text-amber-300 ml-0.5 mb-0.5`} />
+                <span className={`font-pixel ${isCompactLandscape ? 'text-[7.5px]' : 'text-[9px] sm:text-[10px]'} font-black leading-none text-[#fef08a]`}>
+                  [SPASI]
+                </span>
+                <span className={`font-pixel ${isCompactLandscape ? 'text-[5.5px]' : 'text-[7px] sm:text-[8px]'} text-amber-200 uppercase tracking-wider leading-none mt-0.5`}>
+                  MAIN
+                </span>
+              </button>
+            </div>
+
+          </div>
+        </>
+      )}
 
       {/* 3b. Visual Novel Character Interaction Scene (Dynamic 2-Way Conversation) */}
       {activeNpcDialogue && (() => {
