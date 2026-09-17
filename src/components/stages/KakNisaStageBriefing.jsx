@@ -450,6 +450,11 @@ export const KakNisaStageBriefing = ({ stageId, onClose }) => {
   const [activeTab, setActiveTab] = useState('mission'); // 'mission' | 'curriculum' | 'howtoplay'
   const [selectedStepIndex, setSelectedStepIndex] = useState(0);
   const [quizAnsweredIndex, setQuizAnsweredIndex] = useState(null);
+  // Fix 6: Gate PAHAM button until user reads Cara Bermain
+  const [hasReadHowToPlay, setHasReadHowToPlay] = useState(false);
+  // Fix 7: Countdown 5 detik di tab Cara Bermain
+  const [howToPlayCountdown, setHowToPlayCountdown] = useState(null); // null | number
+  const countdownRef = React.useRef(null);
 
   const { isLandscapeMobile } = useGame();
 
@@ -480,7 +485,27 @@ export const KakNisaStageBriefing = ({ stageId, onClose }) => {
   const handleSelectTab = (tab) => {
     sound.playClick();
     setActiveTab(tab);
+    // Fix 6+7: When user opens Cara Bermain, start 5-second countdown
+    if (tab === 'howtoplay' && !hasReadHowToPlay) {
+      setHowToPlayCountdown(5);
+      if (countdownRef.current) clearInterval(countdownRef.current);
+      countdownRef.current = setInterval(() => {
+        setHowToPlayCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(countdownRef.current);
+            setHasReadHowToPlay(true);
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
   };
+
+  // Cleanup countdown on unmount
+  React.useEffect(() => {
+    return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+  }, []);
 
   return (
     <div className={`fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center ${isCompact ? 'p-1.5' : 'p-2 sm:p-4'} animate-fade-in select-none text-left`}>
@@ -839,16 +864,38 @@ export const KakNisaStageBriefing = ({ stageId, onClose }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                sound.playClick();
-                onClose();
-              }}
-              className={`${isCompact ? 'px-4 py-1.5 rounded-lg text-[8.5px]' : 'px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-[9px] sm:text-xs'} bg-gradient-to-b from-emerald-500 via-emerald-600 to-emerald-700 hover:brightness-110 text-white font-pixel uppercase flex items-center justify-center gap-1.5 border-2 border-[#14532d] shadow-[2px_2px_0_#0f5132] active:translate-y-0.5 cursor-pointer font-bold transition-all`}
-            >
-              <Play className={`${isCompact ? 'w-3 h-3' : 'w-4 h-4'} fill-current`} />
-              <span>PAHAM & MULAI MAIN SEKARANG! 🚀</span>
-            </button>
+            {/* Fix 6+7: PAHAM button gated behind Cara Bermain tab + 5s countdown */}
+            {!hasReadHowToPlay ? (
+              <div className="flex flex-col items-end gap-1">
+                {/* Prompt to go to Cara Bermain if not yet visited */}
+                {activeTab !== 'howtoplay' ? (
+                  <button
+                    onClick={() => handleSelectTab('howtoplay')}
+                    className={`${isCompact ? 'px-4 py-1.5 rounded-lg text-[8.5px]' : 'px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-xs'} bg-gradient-to-b from-amber-400 to-amber-600 hover:brightness-110 text-white font-pixel uppercase flex items-center justify-center gap-1.5 border-2 border-amber-700 shadow-[2px_2px_0_#92400e] active:translate-y-0.5 cursor-pointer font-bold transition-all`}
+                  >
+                    <Lightbulb className={`${isCompact ? 'w-3 h-3' : 'w-4 h-4'} fill-current`} />
+                    <span>BACA CARA BERMAIN DULU 📖</span>
+                  </button>
+                ) : howToPlayCountdown !== null ? (
+                  /* Countdown timer visible */
+                  <div className={`${isCompact ? 'px-4 py-1.5 rounded-lg text-[8.5px]' : 'px-5 py-2.5 rounded-xl text-[9px] sm:text-xs'} bg-slate-200 text-slate-600 font-pixel uppercase flex items-center gap-2 border-2 border-slate-300 select-none`}>
+                    <span className="text-lg font-black text-slate-800 tabular-nums w-5 text-center">{howToPlayCountdown}</span>
+                    <span>detik... baca dulu!</span>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  onClose();
+                }}
+                className={`${isCompact ? 'px-4 py-1.5 rounded-lg text-[8.5px]' : 'px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-[9px] sm:text-xs'} bg-gradient-to-b from-emerald-500 via-emerald-600 to-emerald-700 hover:brightness-110 text-white font-pixel uppercase flex items-center justify-center gap-1.5 border-2 border-[#14532d] shadow-[2px_2px_0_#0f5132] active:translate-y-0.5 cursor-pointer font-bold transition-all animate-scale-up`}
+              >
+                <Play className={`${isCompact ? 'w-3 h-3' : 'w-4 h-4'} fill-current`} />
+                <span>PAHAM & MULAI MAIN SEKARANG! 🚀</span>
+              </button>
+            )}
           </div>
         </div>
 

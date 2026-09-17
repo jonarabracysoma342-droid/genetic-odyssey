@@ -7,8 +7,12 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const GameContext = createContext();
 
+// TESTING MODE: Set to true only during testing
+export const DEV_UNLOCK_ALL_STAGES = false;
+
 const INITIAL_PROGRESS = {
-  unlockedStage: 1,
+  unlockedStage: DEV_UNLOCK_ALL_STAGES ? 8 : 1,
+  unlockedStages: DEV_UNLOCK_ALL_STAGES ? [1, 2, 3, 4, 5, 6, 7, 8] : [1],
   stars: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 },
   score: 0,
   badges: [],
@@ -48,7 +52,11 @@ export const GameProvider = ({ children }) => {
             setUserName(userData.displayName || user.email.split('@')[0]);
             setGroupId(userData.groupId || '');
             if (userData.progress) {
-              setUserProgress(userData.progress);
+              setUserProgress(DEV_UNLOCK_ALL_STAGES ? {
+                ...userData.progress,
+                unlockedStage: 8,
+                unlockedStages: [1, 2, 3, 4, 5, 6, 7, 8]
+              } : userData.progress);
             }
           }
         } catch (err) {

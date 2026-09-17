@@ -68,11 +68,11 @@ export const QUEST_ITEMS = [
     stageId: 6,
     icon: '📖',
     iconSrc: '/assets/rpg/quests/item_dihybrid_ledger.png',
-    x: 640,
-    y: 360, // Di meja perapian kabin dalam
+    x: 870,
+    y: 290, // Di sudut kanan atas lantai kabin riset (dekat rak buku)
     scene: 'cabin_interior',
     description: 'Buku jurnal 16 kombinasi sifat milik Kak Fafa.',
-    hint: 'Cari di atas meja riset di dalam Kabin Riset Dihibrid.'
+    hint: 'Cari di sudut kanan atas lantai di dalam Kabin Riset Dihibrid.'
   },
   {
     id: 'bio_crystal',
@@ -277,15 +277,15 @@ export const NPC_QUEST_STORIES = {
       { speaker: 'player', speakerName: 'Peneliti Muda', text: 'Halo Kak Fafa! Hangat sekali kabin riset ini. Sedang menyiapkan apa di papan tulis perapian?' },
       { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Hai Peneliti Muda! Sekarang kita naik level ke Hukum Mendel II: Asortasi Bebas dengan mengamati DUA sifat beda sekaligus!' },
       { speaker: 'player', speakerName: 'Peneliti Muda', text: 'Dua sifat sekaligus? Maksudnya seperti bentuk biji (bulat/keriput) sekaligus warna biji (kuning/hijau) ya, Kak?' },
-      { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Tepat seratus! Tapi Buku Catatan Dihibrid 16 kotak Punnett milikku tertinggal di atas meja di dalam kabin perapian. Masuklah dan ambil bukunya ya!' }
+      { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Tepat seratus! Tapi Buku Catatan Dihibrid 16 kotak Punnett milikku tertinggal di sudut kanan atas di dalam kabin. Masuklah dan ambil bukunya ya!' }
     ],
     searchingDialogues: [
       { speaker: 'player', speakerName: 'Peneliti Muda', text: 'Kak Fafa, di mana letak persis Buku Catatan Dihibrid itu?' },
       { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Buku bersampul kulit tebal dengan pita penanda hijau.' },
-      { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Masuklah ke dalam kabin lewat pintu kayu di sebelahku, bukunya ada di atas meja perapian kabin!' }
+      { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Masuklah ke dalam kabin lewat pintu kayu di sebelahku, bukunya ada di lantai sudut kanan atas kabin!' }
     ],
     turnInDialogues: [
-      { speaker: 'player', speakerName: 'Peneliti Muda', text: 'Kak Fafa, ini Buku Catatan Dihibrid dari meja perapian di dalam kabin!' },
+      { speaker: 'player', speakerName: 'Peneliti Muda', text: 'Kak Fafa, ini Buku Catatan Dihibrid dari sudut kanan atas di dalam kabin!' },
       { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Keren banget! Matriks 16 kotak Punnett Square siap diisi dengan 4 macam gamet: AB, Ab, aB, dan ab!' },
       { speaker: 'player', speakerName: 'Peneliti Muda', text: 'Hukum Mendel II: Asortasi Bebas dua sifat beda akan segera terbukti!' },
       { speaker: 'npc', speakerName: 'Kak Fafa', text: 'Ayo mulai Stage 6: Petualangan Dihibrid!' }

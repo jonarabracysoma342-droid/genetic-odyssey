@@ -44,7 +44,7 @@ const PLANT_CARDS = [
     flowerColor: 'Ungu', 
     seedShape: 'Bulat', 
     podColor: 'Kuning', 
-    image: '/assets/pixel_plant_a.svg', 
+    image: '/assets/pixel_plant_a_yellow.svg', 
     imageBg: 'from-purple-100 via-amber-50 to-yellow-100',
     flowerBadgeBg: 'bg-purple-600 text-white',
     seedBadgeBg: 'bg-emerald-600 text-white',
@@ -116,7 +116,7 @@ const PLANT_CARDS = [
     flowerColor: 'Putih', 
     seedShape: 'Keriput', 
     podColor: 'Hijau', 
-    image: '/assets/pixel_plant_d.svg', 
+    image: '/assets/pixel_plant_d_keriput.svg', 
     imageBg: 'from-teal-100 via-emerald-50 to-green-100',
     flowerBadgeBg: 'bg-slate-200 text-slate-800 border border-slate-300',
     seedBadgeBg: 'bg-amber-700 text-white',
@@ -128,7 +128,7 @@ const PLANT_CARDS = [
     flowerColor: 'Putih', 
     seedShape: 'Keriput', 
     podColor: 'Kuning', 
-    image: '/assets/pixel_plant_b.svg', 
+    image: '/assets/pixel_plant_b_keriput.svg', 
     imageBg: 'from-yellow-100 via-amber-50 to-orange-100',
     flowerBadgeBg: 'bg-slate-200 text-slate-800 border border-slate-300',
     seedBadgeBg: 'bg-amber-700 text-white',
@@ -408,37 +408,37 @@ export const Stage1MysteryGarden = () => {
               📋
             </button>
           ) : (
-            <div className="absolute top-11 sm:top-20 right-2 sm:right-4 w-38 sm:w-56 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl shadow-md z-30 transition-all duration-300 overflow-hidden select-none stage1-mission-box">
+            <div className="absolute top-11 sm:top-20 right-2 sm:right-4 w-48 sm:w-72 bg-white/95 backdrop-blur-md border-2 border-indigo-200 rounded-2xl shadow-lg z-30 transition-all duration-300 overflow-hidden select-none stage1-mission-box">
               {/* Card Header */}
               <div 
                 onClick={() => setIsMissionExpanded(false)}
-                className="flex items-center justify-between px-1.5 py-1 sm:px-2.5 sm:py-2 bg-slate-50/80 border-b border-slate-100 cursor-pointer hover:bg-slate-100/80 transition"
+                className="flex items-center justify-between px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 bg-indigo-600 border-b-2 border-indigo-700 cursor-pointer hover:bg-indigo-700 transition"
               >
-                <span className="text-[6.5px] sm:text-[8px] font-black text-indigo-700 tracking-wider font-sans uppercase">
+                <span className="text-[8px] sm:text-[10px] font-black text-white tracking-wider font-sans uppercase">
                   📋 MISI ({currentMissionIdx + 1}/{MISSIONS.length})
                 </span>
-                <button className="text-slate-500 hover:text-indigo-650 font-extrabold text-[6px] sm:text-[7.5px] focus:outline-none cursor-pointer">
-                  Tutup
+                <button className="text-indigo-200 hover:text-white font-extrabold text-[8px] sm:text-[9px] focus:outline-none cursor-pointer">
+                  ✕ Tutup
                 </button>
               </div>
 
               {/* Card Body */}
-              <div className="p-1.5 sm:p-2.5 space-y-1 sm:space-y-2 text-left animate-fade-in">
-                <div className="flex items-start gap-1 sm:gap-1.5">
+              <div className="p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5 text-left animate-fade-in">
+                <div className="flex items-start gap-2 sm:gap-2.5">
                   <img 
                     src="/assets/mendel_avatar.webp" 
                     alt="Gregor Mendel" 
-                    className="w-4 h-4 sm:w-7 sm:h-7 object-contain flex-shrink-0 drop-shadow-3xs"
+                    className="w-6 h-6 sm:w-10 sm:h-10 object-contain flex-shrink-0 drop-shadow-3xs"
                   />
-                  <div className="space-y-0.5">
-                    <span className="text-[6px] sm:text-[7px] font-black text-slate-400 uppercase tracking-widest block truncate max-w-[80px] sm:max-w-[120px]">{mission.title}</span>
-                    <h3 className="text-[7px] sm:text-[8.5px] font-black text-slate-800 leading-tight">
+                  <div className="space-y-1">
+                    <span className="text-[8px] sm:text-[9px] font-black text-indigo-600 uppercase tracking-widest block">{mission.title}</span>
+                    <h3 className="text-[10px] sm:text-xs font-black text-slate-800 leading-snug">
                       {mission.promptText}
                     </h3>
                   </div>
                 </div>
 
-                <p className="text-[7px] sm:text-[8px] font-bold text-indigo-900 bg-indigo-50/50 p-1 sm:p-2 rounded-lg border border-indigo-100/50 leading-normal">
+                <p className="text-[9px] sm:text-[10px] font-bold text-indigo-900 bg-indigo-50 p-2 sm:p-2.5 rounded-xl border border-indigo-200 leading-relaxed">
                   💡 {mission.explanation}
                 </p>
               </div>
@@ -455,65 +455,79 @@ export const Stage1MysteryGarden = () => {
               🏷️
             </button>
           ) : (
-            <div className="absolute top-11 sm:top-20 left-2 sm:left-4 w-32 sm:w-52 bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl shadow-md z-30 transition-all duration-300 overflow-hidden select-none stage1-legend-box">
+            <div className="absolute top-11 sm:top-20 left-2 sm:left-4 w-40 sm:w-64 bg-white/95 backdrop-blur-md border-2 border-emerald-200 rounded-2xl shadow-lg z-30 transition-all duration-300 overflow-hidden select-none stage1-legend-box">
               {/* Card Header */}
               <div 
                 onClick={() => setIsLegendExpanded(false)}
-                className="flex items-center justify-between px-1.5 py-1 sm:px-2.5 sm:py-2 bg-slate-50/80 border-b border-slate-100 cursor-pointer hover:bg-slate-100/80 transition"
+                className="flex items-center justify-between px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 bg-emerald-600 border-b-2 border-emerald-700 cursor-pointer hover:bg-emerald-700 transition"
               >
-                <span className="text-[6.5px] sm:text-[8px] font-black text-indigo-700 tracking-wider font-sans uppercase">
+                <span className="text-[8px] sm:text-[10px] font-black text-white tracking-wider font-sans uppercase">
                   🏷️ LEGENDA SIMBOL
                 </span>
-                <button className="text-slate-500 hover:text-indigo-655 font-extrabold text-[6px] sm:text-[7.5px] focus:outline-none cursor-pointer">
-                  Tutup
+                <button className="text-emerald-100 hover:text-white font-extrabold text-[8px] sm:text-[9px] focus:outline-none cursor-pointer">
+                  ✕ Tutup
                 </button>
               </div>
 
               {/* Card Body */}
-              <div className="p-1.5 md:p-2.5 space-y-2 md:space-y-2.5 text-left text-[7px] md:text-[9px] font-bold text-black/80 animate-fade-in leading-normal md:leading-relaxed">
+              <div className="p-2.5 sm:p-3.5 space-y-2.5 sm:space-y-3 text-left animate-fade-in">
                 {/* Flower Color */}
-                <div className="space-y-0.5 md:space-y-1">
-                  <span className="text-[6.5px] md:text-[7.5px] font-black text-slate-400 uppercase tracking-wider block">Warna Bunga</span>
-                  <div className="grid grid-cols-2 gap-1 md:gap-1.5">
-                    <div className="flex items-center gap-0.5 md:gap-1 bg-purple-50 border border-purple-100 p-0.5 md:p-1 rounded-lg">
-                      <span className="text-[8px] md:text-[10px]">🌸</span>
-                      <span className="font-extrabold text-[7.5px] md:text-[8px] text-purple-700">Ungu</span>
+                <div className="space-y-1 sm:space-y-1.5">
+                  <span className="text-[8px] sm:text-[9px] font-black text-slate-500 uppercase tracking-wider block">🌺 Warna Bunga</span>
+                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                    <div className="flex items-center gap-1 sm:gap-1.5 bg-purple-50 border-2 border-purple-200 p-1 sm:p-1.5 rounded-xl">
+                      <span className="text-sm sm:text-base">🌸</span>
+                      <span className="font-black text-[9px] sm:text-[10px] text-purple-700">Ungu</span>
                     </div>
-                    <div className="flex items-center gap-0.5 md:gap-1 bg-slate-50 border border-slate-100 p-0.5 md:p-1 rounded-lg">
-                      <span className="text-[8px] md:text-[10px]">💮</span>
-                      <span className="font-extrabold text-[7.5px] md:text-[8px] text-slate-600">Putih</span>
+                    <div className="flex items-center gap-1 sm:gap-1.5 bg-slate-50 border-2 border-slate-200 p-1 sm:p-1.5 rounded-xl">
+                      <span className="text-sm sm:text-base">💮</span>
+                      <span className="font-black text-[9px] sm:text-[10px] text-slate-600">Putih</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Pod Color */}
-                <div className="space-y-0.5 md:space-y-1">
-                  <span className="text-[6.5px] md:text-[7.5px] font-black text-slate-400 uppercase tracking-wider block">Warna Polong</span>
-                  <div className="grid grid-cols-2 gap-1 md:gap-1.5">
-                    <div className="flex items-center gap-0.5 md:gap-1 bg-emerald-50 border border-emerald-100 p-0.5 md:p-1 rounded-lg">
-                      <span className="text-[8px] md:text-[10px]">🫛</span>
-                      <span className="font-extrabold text-[7.5px] md:text-[8px] text-emerald-700">Hijau</span>
+                <div className="space-y-1 sm:space-y-1.5">
+                  <span className="text-[8px] sm:text-[9px] font-black text-slate-500 uppercase tracking-wider block">🫘 Warna Polong</span>
+                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                    <div className="flex items-center gap-1 sm:gap-1.5 bg-emerald-50 border-2 border-emerald-200 p-1 sm:p-1.5 rounded-xl">
+                      <span className="text-sm sm:text-base">🫛</span>
+                      <span className="font-black text-[9px] sm:text-[10px] text-emerald-700">Hijau</span>
                     </div>
-                    <div className="flex items-center gap-0.5 md:gap-1 bg-amber-50 border border-amber-100 p-0.5 md:p-1 rounded-lg">
-                      <span className="text-[8px] md:text-[10px]">💛</span>
-                      <span className="font-extrabold text-[7.5px] md:text-[8px] text-amber-700">Kuning</span>
+                    {/* Polong Kuning - warna kuning asli */}
+                    <div className="flex items-center gap-1 sm:gap-1.5 bg-yellow-50 border-2 border-yellow-300 p-1 sm:p-1.5 rounded-xl">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="7" cy="7" rx="5.5" ry="3.5" fill="#EAB308" stroke="#A16207" strokeWidth="1.2"/>
+                        <ellipse cx="4.5" cy="7" rx="1.8" ry="1.8" fill="#FDE047" stroke="#A16207" strokeWidth="0.8"/>
+                        <ellipse cx="7" cy="7" rx="1.8" ry="1.8" fill="#FDE047" stroke="#A16207" strokeWidth="0.8"/>
+                        <ellipse cx="9.5" cy="7" rx="1.8" ry="1.8" fill="#FDE047" stroke="#A16207" strokeWidth="0.8"/>
+                      </svg>
+                      <span className="font-black text-[9px] sm:text-[10px] text-yellow-700">Kuning</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Seed Shape */}
-                <div className="space-y-0.5 md:space-y-1">
-                  <span className="text-[6.5px] md:text-[7.5px] font-black text-slate-400 uppercase tracking-wider block">Bentuk Biji</span>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1 md:gap-1.5 bg-slate-50 border border-slate-100 px-1 md:px-1.5 py-0.5 md:py-1 rounded-lg">
-                      <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-600 border border-emerald-700 flex-shrink-0" />
-                      <span className="font-extrabold text-[7px] md:text-[8px] text-slate-700">Bulat (Mulus)</span>
+                <div className="space-y-1 sm:space-y-1.5">
+                  <span className="text-[8px] sm:text-[9px] font-black text-slate-500 uppercase tracking-wider block">🌱 Bentuk Biji</span>
+                  <div className="space-y-1.5">
+                    {/* Biji Bulat - lingkaran mulus */}
+                    <div className="flex items-center gap-2 sm:gap-2.5 bg-slate-50 border-2 border-slate-200 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-700 border-2 border-emerald-800 flex-shrink-0 shadow-sm" />
+                      <span className="font-black text-[9px] sm:text-[10px] text-slate-700">Bulat (Mulus)</span>
                     </div>
-                    <div className="flex items-center gap-1 md:gap-1.5 bg-slate-50 border border-slate-100 px-1 md:px-1.5 py-0.5 md:py-1 rounded-lg">
-                      <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-emerald-600 flex-shrink-0 flex items-center justify-center relative" style={{ clipPath: 'polygon(50% 0%, 80% 20%, 100% 50%, 80% 80%, 50% 100%, 20% 80%, 0% 50%, 20% 20%)' }}>
-                        <div className="w-1.5 h-1.5 bg-emerald-800" style={{ clipPath: 'polygon(50% 0%, 80% 20%, 100% 50%, 80% 80%, 50% 100%, 20% 80%, 0% 50%, 20% 20%)' }} />
-                      </div>
-                      <span className="font-extrabold text-[7px] md:text-[8px] text-slate-700">Keriput (Bergerigi)</span>
+                    {/* Biji Keriput - bentuk bergerigi tidak beraturan */}
+                    <div className="flex items-center gap-2 sm:gap-2.5 bg-slate-50 border-2 border-slate-200 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl">
+                      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                        {/* Biji keriput: bentuk tidak beraturan, bergerigi, seperti kismis */}
+                        <path d="M10 2 C11.5 1 13.5 1.5 14.5 3 C16 2.5 17.5 3.5 17.5 5.5 C19 6 19.5 7.5 18.5 8.5 C19.5 9.5 19 11 18 11.5 C18.5 13 17.5 14.5 16 14.5 C15.5 16 14 17 12.5 16.5 C11.5 18 9.5 18 8.5 16.5 C7 17.5 5.5 16.5 5 15 C3.5 15 2.5 13.5 3 12 C1.5 11 1.5 9 3 8 C2 6.5 2.5 4.5 4 4 C4 2.5 5.5 1.5 7 2 C7.5 1 9 1.5 10 2Z" fill="#6B7F3A" stroke="#3D4A1F" strokeWidth="1"/>
+                        {/* Lekukan/kerutan di tengah */}
+                        <path d="M7 8 Q8 9.5 10 9 Q12 8.5 13 10" stroke="#3D4A1F" strokeWidth="0.8" fill="none" strokeLinecap="round"/>
+                        <path d="M8 11 Q9.5 12.5 11.5 11.5" stroke="#3D4A1F" strokeWidth="0.8" fill="none" strokeLinecap="round"/>
+                        {/* Highlight */}
+                        <ellipse cx="8" cy="7" rx="1.5" ry="1" fill="#9DB54A" opacity="0.6"/>
+                      </svg>
+                      <span className="font-black text-[9px] sm:text-[10px] text-slate-700">Keriput (Gerigi)</span>
                     </div>
                   </div>
                 </div>
@@ -621,12 +635,19 @@ export const Stage1MysteryGarden = () => {
             </div>
           </div>
 
-          {/* Feedback & Verify Section */}
-          {feedback && (
-            <div className={`absolute bottom-20 left-4 right-4 max-w-sm mx-auto p-3 rounded-2xl border flex items-center gap-2.5 text-[10px] font-extrabold shadow-md z-30 animate-fade-in ${
-              feedback.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
-            }`}>
-              {feedback.type === 'success' ? <CheckCircle2 className="w-4 h-4 flex-shrink-0" /> : <XCircle className="w-4 h-4 flex-shrink-0" />}
+          {/* Feedback: SUCCESS = top-center overlay besar, ERROR = bottom bar */}
+          {feedback && feedback.type === 'success' && (
+            <div className="absolute top-16 sm:top-20 left-0 right-0 flex justify-center z-40 pointer-events-none px-4">
+              <div className="bg-emerald-500 border-4 border-emerald-700 text-white rounded-3xl px-8 py-5 flex flex-col items-center gap-2.5 shadow-2xl animate-scale-up max-w-sm w-full">
+                <CheckCircle2 className="w-12 h-12 text-white drop-shadow-md" />
+                <span className="text-base sm:text-lg font-black text-center leading-snug">{feedback.message}</span>
+                <span className="text-emerald-100 text-xs font-bold animate-pulse">✨ Melanjutkan misi...</span>
+              </div>
+            </div>
+          )}
+          {feedback && feedback.type === 'error' && (
+            <div className="absolute bottom-20 left-4 right-4 max-w-sm mx-auto p-3 rounded-2xl border-2 flex items-center gap-2.5 text-[10px] font-extrabold shadow-md z-30 animate-fade-in bg-rose-50 border-rose-300 text-rose-800">
+              <XCircle className="w-5 h-5 flex-shrink-0" />
               <span>{feedback.message}</span>
             </div>
           )}

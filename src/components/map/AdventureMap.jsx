@@ -147,10 +147,12 @@ export const AdventureMap = () => {
         {/* 8 Stages Grid */}
         <div className={`grid ${isLandscapeMobile ? 'grid-cols-2 sm:grid-cols-4 gap-2' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4'}`}>
           {STAGES.map((stage) => {
+            // TESTING OVERRIDE: set to false to restore normal progression
+            const RPG_TESTING_UNLOCK_ALL = false;
             const unlockedList = Array.isArray(userProgress.unlockedStages) ? userProgress.unlockedStages : [1];
             const maxUnlockedNum = Math.max(userProgress.unlockedStage || 1, ...unlockedList);
 
-            const isUnlocked = unlockedList.includes(stage.id) || stage.id <= maxUnlockedNum;
+            const isUnlocked = RPG_TESTING_UNLOCK_ALL || unlockedList.includes(stage.id) || stage.id <= maxUnlockedNum;
             const stageStars = (userProgress.stars && userProgress.stars[stage.id]) || 0;
 
             return (

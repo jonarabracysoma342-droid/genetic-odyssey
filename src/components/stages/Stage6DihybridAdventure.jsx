@@ -10,22 +10,25 @@ import {
   Star,
   RefreshCw,
   ChevronLeft,
+  ChevronDown,
   Info
 } from 'lucide-react';
 
 // SeedIcon Component for phenotype visualization
 const SeedIcon = ({ genotypeOrPhenotype, size = 20 }) => {
+  if (!genotypeOrPhenotype) return null;
+  const str = String(genotypeOrPhenotype);
   let isRound = true;
   let isYellow = true;
 
-  if (!genotypeOrPhenotype.includes(' ')) {
+  if (!str.includes(' ')) {
     // Genotype parsing (e.g. 'AaBb')
-    isRound = genotypeOrPhenotype.includes('A');
-    isYellow = genotypeOrPhenotype.includes('B');
+    isRound = str.includes('A');
+    isYellow = str.includes('B');
   } else {
     // Phenotype label parsing (e.g. 'Bulat Kuning')
-    isRound = genotypeOrPhenotype.includes('Bulat');
-    isYellow = genotypeOrPhenotype.includes('Kuning');
+    isRound = str.includes('Bulat');
+    isYellow = str.includes('Kuning');
   }
   
   const fill = isYellow ? '#facc15' : '#4ade80'; // Yellow vs Green
@@ -55,6 +58,516 @@ const SeedIcon = ({ genotypeOrPhenotype, size = 20 }) => {
       </svg>
     );
   }
+};
+
+// --- Interactive Parental Gamete Line Formation Guide (AaBb -> AB, Ab, aB, ab) ---
+// --- Interactive Parental Gamete Line Formation Guide (AaBb -> AB, Ab, aB, ab) ---
+const ParentalGameteLineGuide = ({ highlightedGamete, onSelectGamete }) => {
+  const gameteInfo = {
+    AB: {
+      gene1: 'A',
+      gene2: 'B',
+      label: 'A ➔ B',
+      name: 'Gamet AB',
+      desc: 'Bulat Kuning',
+      text: 'Alel A (Bulat) berpasangan dengan alel B (Kuning)',
+      color: '#2563eb',
+      bgClass: 'bg-blue-50 border-blue-400 text-blue-900',
+      activeClass: 'border-blue-500 bg-blue-50 text-blue-900 ring-2 ring-blue-400 shadow-sm'
+    },
+    Ab: {
+      gene1: 'A',
+      gene2: 'b',
+      label: 'A ➔ b',
+      name: 'Gamet Ab',
+      desc: 'Bulat Hijau',
+      text: 'Alel A (Bulat) berpasangan dengan alel b (Hijau)',
+      color: '#7c3aed',
+      bgClass: 'bg-purple-50 border-purple-400 text-purple-900',
+      activeClass: 'border-purple-500 bg-purple-50 text-purple-900 ring-2 ring-purple-400 shadow-sm'
+    },
+    aB: {
+      gene1: 'a',
+      gene2: 'B',
+      label: 'a ➔ B',
+      name: 'Gamet aB',
+      desc: 'Keriput Kuning',
+      text: 'Alel a (Keriput) berpasangan dengan alel B (Kuning)',
+      color: '#d97706',
+      bgClass: 'bg-amber-50 border-amber-400 text-amber-900',
+      activeClass: 'border-amber-500 bg-amber-50 text-amber-900 ring-2 ring-amber-400 shadow-sm'
+    },
+    ab: {
+      gene1: 'a',
+      gene2: 'b',
+      label: 'a ➔ b',
+      name: 'Gamet ab',
+      desc: 'Keriput Hijau',
+      text: 'Alel a (Keriput) berpasangan dengan alel b (Hijau)',
+      color: '#059669',
+      bgClass: 'bg-emerald-50 border-emerald-400 text-emerald-900',
+      activeClass: 'border-emerald-500 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-400 shadow-sm'
+    }
+  };
+
+  const currentInfo = highlightedGamete ? gameteInfo[highlightedGamete] : null;
+
+  // Check which alleles should be highlighted
+  const isAActive = currentInfo ? currentInfo.gene1 === 'A' : false;
+  const isaActive = currentInfo ? currentInfo.gene1 === 'a' : false;
+  const isBActive = currentInfo ? currentInfo.gene2 === 'B' : false;
+  const isbActive = currentInfo ? currentInfo.gene2 === 'b' : false;
+
+  return (
+    <div className="w-full flex flex-col items-center select-none">
+      {/* SVG Diagram with curved connecting lines */}
+      <div className="w-full relative py-0.5">
+        <svg viewBox="0 0 380 155" className="w-full max-w-[340px] sm:max-w-[370px] h-auto mx-auto block overflow-visible">
+          <defs>
+            <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+            </marker>
+            <marker id="arrow-purple" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#7c3aed" />
+            </marker>
+            <marker id="arrow-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
+            </marker>
+            <marker id="arrow-emerald" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669" />
+            </marker>
+            <filter id="glow-blue" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#2563eb" floodOpacity="0.7" />
+            </filter>
+            <filter id="glow-purple" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#7c3aed" floodOpacity="0.7" />
+            </filter>
+            <filter id="glow-amber" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#d97706" floodOpacity="0.7" />
+            </filter>
+            <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#059669" floodOpacity="0.7" />
+            </filter>
+          </defs>
+
+          {/* Background card container */}
+          <rect width="100%" height="100%" fill="#fffdfa" rx="14" stroke="#cbd5e1" strokeWidth="1.2" />
+
+          {/* Gene 1 & Gene 2 Header labels */}
+          <text x="90" y="44" fontFamily="sans-serif" fontSize="8" fontWeight="700" fill="#64748b" textAnchor="middle">
+            Gen 1 (Bentuk)
+          </text>
+          <text x="286" y="44" fontFamily="sans-serif" fontSize="8" fontWeight="700" fill="#64748b" textAnchor="middle">
+            Gen 2 (Warna)
+          </text>
+
+          {/* Prompt when no gamete is selected */}
+          {!highlightedGamete && (
+            <g className="animate-pulse">
+              <rect x="55" y="10" width="270" height="20" rx="6" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3 3" />
+              <text x="190" y="23" fontFamily="sans-serif" fontSize="8.5" fontWeight="700" fill="#475569" textAnchor="middle">
+                👆 Klik salah satu kotak gamet untuk melihat garisnya
+              </text>
+            </g>
+          )}
+
+          {/* Line 2: A to b (High Top Arc) - ONLY VISIBLE WHEN 'Ab' IS SELECTED */}
+          {highlightedGamete === 'Ab' && (
+            <g className="animate-scale-up" filter="url(#glow-purple)">
+              <path
+                d="M 68 54 C 115 -6, 265 -6, 308 54"
+                fill="none"
+                stroke="#7c3aed"
+                strokeWidth={3.5}
+                strokeDasharray="6,3"
+                strokeLinecap="round"
+                markerEnd="url(#arrow-purple)"
+              />
+              <rect x="174" y="2" width="32" height="15" rx="4" fill="#7c3aed" />
+              <text x="190" y="13.5" fontFamily="monospace" fontSize="9" fontWeight="900" fill="#ffffff" textAnchor="middle">Ab</text>
+            </g>
+          )}
+
+          {/* Line 1: A to B (Inner Top Arc) - ONLY VISIBLE WHEN 'AB' IS SELECTED */}
+          {highlightedGamete === 'AB' && (
+            <g className="animate-scale-up" filter="url(#glow-blue)">
+              <path
+                d="M 68 56 C 110 20, 220 20, 264 56"
+                fill="none"
+                stroke="#2563eb"
+                strokeWidth={3.5}
+                strokeDasharray="6,3"
+                strokeLinecap="round"
+                markerEnd="url(#arrow-blue)"
+              />
+              <rect x="150" y="16" width="32" height="15" rx="4" fill="#2563eb" />
+              <text x="166" y="27.5" fontFamily="monospace" fontSize="9" fontWeight="900" fill="#ffffff" textAnchor="middle">AB</text>
+            </g>
+          )}
+
+          {/* Gene 1 Box: [A] [a] */}
+          <rect x="42" y="53" width="96" height="42" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
+          
+          {/* Allele A */}
+          <g style={{ opacity: !highlightedGamete || isAActive ? 1 : 0.35, transition: 'all 0.3s' }}>
+            <circle
+              cx="68"
+              cy="74"
+              r={isAActive ? 15.5 : 14}
+              fill={isAActive ? '#dbeafe' : '#ffffff'}
+              stroke={isAActive ? '#2563eb' : '#1d4ed8'}
+              strokeWidth={isAActive ? 3 : 2}
+            />
+            <text x="68" y="79.5" fontFamily="monospace" fontSize={isAActive ? 16 : 15} fontWeight="900" fill="#1e40af" textAnchor="middle">A</text>
+          </g>
+
+          {/* Allele a */}
+          <g style={{ opacity: !highlightedGamete || isaActive ? 1 : 0.35, transition: 'all 0.3s' }}>
+            <circle
+              cx="112"
+              cy="74"
+              r={isaActive ? 15.5 : 14}
+              fill={isaActive ? '#ede9fe' : '#ffffff'}
+              stroke={isaActive ? '#7c3aed' : '#6d28d9'}
+              strokeWidth={isaActive ? 3 : 2}
+            />
+            <text x="112" y="79.5" fontFamily="monospace" fontSize={isaActive ? 16 : 15} fontWeight="900" fill="#5b21b6" textAnchor="middle">a</text>
+          </g>
+
+          {/* Cross Multiplication Sign */}
+          <text x="190" y="78" fontFamily="sans-serif" fontSize="13" fontWeight="900" fill="#94a3b8" textAnchor="middle">✕</text>
+
+          {/* Gene 2 Box: [B] [b] */}
+          <rect x="238" y="53" width="96" height="42" rx="10" fill="#fefce8" stroke="#eab308" strokeWidth="1.5" />
+
+          {/* Allele B */}
+          <g style={{ opacity: !highlightedGamete || isBActive ? 1 : 0.35, transition: 'all 0.3s' }}>
+            <circle
+              cx="264"
+              cy="74"
+              r={isBActive ? 15.5 : 14}
+              fill={isBActive ? '#fef3c7' : '#ffffff'}
+              stroke={isBActive ? '#d97706' : '#b45309'}
+              strokeWidth={isBActive ? 3 : 2}
+            />
+            <text x="264" y="79.5" fontFamily="monospace" fontSize={isBActive ? 16 : 15} fontWeight="900" fill="#92400e" textAnchor="middle">B</text>
+          </g>
+
+          {/* Allele b */}
+          <g style={{ opacity: !highlightedGamete || isbActive ? 1 : 0.35, transition: 'all 0.3s' }}>
+            <circle
+              cx="308"
+              cy="74"
+              r={isbActive ? 15.5 : 14}
+              fill={isbActive ? '#d1fae5' : '#ffffff'}
+              stroke={isbActive ? '#059669' : '#047857'}
+              strokeWidth={isbActive ? 3 : 2}
+            />
+            <text x="308" y="79.5" fontFamily="monospace" fontSize={isbActive ? 16 : 15} fontWeight="900" fill="#065f46" textAnchor="middle">b</text>
+          </g>
+
+          {/* Line 3: a to B (Inner Bottom Arc) - ONLY VISIBLE WHEN 'aB' IS SELECTED */}
+          {highlightedGamete === 'aB' && (
+            <g className="animate-scale-up" filter="url(#glow-amber)">
+              <path
+                d="M 112 94 C 135 130, 235 130, 264 94"
+                fill="none"
+                stroke="#d97706"
+                strokeWidth={3.5}
+                strokeDasharray="6,3"
+                strokeLinecap="round"
+                markerEnd="url(#arrow-amber)"
+              />
+              <rect x="174" y="112" width="32" height="15" rx="4" fill="#d97706" />
+              <text x="190" y="123.5" fontFamily="monospace" fontSize="9" fontWeight="900" fill="#ffffff" textAnchor="middle">aB</text>
+            </g>
+          )}
+
+          {/* Line 4: a to b (Low Bottom Arc) - ONLY VISIBLE WHEN 'ab' IS SELECTED */}
+          {highlightedGamete === 'ab' && (
+            <g className="animate-scale-up" filter="url(#glow-emerald)">
+              <path
+                d="M 112 94 C 145 154, 275 154, 308 94"
+                fill="none"
+                stroke="#059669"
+                strokeWidth={3.5}
+                strokeDasharray="6,3"
+                strokeLinecap="round"
+                markerEnd="url(#arrow-emerald)"
+              />
+              <rect x="196" y="128" width="32" height="15" rx="4" fill="#059669" />
+              <text x="212" y="139.5" fontFamily="monospace" fontSize="9" fontWeight="900" fill="#ffffff" textAnchor="middle">ab</text>
+            </g>
+          )}
+        </svg>
+      </div>
+
+      {/* Dynamic Explanation Callout when a Gamete is chosen */}
+      {currentInfo && (
+        <div className={`w-full mt-1 px-2 py-1 rounded-lg border text-[8.5px] font-bold text-center flex items-center justify-center gap-1.5 animate-scale-up ${currentInfo.bgClass}`}>
+          <span className="font-mono font-black">{currentInfo.name}:</span>
+          <span>{currentInfo.text}</span>
+          <span className="px-1.5 py-0.2 rounded bg-white/70 text-[7.5px] font-extrabold border border-current">
+            {currentInfo.label}
+          </span>
+        </div>
+      )}
+
+      {/* 4 Interactive Gamete Pills with Explanation */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full mt-1.5">
+        {[
+          { id: 'AB', line: 'A ➔ B', label: 'Gamet AB', desc: 'Bulat Kuning', activeClass: 'border-blue-500 bg-blue-50 text-blue-900 ring-2 ring-blue-400 shadow-sm' },
+          { id: 'Ab', line: 'A ➔ b', label: 'Gamet Ab', desc: 'Bulat Hijau', activeClass: 'border-purple-500 bg-purple-50 text-purple-900 ring-2 ring-purple-400 shadow-sm' },
+          { id: 'aB', line: 'a ➔ B', label: 'Gamet aB', desc: 'Keriput Kuning', activeClass: 'border-amber-500 bg-amber-50 text-amber-900 ring-2 ring-amber-400 shadow-sm' },
+          { id: 'ab', line: 'a ➔ b', label: 'Gamet ab', desc: 'Keriput Hijau', activeClass: 'border-emerald-500 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-400 shadow-sm' }
+        ].map((item) => (
+          <button
+            key={`guide-${item.id}`}
+            type="button"
+            onClick={() => onSelectGamete(highlightedGamete === item.id ? null : item.id)}
+            className={`p-1.5 rounded-xl border text-left cursor-pointer transition-all ${
+              highlightedGamete === item.id
+                ? item.activeClass
+                : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700 shadow-3xs'
+            }`}
+            title={`Klik kotak untuk melihat garis ${item.line}`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-mono font-black text-[10px] sm:text-[11px]">{item.id}</span>
+              <span className="text-[7.5px] font-bold text-slate-400 font-sans">{item.line}</span>
+            </div>
+            <div className="text-[7.5px] sm:text-[8px] text-slate-500 truncate mt-0.5 font-medium">{item.desc}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// --- Interactive Offspring Genotype Combination Guide (e.g. AB x AB -> AABB) ---
+const OffspringGenotypeLineGuide = ({ 
+  rowGamete = 'AB', 
+  colGamete = 'AB',
+  onSelectPreset
+}) => {
+  const g1Row = (rowGamete && rowGamete[0]) || 'A';
+  const g2Row = (rowGamete && rowGamete[1]) || 'B';
+  const g1Col = (colGamete && colGamete[0]) || 'A';
+  const g2Col = (colGamete && colGamete[1]) || 'B';
+
+  const sortPair = (c1, c2) => {
+    const char1 = String(c1 || '');
+    const char2 = String(c2 || '');
+    if (char1 === char1.toUpperCase() && char2 === char2.toLowerCase()) return char1 + char2;
+    if (char1 === char2.toLowerCase() && char2 === char1.toUpperCase()) return char2 + char1;
+    return [char1, char2].sort().join('');
+  };
+
+  const pair1 = sortPair(g1Row, g1Col);
+  const pair2 = sortPair(g2Row, g2Col);
+  const fullGenotype = String(pair1 + pair2);
+
+  const getPhenotype = (genotype) => {
+    const str = String(genotype || '');
+    const isRound = str.includes('A');
+    const isYellow = str.includes('B');
+    if (isRound && isYellow) return { label: 'Bulat Kuning', bg: '#fef3c7', text: '#92400e', color: '#eab308' };
+    if (isRound && !isYellow) return { label: 'Bulat Hijau', bg: '#ecfccb', text: '#3f6212', color: '#84cc16' };
+    if (!isRound && isYellow) return { label: 'Keriput Kuning', bg: '#ffedd5', text: '#9a3412', color: '#f97316' };
+    return { label: 'Keriput Hijau', bg: '#d1fae5', text: '#065f46', color: '#10b981' };
+  };
+
+  const pheno = getPhenotype(fullGenotype);
+
+  const getAlleleColor = (allele) => {
+    if (allele === 'A') return { fill: '#dbeafe', stroke: '#2563eb', text: '#1e40af' };
+    if (allele === 'a') return { fill: '#ede9fe', stroke: '#7c3aed', text: '#5b21b6' };
+    if (allele === 'B') return { fill: '#fefce8', stroke: '#d97706', text: '#92400e' };
+    return { fill: '#d1fae5', stroke: '#059669', text: '#065f46' };
+  };
+
+  const c_g1Row = getAlleleColor(g1Row);
+  const c_g2Row = getAlleleColor(g2Row);
+  const c_g1Col = getAlleleColor(g1Col);
+  const c_g2Col = getAlleleColor(g2Col);
+
+  return (
+    <div className="w-full flex flex-col items-center select-none animate-scale-up">
+      {/* SVG Diagram with curved connecting lines */}
+      <div className="w-full relative py-0.5">
+        <svg viewBox="0 0 380 180" className="w-full max-w-[340px] sm:max-w-[370px] h-auto mx-auto block overflow-visible">
+          <defs>
+            <marker id="arrow-gene1-offspring" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+            </marker>
+            <marker id="arrow-gene2-offspring" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
+            </marker>
+            <filter id="glow-gene1-offspring" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#2563eb" floodOpacity="0.5" />
+            </filter>
+            <filter id="glow-gene2-offspring" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#d97706" floodOpacity="0.5" />
+            </filter>
+          </defs>
+
+          {/* Background card container */}
+          <rect width="100%" height="100%" fill="#fffdfa" rx="14" stroke="#cbd5e1" strokeWidth="1.2" />
+
+          {/* Header Titles */}
+          <text x="95" y="18" fontFamily="sans-serif" fontSize="8" fontWeight="800" fill="#475569" textAnchor="middle">
+            Gamet ♀ (Ibu / Baris)
+          </text>
+          <text x="285" y="18" fontFamily="sans-serif" fontSize="8" fontWeight="800" fill="#475569" textAnchor="middle">
+            Gamet ♂ (Ayah / Kolom)
+          </text>
+
+          {/* Gamet ♀ Container */}
+          <rect x="45" y="24" width="100" height="46" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
+          {/* Allele g1Row (Gen Bentuk) */}
+          <circle cx="72" cy="43" r="13" fill={c_g1Row.fill} stroke={c_g1Row.stroke} strokeWidth="2.2" />
+          <text x="72" y="48" fontFamily="monospace" fontSize="13.5" fontWeight="900" fill={c_g1Row.text} textAnchor="middle">{g1Row}</text>
+          <text x="72" y="64" fontFamily="sans-serif" fontSize="6.5" fontWeight="700" fill="#64748b" textAnchor="middle">Bentuk</text>
+
+          {/* Allele g2Row (Gen Warna) */}
+          <circle cx="118" cy="43" r="13" fill={c_g2Row.fill} stroke={c_g2Row.stroke} strokeWidth="2.2" />
+          <text x="118" y="48" fontFamily="monospace" fontSize="13.5" fontWeight="900" fill={c_g2Row.text} textAnchor="middle">{g2Row}</text>
+          <text x="118" y="64" fontFamily="sans-serif" fontSize="6.5" fontWeight="700" fill="#64748b" textAnchor="middle">Warna</text>
+
+          {/* Fertilization Sign */}
+          <circle cx="190" cy="47" r="11" fill="#eff6ff" stroke="#93c5fd" strokeWidth="1.2" />
+          <text x="190" y="51" fontFamily="sans-serif" fontSize="12" fontWeight="900" fill="#1d4ed8" textAnchor="middle">✕</text>
+
+          {/* Gamet ♂ Container */}
+          <rect x="235" y="24" width="100" height="46" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
+          {/* Allele g1Col (Gen Bentuk) */}
+          <circle cx="262" cy="43" r="13" fill={c_g1Col.fill} stroke={c_g1Col.stroke} strokeWidth="2.2" />
+          <text x="262" y="48" fontFamily="monospace" fontSize="13.5" fontWeight="900" fill={c_g1Col.text} textAnchor="middle">{g1Col}</text>
+          <text x="262" y="64" fontFamily="sans-serif" fontSize="6.5" fontWeight="700" fill="#64748b" textAnchor="middle">Bentuk</text>
+
+          {/* Allele g2Col (Gen Warna) */}
+          <circle cx="308" cy="43" r="13" fill={c_g2Col.fill} stroke={c_g2Col.stroke} strokeWidth="2.2" />
+          <text x="308" y="48" fontFamily="monospace" fontSize="13.5" fontWeight="900" fill={c_g2Col.text} textAnchor="middle">{g2Col}</text>
+          <text x="308" y="64" fontFamily="sans-serif" fontSize="6.5" fontWeight="700" fill="#64748b" textAnchor="middle">Warna</text>
+
+          {/* Connecting Arc 1: Gen Bentuk */}
+          <g filter="url(#glow-gene1-offspring)">
+            <path
+              d="M 72 56 C 72 85, 82 92, 82 122"
+              fill="none"
+              stroke="#2563eb"
+              strokeWidth={2.5}
+              strokeDasharray="5 3"
+              strokeLinecap="round"
+              markerEnd="url(#arrow-gene1-offspring)"
+            />
+            <path
+              d="M 262 56 C 262 92, 102 85, 102 122"
+              fill="none"
+              stroke="#2563eb"
+              strokeWidth={2.5}
+              strokeDasharray="5 3"
+              strokeLinecap="round"
+              markerEnd="url(#arrow-gene1-offspring)"
+            />
+          </g>
+
+          {/* Connecting Arc 2: Gen Warna */}
+          <g filter="url(#glow-gene2-offspring)">
+            <path
+              d="M 118 56 C 118 85, 170 92, 170 122"
+              fill="none"
+              stroke="#d97706"
+              strokeWidth={2.5}
+              strokeDasharray="5 3"
+              strokeLinecap="round"
+              markerEnd="url(#arrow-gene2-offspring)"
+            />
+            <path
+              d="M 308 56 C 308 85, 190 92, 190 122"
+              fill="none"
+              stroke="#d97706"
+              strokeWidth={2.5}
+              strokeDasharray="5 3"
+              strokeLinecap="round"
+              markerEnd="url(#arrow-gene2-offspring)"
+            />
+          </g>
+
+          {/* Result Box (Bottom) */}
+          <rect x="45" y="124" width="290" height="48" rx="12" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
+
+          {/* Label Pair 1 (Bentuk) */}
+          <rect x="58" y="129" width="68" height="38" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.4" />
+          <text x="92" y="140" fontFamily="sans-serif" fontSize="7" fontWeight="800" fill="#1d4ed8" textAnchor="middle">Alel Bentuk</text>
+          <text x="92" y="157" fontFamily="monospace" fontSize="14" fontWeight="900" fill="#1e40af" textAnchor="middle">{pair1}</text>
+
+          {/* Plus sign */}
+          <text x="136" y="151" fontFamily="sans-serif" fontSize="13" fontWeight="900" fill="#64748b" textAnchor="middle">+</text>
+
+          {/* Label Pair 2 (Warna) */}
+          <rect x="146" y="129" width="68" height="38" rx="8" fill="#fefce8" stroke="#eab308" strokeWidth="1.4" />
+          <text x="180" y="140" fontFamily="sans-serif" fontSize="7" fontWeight="800" fill="#b45309" textAnchor="middle">Alel Warna</text>
+          <text x="180" y="157" fontFamily="monospace" fontSize="14" fontWeight="900" fill="#92400e" textAnchor="middle">{pair2}</text>
+
+          {/* Arrow to full genotype */}
+          <text x="224" y="151" fontFamily="sans-serif" fontSize="13" fontWeight="900" fill="#64748b" textAnchor="middle">➔</text>
+
+          {/* Combined Genotype + Phenotype badge */}
+          <rect 
+            x="234" 
+            y="129" 
+            width="93" 
+            height="38" 
+            rx="8" 
+            fill={pheno.color === '#eab308' ? '#fef3c7' : pheno.color === '#84cc16' ? '#ecfccb' : pheno.color === '#f97316' ? '#ffedd5' : '#d1fae5'} 
+            stroke={pheno.color} 
+            strokeWidth="1.4" 
+          />
+          <text x="280.5" y="144" fontFamily="monospace" fontSize="13" fontWeight="900" fill={pheno.text} textAnchor="middle">{fullGenotype}</text>
+          <text x="280.5" y="158" fontFamily="sans-serif" fontSize="7.5" fontWeight="800" fill={pheno.text} textAnchor="middle">{pheno.label}</text>
+        </svg>
+      </div>
+
+      {/* Dynamic Explanation Footer */}
+      <div className="w-full mt-1.5 px-2 py-1 rounded-lg bg-white border border-slate-200 text-[8px] sm:text-[8.5px] font-bold text-slate-700 text-center flex flex-wrap items-center justify-center gap-1 shadow-3xs">
+        <span className="text-slate-400 font-extrabold">Alur:</span>
+        <span className="font-mono text-blue-700 font-black">{g1Row} + {g1Col} ➔ {pair1}</span>
+        <span className="text-slate-300">&bull;</span>
+        <span className="font-mono text-amber-700 font-black">{g2Row} + {g2Col} ➔ {pair2}</span>
+        <span className="text-slate-300">&bull;</span>
+        <span className="font-black text-slate-900 font-mono">Hasil: {fullGenotype}</span>
+      </div>
+
+      {/* 4 Quick Sample Genotype Presets */}
+      <div className="grid grid-cols-4 gap-1 w-full mt-1.5">
+        {[
+          { label: 'AABB', row: 'AB', col: 'AB', desc: 'Bulat Kuning' },
+          { label: 'AABb', row: 'AB', col: 'Ab', desc: 'Bulat Kuning' },
+          { label: 'AaBb', row: 'Ab', col: 'aB', desc: 'Bulat Kuning' },
+          { label: 'aabb', row: 'ab', col: 'ab', desc: 'Keriput Hijau' }
+        ].map((preset) => {
+          const isCurrent = fullGenotype === preset.label;
+          return (
+            <button
+              key={`preset-${preset.label}`}
+              type="button"
+              onClick={() => onSelectPreset && onSelectPreset(preset.row, preset.col)}
+              className={`p-1 rounded-lg border text-center cursor-pointer transition-all ${
+                isCurrent
+                  ? 'border-indigo-600 bg-indigo-50 text-indigo-950 ring-2 ring-indigo-400 font-black shadow-3xs scale-[1.02]'
+                  : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700 shadow-3xs'
+              }`}
+              title={`Klik untuk melihat alur pembentukan ${preset.label}`}
+            >
+              <div className="font-mono font-black text-[9.5px] sm:text-[10.5px]">{preset.label}</div>
+              <div className="text-[6.5px] text-slate-400 font-medium truncate">{preset.desc}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 export const Stage6DihybridAdventure = () => {
@@ -92,6 +605,13 @@ export const Stage6DihybridAdventure = () => {
   const [feedback, setFeedback] = useState(null);
   const [stageCompleted, setStageCompleted] = useState(false);
   const [score, setScore] = useState(0);
+
+  // Gamete line guide state (Hukum Asortasi Bebas visual guide)
+  const [highlightedGamete, setHighlightedGamete] = useState(null);
+  const [showGameteGuide, setShowGameteGuide] = useState(true);
+  // Guide tab: 'parental' (Asortasi Bebas AaBb -> gamet) | 'offspring' (Fertilisasi gamet -> genotipe AABB, dll)
+  const [guideTab, setGuideTab] = useState('parental');
+  const [sampleCross, setSampleCross] = useState(null); // null | { row: 'AB', col: 'AB' }
 
   const stageInfo = STAGES.find(s => s.id === 6);
 
@@ -141,14 +661,21 @@ export const Stage6DihybridAdventure = () => {
   };
 
   const handleSelectHeaderSlot = (type, index) => {
-    if (step !== 1) return;
     sound.playClick();
     
+    // Determine the expected or current gamete for this column / row
+    const currentVal = type === 'col' ? assignedCols[index] : assignedRows[index];
+    const targetGamete = currentVal || expectedGametes[index];
+    
     // Toggle active slot
-    if (activeHeaderSlot && activeHeaderSlot.type === type && activeHeaderSlot.index === index) {
-      setActiveHeaderSlot(null);
+    const isSameSlot = activeHeaderSlot && activeHeaderSlot.type === type && activeHeaderSlot.index === index;
+    if (isSameSlot || (step !== 1 && highlightedGamete === targetGamete)) {
+      if (step === 1) setActiveHeaderSlot(null);
+      setHighlightedGamete(null);
     } else {
-      setActiveHeaderSlot({ type, index });
+      if (step === 1) setActiveHeaderSlot({ type, index });
+      setHighlightedGamete(targetGamete);
+      setShowGameteGuide(true);
     }
     setFeedback(null);
   };
@@ -156,6 +683,7 @@ export const Stage6DihybridAdventure = () => {
   const handleSelectHeaderGameteOption = (g) => {
     if (!activeHeaderSlot) return;
     sound.playClick();
+    setHighlightedGamete(g);
     
     const { type, index } = activeHeaderSlot;
     if (type === 'col') {
@@ -213,6 +741,7 @@ export const Stage6DihybridAdventure = () => {
       
       setTimeout(() => {
         setStep(2);
+        setGuideTab('offspring');
         setFeedback(null);
       }, 2000);
     } else {
@@ -229,6 +758,9 @@ export const Stage6DihybridAdventure = () => {
     if (step !== 2) return;
     sound.playClick();
     setActiveCell([r, c]);
+    setGuideTab('offspring');
+    setShowGameteGuide(true);
+    setSampleCross(null);
 
     if (round === 1) {
       // Round 1 options: Correct genotype + 2 distractors
@@ -477,25 +1009,105 @@ export const Stage6DihybridAdventure = () => {
               </div>
 
               {/* Board and interactive panels */}
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5 items-start max-w-5xl mx-auto w-full">
                 
                 {/* Left controls column */}
-                <div className="sm:col-span-5 space-y-2 sm:space-y-3 w-full">
+                <div className="lg:col-span-6 space-y-2.5 sm:space-y-3.5 w-full flex flex-col items-center">
                   
-                  {/* Induk display info */}
-                  <div className="bg-amber-50/60 border border-slate-350 rounded-2xl p-2 sm:p-3 flex flex-col items-center shadow-3xs">
-                    <span className="text-[7px] sm:text-[7.5px] font-black text-slate-400 uppercase tracking-widest block mb-1">
-                      Parental Cross
-                    </span>
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-800 bg-white font-mono font-black text-[11px] sm:text-xs shadow-3xs">
-                        Induk : {parentGenotype}
+                  {/* Induk display info & Dual Gamete/Offspring Line Guide */}
+                  <div className="bg-amber-50/70 border border-slate-350 rounded-2xl p-2 sm:p-2.5 flex flex-col items-center shadow-3xs transition-all">
+                    <div className="w-full flex items-center justify-between gap-1.5 pb-1.5 border-b border-amber-200/80">
+                      {/* Tab selector between Gamet Induk (AaBb) and Keturunan F2 (AABB, dll) */}
+                      <div className="flex items-center gap-1 bg-amber-100/80 p-0.5 rounded-lg border border-amber-300/60">
+                        <button
+                          type="button"
+                          onClick={() => setGuideTab('parental')}
+                          className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[7.5px] sm:text-[8px] font-black transition-all cursor-pointer ${
+                            guideTab === 'parental'
+                              ? 'bg-white text-amber-950 shadow-3xs'
+                              : 'text-amber-800 hover:text-amber-950'
+                          }`}
+                        >
+                          🧬 Gamet Induk
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setGuideTab('offspring')}
+                          className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[7.5px] sm:text-[8px] font-black transition-all cursor-pointer ${
+                            guideTab === 'offspring'
+                              ? 'bg-white text-indigo-950 shadow-3xs'
+                              : 'text-amber-800 hover:text-amber-950'
+                          }`}
+                        >
+                          🌱 Keturunan
+                        </button>
                       </div>
-                      <span className="text-slate-800 font-extrabold text-xs sm:text-sm">✕</span>
-                      <div className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-800 bg-white font-mono font-black text-[11px] sm:text-xs shadow-3xs">
-                        {parentGenotype}
-                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowGameteGuide(!showGameteGuide)}
+                        className="flex items-center gap-1 text-[8px] sm:text-[8.5px] font-black text-indigo-700 hover:text-indigo-900 bg-white/90 hover:bg-white px-2 py-0.5 rounded-lg border border-indigo-200/80 shadow-3xs cursor-pointer transition-all"
+                      >
+                        <span>{showGameteGuide ? 'Tutup Garis' : 'Lihat Garis'}</span>
+                        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${showGameteGuide ? 'rotate-180' : ''}`} />
+                      </button>
                     </div>
+
+                    {guideTab === 'parental' ? (
+                      <>
+                        <div className="flex items-center gap-2 sm:gap-2.5 my-1.5">
+                          <div className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl border border-slate-800 bg-white font-mono font-black text-[10px] sm:text-[11px] shadow-3xs text-center">
+                            <span className="text-[7px] font-sans font-extrabold text-slate-400 mr-1">Induk 1:</span>
+                            <span>{parentGenotype}</span>
+                          </div>
+                          <span className="text-slate-800 font-extrabold text-xs">✕</span>
+                          <div className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl border border-slate-800 bg-white font-mono font-black text-[10px] sm:text-[11px] shadow-3xs text-center">
+                            <span className="text-[7px] font-sans font-extrabold text-slate-400 mr-1">Induk 2:</span>
+                            <span>{parentGenotype}</span>
+                          </div>
+                        </div>
+
+                        {showGameteGuide && (
+                          <ParentalGameteLineGuide
+                            highlightedGamete={highlightedGamete}
+                            onSelectGamete={setHighlightedGamete}
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {(() => {
+                          const rIdx = activeCell ? activeCell[0] : 0;
+                          const cIdx = activeCell ? activeCell[1] : 0;
+                          const activeRowG = sampleCross ? sampleCross.row : (assignedRows[rIdx] || expectedGametes[rIdx] || 'AB');
+                          const activeColG = sampleCross ? sampleCross.col : (assignedCols[cIdx] || expectedGametes[cIdx] || 'AB');
+
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 sm:gap-2.5 my-1.5">
+                                <div className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl border border-blue-500 bg-blue-50 font-mono font-black text-[10px] sm:text-[11px] shadow-3xs text-center">
+                                  <span className="text-[7px] font-sans font-extrabold text-blue-600 mr-1">Gamet ♀:</span>
+                                  <span className="text-blue-900">{activeRowG}</span>
+                                </div>
+                                <span className="text-slate-800 font-extrabold text-xs">✕</span>
+                                <div className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl border border-amber-500 bg-amber-50 font-mono font-black text-[10px] sm:text-[11px] shadow-3xs text-center">
+                                  <span className="text-[7px] font-sans font-extrabold text-amber-600 mr-1">Gamet ♂:</span>
+                                  <span className="text-amber-900">{activeColG}</span>
+                                </div>
+                              </div>
+
+                              {showGameteGuide && (
+                                <OffspringGenotypeLineGuide
+                                  rowGamete={activeRowG}
+                                  colGamete={activeColG}
+                                  onSelectPreset={(rG, cG) => setSampleCross({ row: rG, col: cG })}
+                                />
+                              )}
+                            </>
+                          );
+                        })()}
+                      </>
+                    )}
                   </div>
 
                   {/* Step 1 controls (Gamete headers selection) */}
@@ -515,7 +1127,12 @@ export const Stage6DihybridAdventure = () => {
                               <button
                                 key={`opt-gamete-${g}`}
                                 onClick={() => handleSelectHeaderGameteOption(g)}
-                                className="px-2.5 sm:px-3.5 py-1.5 sm:py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-800 font-mono font-black text-xs shadow-3xs cursor-pointer active:translate-y-0.5 hover:scale-105 transition-all flex items-center justify-center min-w-[40px] sm:min-w-[50px] min-h-[36px] sm:min-h-[44px]"
+                                onMouseEnter={() => setHighlightedGamete(g)}
+                                className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border-2 font-mono font-black text-xs shadow-3xs cursor-pointer active:translate-y-0.5 hover:scale-105 transition-all flex items-center justify-center min-w-[40px] sm:min-w-[50px] min-h-[36px] sm:min-h-[44px] ${
+                                  highlightedGamete === g
+                                    ? 'border-indigo-600 bg-indigo-50 text-indigo-900 ring-2 ring-indigo-400'
+                                    : 'border-slate-800'
+                                }`}
                               >
                                 {round === 1 ? g : <SeedIcon genotypeOrPhenotype={g} size={20} />}
                               </button>
@@ -613,35 +1230,39 @@ export const Stage6DihybridAdventure = () => {
                 </div>
 
                 {/* Right Punnett grid column */}
-                <div className="sm:col-span-7 flex justify-center w-full">
+                <div className="lg:col-span-6 flex justify-center w-full">
                   
                   {/* Punnett Table wrapper */}
-                  <div className="grid grid-cols-5 gap-1 sm:gap-1.5 w-full max-w-[240px] sm:max-w-[310px] bg-slate-50 border-2 border-slate-800 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl shadow-3xs punnett-grid-compact">
+                  <div className="grid grid-cols-5 gap-1.5 sm:gap-2 w-full max-w-[340px] sm:max-w-[420px] md:max-w-[460px] bg-slate-50 border-2 sm:border-3 border-slate-800 p-2 sm:p-3 rounded-2xl sm:rounded-3xl shadow-[4px_4px_0px_#1e293b] punnett-grid-compact">
                     
                     {/* Row 0 / Col 0 Spacer */}
-                    <div className="aspect-square bg-slate-100 border-2 border-slate-800 rounded-lg flex items-center justify-center">
-                      <span className="text-[7px] font-black text-slate-400">♀ \ ♂</span>
+                    <div className="aspect-square bg-slate-100 border-2 border-slate-800 rounded-xl flex items-center justify-center shadow-3xs">
+                      <span className="text-[8px] sm:text-[9.5px] font-black text-slate-500">♀ \ ♂</span>
                     </div>
 
                     {/* Row 0 / Column gametes (Ayah) */}
                     {assignedCols.map((g, index) => {
-                      const isLocked = step !== 1;
                       const isActive = activeHeaderSlot && activeHeaderSlot.type === 'col' && activeHeaderSlot.index === index;
+                      const expectedG = expectedGametes[index];
+                      const isMatchingHighlight = highlightedGamete === (g || expectedG);
                       
                       return (
                         <div
                           key={`col-${index}`}
-                          onClick={() => !isLocked && handleSelectHeaderSlot('col', index)}
-                          className={`aspect-square rounded-lg flex items-center justify-center font-mono font-black text-xs transition-all shadow-3xs cursor-pointer ${
+                          onClick={() => handleSelectHeaderSlot('col', index)}
+                          className={`aspect-square rounded-xl flex items-center justify-center font-mono font-black text-xs sm:text-sm transition-all shadow-3xs cursor-pointer ${
                             isActive
-                              ? 'bg-sky-100 border-2 border-sky-600 scale-105 ring-2 ring-sky-350 font-black'
-                              : g
-                                ? 'bg-emerald-100 border-2 border-slate-800 text-emerald-800'
-                                : 'border-2 border-dashed border-slate-450 bg-white text-slate-400 hover:bg-slate-50'
+                              ? 'bg-sky-100 border-2 sm:border-3 border-sky-600 scale-105 ring-2 ring-sky-350 font-black'
+                              : isMatchingHighlight
+                                ? 'bg-amber-100 border-2 sm:border-3 border-amber-500 scale-105 ring-2 ring-amber-300 text-amber-900 font-black'
+                                : g
+                                  ? 'bg-emerald-100 border-2 border-slate-800 text-emerald-800'
+                                  : 'border-2 border-dashed border-slate-450 bg-white text-slate-400 hover:bg-slate-50'
                           }`}
+                          title={`Kolom ${index + 1}: Gamet ${expectedG} (Klik untuk melihat alur garis alel)`}
                         >
                           {g ? (
-                            round === 1 ? g : <SeedIcon genotypeOrPhenotype={g} size={22} />
+                            round === 1 ? g : <SeedIcon genotypeOrPhenotype={g} size={26} />
                           ) : (
                             '?'
                           )}
@@ -652,25 +1273,29 @@ export const Stage6DihybridAdventure = () => {
                     {/* Rows 1-4 */}
                     {[0, 1, 2, 3].map((rIndex) => {
                       const rowGamete = assignedRows[rIndex];
-                      const isLocked = step !== 1;
                       const isRowActive = activeHeaderSlot && activeHeaderSlot.type === 'row' && activeHeaderSlot.index === rIndex;
+                      const expectedRowG = expectedGametes[rIndex];
+                      const isRowMatchingHighlight = highlightedGamete === (rowGamete || expectedRowG);
 
                       return (
                         <React.Fragment key={`row-frag-${rIndex}`}>
                           
                           {/* Column 0: Row gametes (Ibu) */}
                           <div
-                            onClick={() => !isLocked && handleSelectHeaderSlot('row', rIndex)}
-                            className={`aspect-square rounded-lg flex items-center justify-center font-mono font-black text-xs transition-all shadow-3xs cursor-pointer ${
+                            onClick={() => handleSelectHeaderSlot('row', rIndex)}
+                            className={`aspect-square rounded-xl flex items-center justify-center font-mono font-black text-xs sm:text-sm transition-all shadow-3xs cursor-pointer ${
                               isRowActive
-                                ? 'bg-sky-100 border-2 border-sky-600 scale-105 ring-2 ring-sky-350 font-black'
-                                : rowGamete
-                                  ? 'bg-emerald-100 border-2 border-slate-800 text-emerald-800'
-                                  : 'border-2 border-dashed border-slate-450 bg-white text-slate-400 hover:bg-slate-50'
+                                ? 'bg-sky-100 border-2 sm:border-3 border-sky-600 scale-105 ring-2 ring-sky-350 font-black'
+                                : isRowMatchingHighlight
+                                  ? 'bg-amber-100 border-2 sm:border-3 border-amber-500 scale-105 ring-2 ring-amber-300 text-amber-900 font-black'
+                                  : rowGamete
+                                    ? 'bg-emerald-100 border-2 border-slate-800 text-emerald-800'
+                                    : 'border-2 border-dashed border-slate-450 bg-white text-slate-400 hover:bg-slate-50'
                             }`}
+                            title={`Baris ${rIndex + 1}: Gamet ${expectedRowG} (Klik untuk melihat alur garis alel)`}
                           >
                             {rowGamete ? (
-                              round === 1 ? rowGamete : <SeedIcon genotypeOrPhenotype={rowGamete} size={22} />
+                              round === 1 ? rowGamete : <SeedIcon genotypeOrPhenotype={rowGamete} size={26} />
                             ) : (
                               '?'
                             )}
@@ -691,26 +1316,26 @@ export const Stage6DihybridAdventure = () => {
                               <div
                                 key={`cell-${rIndex}-${cIndex}`}
                                 onClick={() => isCellInteractive && handleCellSelect(rIndex, cIndex)}
-                                className={`aspect-square rounded-lg flex items-center justify-center transition-all cursor-pointer border-2 ${
+                                className={`aspect-square rounded-xl flex items-center justify-center transition-all cursor-pointer border-2 ${
                                   isActive
-                                    ? 'bg-sky-100 border-sky-600 scale-105 ring-2 ring-sky-350'
+                                    ? 'bg-sky-100 border-sky-600 scale-105 ring-2 sm:ring-3 ring-sky-350 font-black'
                                     : isWrong
                                       ? 'bg-rose-55 border-rose-500 text-rose-800 animate-shake'
                                       : cellValue
                                         ? round === 1
                                           ? showPhenotype
-                                            ? `${getPhenotypeInfo(cellValue).bgClass} border-slate-800 font-mono font-black text-[9px] shadow-3xs animate-scale-up`
-                                            : 'bg-white border-slate-855 text-slate-850 font-mono font-black text-[9px] shadow-3xs'
+                                            ? `${getPhenotypeInfo(cellValue).bgClass} border-slate-800 font-mono font-black text-[10px] sm:text-xs shadow-3xs animate-scale-up`
+                                            : 'bg-white border-slate-855 text-slate-850 font-mono font-black text-[10px] sm:text-xs shadow-3xs'
                                           : /* Round 2: phenotype SeedIcon display */
                                             `${getPhenotypeInfo(combineGametes(rowGamete, colGamete)).bgClass} border-slate-800 shadow-3xs flex items-center justify-center`
-                                        : 'bg-white border-slate-200 text-slate-300 font-mono font-black text-[9px]'
+                                        : 'bg-white border-slate-250 text-slate-350 font-mono font-black text-xs sm:text-sm'
                                 }`}
                               >
                                 {cellValue ? (
                                   round === 1 ? (
                                     cellValue
                                   ) : (
-                                    <SeedIcon genotypeOrPhenotype={cellValue} size={22} />
+                                    <SeedIcon genotypeOrPhenotype={cellValue} size={26} />
                                   )
                                 ) : (
                                   '?'
@@ -731,64 +1356,69 @@ export const Stage6DihybridAdventure = () => {
 
             {/* Bottom action controls */}
             {step === 1 && (
-              <div className="flex gap-4 justify-center border-t border-slate-800 pt-3 flex-shrink-0">
+              <div className="flex flex-wrap gap-3 sm:gap-4 justify-center border-t-2 border-slate-800/15 pt-3 sm:pt-4 flex-shrink-0">
                 <button
+                  type="button"
                   onClick={handleResetGrid}
-                  className="px-4 py-2 rounded-xl border-2 border-slate-800 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-[9px] flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border-2 border-slate-800 bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                 >
-                  <RefreshCw className="w-3 h-3 stroke-[2.5px]" />
+                  <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5px]" />
                   <span>RESET GAMET</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleVerifyGametes}
-                  className="px-6 py-2 rounded-xl border-2 border-slate-800 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-[9px] flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl border-2 border-slate-800 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-[3px_3px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                 >
                   <span>VERIFIKASI GAMET</span>
-                  <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5px]" />
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5px]" />
                 </button>
               </div>
             )}
 
             {step === 2 && (
-              <div className="flex gap-4 justify-center border-t border-slate-800 pt-3 flex-shrink-0">
+              <div className="flex flex-wrap gap-3 sm:gap-4 justify-center border-t-2 border-slate-800/15 pt-3 sm:pt-4 flex-shrink-0">
                 <button
+                  type="button"
                   onClick={handleResetGrid}
-                  className="px-4 py-2 rounded-xl border-2 border-slate-800 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-[9px] flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border-2 border-slate-800 bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                 >
-                  <RefreshCw className="w-3 h-3 stroke-[2.5px]" />
+                  <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5px]" />
                   <span>RESET PERSILANGAN</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleVerifyCells}
-                  className="px-6 py-2 rounded-xl border-2 border-slate-800 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-[9px] flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  className="px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl border-2 border-slate-800 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-[3px_3px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                 >
                   <span>VERIFIKASI PUNNETT</span>
-                  <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5px]" />
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5px]" />
                 </button>
               </div>
             )}
 
             {step === 3 && (
               /* Step 3: Answer Ratio picker */
-              <div className="border-t border-slate-800 pt-3 space-y-3 flex-shrink-0 text-center">
-                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">
+              <div className="border-t-2 border-slate-800/15 pt-3 sm:pt-4 space-y-3 flex-shrink-0 text-center">
+                <span className="text-[9px] sm:text-xs font-black text-slate-600 uppercase tracking-widest block">
                   Pilih Rasio Fenotipe F2 Dihibrid yang Tepat
                 </span>
                 
-                <div className="flex justify-center gap-3">
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                   {['9:3:3:1', '3:1', '1:2:1', '1:1:1:1'].map((r) => (
                     <button
                       key={r}
+                      type="button"
                       onClick={() => {
                         sound.playClick();
                         setRatioAnswer(r);
                       }}
-                      className={`px-5 py-2.5 rounded-xl font-mono font-black text-xs border-2 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none cursor-pointer transition-all ${
+                      className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl font-mono font-black text-xs sm:text-sm border-2 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none cursor-pointer transition-all ${
                         ratioAnswer === r 
-                          ? 'bg-sky-100 border-sky-600 text-sky-900 scale-105' 
-                          : 'bg-white border-slate-850 text-slate-855 hover:bg-slate-50'
+                          ? 'bg-sky-100 border-sky-600 text-sky-900 scale-105 ring-2 ring-sky-300' 
+                          : 'bg-white border-slate-800 text-slate-800 hover:bg-slate-50'
                       }`}
                     >
                       {r}
@@ -796,26 +1426,28 @@ export const Stage6DihybridAdventure = () => {
                   ))}
                 </div>
 
-                <div className="flex justify-center pt-2 gap-3">
+                <div className="flex flex-wrap justify-center pt-2 gap-3">
                   <button
+                    type="button"
                     onClick={handleResetGrid}
-                    className="px-4 py-2 rounded-xl border-2 border-slate-800 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-[9px] flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border-2 border-slate-800 bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                   >
-                    <RefreshCw className="w-3 h-3 stroke-[2.5px]" />
+                    <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5px]" />
                     <span>ULANG TAHAP</span>
                   </button>
 
                   <button
+                    type="button"
                     onClick={handleVerifyRatio}
                     disabled={!ratioAnswer}
-                    className={`px-6 py-2 rounded-xl border-2 border-slate-855 font-black text-[9px] shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 ${
+                    className={`px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl border-2 border-slate-800 font-black text-xs sm:text-sm shadow-[3px_3px_0px_#1e293b] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-2 ${
                       ratioAnswer 
-                        ? 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-650 text-white cursor-pointer hover:scale-103' 
-                        : 'bg-slate-100 border-slate-400 text-slate-400 cursor-not-allowed shadow-none'
+                        ? 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white cursor-pointer hover:scale-105' 
+                        : 'bg-slate-200 border-slate-400 text-slate-400 cursor-not-allowed shadow-none'
                     }`}
                   >
                     <span>SELESAIKAN DIHIBRID</span>
-                    <ArrowRight className="w-3.5 h-3.5 stroke-[3.5px]" />
+                    <ArrowRight className="w-4 h-4 stroke-[3px]" />
                   </button>
                 </div>
               </div>
@@ -824,19 +1456,48 @@ export const Stage6DihybridAdventure = () => {
           </div>
           )}
 
-          {/* Feedback Alerts */}
+          {/* Centered Feedback Notification Modal */}
           {feedback && (
-            <div className={`w-full p-2 border-2 border-slate-800 rounded-xl flex items-center gap-2 text-[9px] font-black shadow-[3px_3px_0px_#1e293b] animate-fade-in my-1.5 flex-shrink-0 ${
-              feedback.type === 'success' 
-                ? 'bg-emerald-100 text-emerald-800' 
-                : 'bg-rose-100 text-rose-800'
-            }`}>
-              {feedback.type === 'success' ? (
-                <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-              ) : (
-                <XCircle className="w-4 h-4 flex-shrink-0" />
-              )}
-              <span>{feedback.message}</span>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+              <div className={`p-6 sm:p-7 rounded-3xl border-3 border-slate-900 shadow-[8px_8px_0px_#0f172a] max-w-sm sm:max-w-md w-full text-center flex flex-col items-center gap-4 animate-scale-up ${
+                feedback.type === 'success'
+                  ? 'bg-gradient-to-b from-emerald-50 via-white to-emerald-100 text-emerald-950'
+                  : 'bg-gradient-to-b from-rose-50 via-white to-rose-100 text-rose-950'
+              }`}>
+                <div className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl flex items-center justify-center border-3 border-slate-900 shadow-[3px_3px_0px_#0f172a] ${
+                  feedback.type === 'success' ? 'bg-emerald-500 text-white animate-bounce' : 'bg-rose-500 text-white'
+                }`}>
+                  {feedback.type === 'success' ? (
+                    <CheckCircle2 className="w-10 h-10 sm:w-11 sm:h-11 stroke-[2.5px]" />
+                  ) : (
+                    <XCircle className="w-10 h-10 sm:w-11 sm:h-11 stroke-[2.5px]" />
+                  )}
+                </div>
+
+                <div className="space-y-1.5 px-2">
+                  <h3 className="text-base sm:text-xl font-black text-slate-900 tracking-wide font-sans">
+                    {feedback.type === 'success' ? '🎉 Verifikasi Berhasil!' : '⚠️ Periksa Kembali!'}
+                  </h3>
+                  <p className="text-xs sm:text-sm font-bold text-slate-700 leading-relaxed">
+                    {feedback.message}
+                  </p>
+                </div>
+
+                {feedback.type !== 'success' ? (
+                  <button
+                    type="button"
+                    onClick={() => setFeedback(null)}
+                    className="mt-2 px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm shadow-[3px_3px_0px_#0f172a] cursor-pointer active:translate-y-0.5 transition-all"
+                  >
+                    Tutup & Coba Lagi
+                  </button>
+                ) : (
+                  <div className="mt-1 flex items-center gap-2 text-xs font-black text-emerald-800 bg-emerald-200/80 px-4 py-1.5 rounded-full border border-emerald-400">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping" />
+                    <span>Melanjutkan ke tahap berikutnya...</span>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

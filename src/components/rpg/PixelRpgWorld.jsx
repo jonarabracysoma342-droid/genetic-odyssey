@@ -3904,7 +3904,15 @@ export const PixelRpgWorld = () => {
   // Welcome & First Quest Onboarding Modal:
   // Step 1: Sambutan Datang di 1865 & Misi Pertama (Berkenalan dengan semua orang)
   // Step 2: Petunjuk Penting (Cari tanda seru ! di atas kepala NPC)
-  const [welcomeStep, setWelcomeStep] = useState(1);
+  // Fix 8: Hanya muncul sekali setelah video intro (bukan setelah kembali dari stage)
+  const [welcomeStep, setWelcomeStep] = useState(() => {
+    try {
+      const seen = sessionStorage.getItem('genetic_odyssey_rpg_welcome_seen');
+      return seen ? null : 1;
+    } catch (e) {
+      return 1;
+    }
+  });
 
   // Controls Tutorial Popup (Shown via button or secondary view)
   const [showControlsTutorial, setShowControlsTutorial] = useState(false);
@@ -4177,6 +4185,10 @@ export const PixelRpgWorld = () => {
 
   // Helper to test if a stage is unlocked
   const isStageUnlocked = useCallback((stageId) => {
+    // TESTING OVERRIDE: set to false to restore normal progression
+    const RPG_TESTING_UNLOCK_ALL = false;
+    if (RPG_TESTING_UNLOCK_ALL) return true;
+
     const unlockedList = Array.isArray(userProgress?.unlockedStages) ? userProgress.unlockedStages : [1];
     const maxUnlockedNum = Math.max(userProgress?.unlockedStage || 1, ...unlockedList);
     return unlockedList.includes(stageId) || stageId <= maxUnlockedNum;
@@ -4588,7 +4600,8 @@ export const PixelRpgWorld = () => {
         const nextGuide = getNextObjectiveInfo();
         if (pickupToastTimerRef.current) clearTimeout(pickupToastTimerRef.current);
         setPickupToast({
-          item: { name: nextGuide.badge, icon: '🎯' },
+          title: 'Panduan Misi Selanjutnya',
+          item: { name: nextGuide.badge, iconSrc: '/assets/rpg/quests/quest_icon.png', icon: '🎯' },
           text: `Panduan Alur: ${nextGuide.instruction}`
         });
         pickupToastTimerRef.current = setTimeout(() => {
@@ -5314,7 +5327,7 @@ export const PixelRpgWorld = () => {
       for (let i = 0; i < activeQuestItems.length; i++) {
         const item = activeQuestItems[i];
         const dist = Math.hypot(p.x - item.x, p.y - item.y);
-        if (dist <= 38 && dist < minQuestItemDist) {
+        if (dist <= 46 && dist < minQuestItemDist) {
           minQuestItemDist = dist;
           closestQuestItem = item;
         }
@@ -6310,8 +6323,10 @@ export const PixelRpgWorld = () => {
   return (
     <div className="fixed inset-0 w-screen h-screen overflow-hidden select-none bg-[#090704] flex flex-col justify-between z-30 pointer-events-none">
 
-      {/* 1. Top RPG HUD Bar */}
-      <div className={`relative z-20 w-full rpg-hud-top ${isCompactLandscape ? 'p-1 px-2' : isPortrait ? 'p-1 px-1.5 pt-1' : 'p-2.5 sm:p-4'} flex items-center justify-between pointer-events-auto bg-gradient-to-b from-black/85 via-black/40 to-transparent`}>
+      {/* 1. Top RPG HUD Bar & Guidance Banner Container */}
+      <div className="relative z-20 w-full flex flex-col items-center pointer-events-none">
+        {/* Top RPG HUD Bar */}
+        <div className={`w-full rpg-hud-top ${isCompactLandscape ? 'py-0.5 px-2' : isPortrait ? 'py-0.5 px-1.5 pt-0.5' : 'py-1 sm:py-1.5 px-2.5 sm:px-4'} flex items-center justify-between pointer-events-auto bg-gradient-to-b from-black/85 via-black/40 to-transparent`}>
         
         {/* Left: Back to Main Menu & Fast Map Switch */}
         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
@@ -6517,6 +6532,49 @@ export const PixelRpgWorld = () => {
           </div>
         )}
 
+        </div>
+
+        {/* Floating Quest Guidance Banner (Immediately below Top HUD Bar at the top of screen) */}
+        {!activeNpcDialogue && showGuidanceBanner && (
+          <div 
+            className={`w-full ${isPortrait ? 'max-w-xs sm:max-w-sm px-2 -mt-0.5' : isCompactLandscape ? 'max-w-md px-2 -mt-0.5' : 'max-w-xl px-3 sm:px-4 -mt-1'} mx-auto transition-all duration-500 ease-out pointer-events-none`}
+          >
+            {(() => {
+              const guide = getNextObjectiveInfo();
+              return (
+                <div 
+                  onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
+                  className={`pointer-events-auto bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 hover:border-[#facc15] text-[#fef08a] ${isPortrait ? 'px-2 py-0.5 rounded-lg gap-1.5' : 'px-3 py-1 sm:py-1.5 rounded-xl gap-2.5'} shadow-[0_4px_16px_rgba(0,0,0,0.65)] flex items-center justify-between transition-all cursor-pointer group`}
+                  title="Klik untuk membuka Buku Misi & Petunjuk Lokasi Lengkap"
+                >
+                  <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <div className={`${isPortrait ? 'w-5.5 h-5.5 rounded-md' : 'w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl'} bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300 shadow-xs`}>
+                      <Compass className={`${isPortrait ? 'w-3 h-3' : 'w-3.5 h-3.5 sm:w-4 sm:h-4'} text-white animate-spin-slow`} />
+                    </div>
+                    <div className="min-w-0 flex flex-col text-left">
+                      <div className="flex items-center gap-1 flex-wrap">
+                        <span className={`font-pixel ${isPortrait ? 'text-[7px] px-1 py-0' : 'text-[7.5px] sm:text-[9px] px-1.5 sm:px-2 py-0.2 sm:py-0.5'} bg-amber-950/80 rounded text-amber-300 border border-amber-500/40 uppercase font-bold tracking-wider`}>
+                          {guide.badge}
+                        </span>
+                        <span className={`font-pixel ${isPortrait ? 'text-[7px]' : 'text-[7.5px] sm:text-[9px]'} text-[#86efac] font-bold tracking-wide truncate`}>
+                          📍 {guide.direction}
+                        </span>
+                      </div>
+                      <p className={`${isPortrait ? 'text-[8.5px]' : 'text-[10px] sm:text-xs'} text-white/95 font-sans font-medium truncate mt-0.5`}>
+                        {guide.instruction}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="hidden sm:flex items-center gap-1 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0 group-hover:text-amber-200">
+                    <span>BUKU MISI</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
       </div>
 
       {/* 2. Main Interactive 2D World Canvas (100% Fullscreen in both Portrait 9:16 and Landscape 16:9) */}
@@ -6526,51 +6584,7 @@ export const PixelRpgWorld = () => {
         className="absolute inset-0 w-full h-full block cursor-pointer select-none z-0 bg-[#1b3211] pointer-events-auto"
       />
 
-      {/* 3. Floating Quest Guidance Banner (Both in Portrait and Landscape) */}
-      {!activeNpcDialogue && (
-        <div 
-          className={`relative z-20 w-full ${isPortrait ? 'max-w-xs sm:max-w-sm px-2 pt-0.5' : isCompactLandscape ? 'max-w-md px-2 pt-1' : 'max-w-xl px-3.5 pt-2'} mx-auto transition-all duration-700 ease-out pointer-events-none ${
-            showGuidanceBanner ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
-          }`}
-        >
-          {(() => {
-            const guide = getNextObjectiveInfo();
-            return (
-              <div 
-                onClick={() => { sound.playClick(); setIsInventoryOpen(true); }}
-                className={`pointer-events-auto bg-[#241206]/92 hover:bg-[#341a09]/96 backdrop-blur-xs border-2 border-[#ca8a04]/80 hover:border-[#facc15] text-[#fef08a] ${isPortrait ? 'px-2 py-1 rounded-lg gap-1.5' : 'px-3.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl gap-2.5'} shadow-[0_4px_16px_rgba(0,0,0,0.65)] flex items-center justify-between transition-all cursor-pointer group`}
-                title="Klik untuk membuka Buku Misi & Petunjuk Lokasi Lengkap"
-              >
-                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                  <div className={`${isPortrait ? 'w-5.5 h-5.5 rounded-md' : 'w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl'} bg-gradient-to-b from-amber-500 to-amber-700 flex items-center justify-center shrink-0 border border-amber-300 shadow-xs`}>
-                    <Compass className={`${isPortrait ? 'w-3 h-3' : 'w-3.5 h-3.5 sm:w-4 sm:h-4'} text-white animate-spin-slow`} />
-                  </div>
-                  <div className="min-w-0 flex flex-col text-left">
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <span className={`font-pixel ${isPortrait ? 'text-[7px] px-1 py-0' : 'text-[7.5px] sm:text-[9px] px-1.5 sm:px-2 py-0.2 sm:py-0.5'} bg-amber-950/80 rounded text-amber-300 border border-amber-500/40 uppercase font-bold tracking-wider`}>
-                        {guide.badge}
-                      </span>
-                      <span className={`font-pixel ${isPortrait ? 'text-[7px]' : 'text-[7.5px] sm:text-[9px]'} text-[#86efac] font-bold tracking-wide truncate`}>
-                        📍 {guide.direction}
-                      </span>
-                    </div>
-                    <p className={`${isPortrait ? 'text-[8.5px]' : 'text-[10px] sm:text-xs'} text-white/95 font-sans font-medium truncate mt-0.5`}>
-                      {guide.instruction}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-1 text-[8px] font-pixel text-amber-300/80 uppercase shrink-0 group-hover:text-amber-200">
-                  <span>BUKU MISI</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* 4. Bottom In-World Controls: Floating over 100% Fullscreen RPG Canvas */}
+      {/* 3. Bottom In-World Controls: Floating over 100% Fullscreen RPG Canvas */}
       <div className={`relative z-20 w-full rpg-bottom-bar ${isCompactLandscape ? 'p-1 px-2 pb-1' : isPortrait ? 'p-1.5 px-2 pb-3' : 'p-3 sm:p-6'} flex items-end justify-between pointer-events-none select-none`}>
         
         {/* Left Control: Virtual Analog Joystick on Mobile/Portrait / Keyboard Legend on Desktop PC */}
@@ -6965,17 +6979,25 @@ export const PixelRpgWorld = () => {
 
       {/* 3d. Celebratory Quest Item Pickup Notification Toast */}
       {pickupToast && (
-        <div className={`fixed ${isPortrait || isCompactLandscape ? 'top-14 max-w-xs px-2' : 'top-28 sm:top-32 max-w-md px-3'} left-1/2 -translate-x-1/2 z-50 animate-bounce pointer-events-none w-full`}>
-          <div className={`bg-[#1c0a02]/95 border-2 border-[#facc15] text-[#fef08a] ${isPortrait || isCompactLandscape ? 'px-2.5 py-2 rounded-xl gap-2' : 'px-4 py-3 rounded-2xl gap-3.5'} shadow-[0_0_30px_rgba(250,204,21,0.7)] flex items-center backdrop-blur-md text-left`}>
+        <div className={`fixed ${
+          showGuidanceBanner && !activeNpcDialogue 
+            ? (isPortrait || isCompactLandscape ? 'top-[52px] max-w-xs px-2' : 'top-[68px] max-w-md px-3')
+            : (isPortrait || isCompactLandscape ? 'top-8 max-w-xs px-2' : 'top-10 sm:top-12 max-w-md px-3')
+        } left-1/2 -translate-x-1/2 z-50 animate-bounce pointer-events-none w-full transition-all duration-300`}>
+          <div className={`bg-[#1c0a02]/95 border-2 border-[#facc15] text-[#fef08a] ${isPortrait || isCompactLandscape ? 'px-2.5 py-1.5 rounded-xl gap-2' : 'px-3.5 py-2 rounded-xl sm:rounded-2xl gap-3'} shadow-[0_0_30px_rgba(250,204,21,0.7)] flex items-center backdrop-blur-md text-left`}>
             <div className={`${isPortrait || isCompactLandscape ? 'w-9 h-9 p-1' : 'w-12 h-12 p-1.5'} shrink-0 bg-[#361706] rounded-xl border-2 border-amber-500/50 shadow-inner flex items-center justify-center`}>
-              <img src={pickupToast.item.iconSrc} alt={pickupToast.item.name} className="w-full h-full object-contain" />
+              {pickupToast.item?.iconSrc ? (
+                <img src={pickupToast.item.iconSrc} alt={pickupToast.item?.name || ''} className="w-full h-full object-contain" />
+              ) : (
+                <span className="text-xl sm:text-2xl">{pickupToast.item?.icon || '📜'}</span>
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <div className="font-pixel text-[9px] sm:text-[10px] text-[#4ade80] font-bold uppercase tracking-wider">
-                Item Quest Berhasil Diambil!
+                {pickupToast.title || "Item Quest Berhasil Diambil!"}
               </div>
               <div className="font-pixel text-xs sm:text-sm text-white font-black truncate">
-                {pickupToast.item.name}
+                {pickupToast.item?.name || ''}
               </div>
               <div className="text-[10px] sm:text-[11px] text-amber-200 font-sans mt-0.5 leading-tight">
                 {pickupToast.text}
@@ -7330,7 +7352,7 @@ export const PixelRpgWorld = () => {
       {/* 4a. Welcome & First Quest Onboarding Modal (Step 1: Sambutan Datang di 1865 & Misi Pertama, Step 2: Petunjuk Tanda Seru ! di Kepala NPC) */}
       {welcomeStep && (
         <div 
-          className={`fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape || isPortrait ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none`}
+          className={`fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape || isPortrait ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none pointer-events-auto`}
         >
           <div 
             onClick={(e) => e.stopPropagation()}
@@ -7569,7 +7591,7 @@ export const PixelRpgWorld = () => {
             setShowControlsTutorial(false);
             try { localStorage.setItem('genetic_odyssey_rpg_controls_tutorial_seen', 'true'); } catch(e) {}
           }}
-          className={`fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape || isPortrait ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none`}
+          className={`fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center ${isCompactLandscape || isPortrait ? 'p-1.5 overflow-y-auto' : 'p-3 sm:p-4'} animate-fade-in select-none pointer-events-auto`}
         >
           {/* Retro Pixel Wooden Frame (Replicating user screenshot) */}
           <div 
