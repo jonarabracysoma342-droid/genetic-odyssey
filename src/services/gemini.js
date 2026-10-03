@@ -38,6 +38,12 @@ KONTEKS GAME:
 
 Siswa sedang bermain game ini dan mungkin bertanya tentang mekanisme game atau konsep genetika.`;
 
+const GEMINI_MODELS = [
+  'gemini-1.5-flash',
+  'gemini-2.0-flash',
+  'gemini-1.5-pro'
+];
+
 /**
  * Mengambil API Key dari localStorage (jika diatur di dalam aplikasi)
  * atau dari environment variable VITE_GEMINI_API_KEY
@@ -45,9 +51,15 @@ Siswa sedang bermain game ini dan mungkin bertanya tentang mekanisme game atau k
 export function getGeminiApiKey() {
   if (typeof window !== 'undefined') {
     const localKey = localStorage.getItem('VITE_GEMINI_API_KEY');
-    if (localKey && localKey.trim()) return localKey.trim();
+    if (localKey && localKey.trim()) {
+      return localKey.trim().replace(/^["']|["']$/g, '');
+    }
   }
-  return import.meta.env.VITE_GEMINI_API_KEY || '';
+  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (envKey && typeof envKey === 'string') {
+    return envKey.trim().replace(/^["']|["']$/g, '');
+  }
+  return '';
 }
 
 /**
@@ -56,7 +68,8 @@ export function getGeminiApiKey() {
 export function setGeminiApiKey(key) {
   if (typeof window !== 'undefined') {
     if (key && key.trim()) {
-      localStorage.setItem('VITE_GEMINI_API_KEY', key.trim());
+      const cleanKey = key.trim().replace(/^["']|["']$/g, '');
+      localStorage.setItem('VITE_GEMINI_API_KEY', cleanKey);
     } else {
       localStorage.removeItem('VITE_GEMINI_API_KEY');
     }
@@ -68,17 +81,27 @@ export function setGeminiApiKey(key) {
  * @param {string} userMessage - Pertanyaan dari siswa
  * @param {number} stageId - Stage ID yang sedang aktif (1-8)
  * @param {Array} chatHistory - Riwayat chat sebelumnya [{sender, text}]
- * @returns {Promise<string>} - Jawaban dari Gemini
+ * @returns {Promise<string|null>} - Jawaban dari Gemini atau null jika perlu fallback offline
  */
 export async function askGemini(userMessage, stageId = 1, chatHistory = []) {
   const apiKey = getGeminiApiKey();
   
   if (!apiKey) {
-    return '⚠️ API Key Gemini belum diatur. Anda bisa memasukkannya di Pengaturan > API Key Gemini, atau mengatur VITE_GEMINI_API_KEY di Vercel.\n\nSementara itu, aku tetap bisa memberikan petunjuk lengkap dari database lokal! 📚';
+    return null; // Triggers automatic local database response
   }
 
   // Build conversation history for context
-  const contents = [];
+  const contents = [
+    // Include system context in first user/model turn for universal compatibility
+    {
+      role: 'user',
+      parts: [{ text: `Instruksi Peran: ${SYSTEM_PROMPT}\n\nPahami konteks ini dan sapa sebagai BioBot.` }]
+    },
+    {
+      role: 'model',
+      parts: [{ text: 'Siap! Aku adalah BioBot, asisten AI resmi game Genetic Odyssey. Aku siap membantu siswa memahami Hukum Pewarisan Sifat Mendel dengan jelas, ramah, dan ringkas! 🧬' }]
+    }
+  ];
   
   // Add recent chat history (max 6 messages for context window efficiency)
   const recentHistory = chatHistory.slice(-6);
@@ -90,61 +113,68 @@ export async function askGemini(userMessage, stageId = 1, chatHistory = []) {
   }
   
   // Add current user message with stage context
-  const contextualMessage = `[Siswa sedang di Stage ${stageId}]\n\nPertanyaan siswa: ${userMessage}`;
+  const contextualMessage = `[Siswa sedang di Stage ${stageId}]\nPertanyaan: ${userMessage}`;
   contents.push({
     role: 'user',
     parts: [{ text: contextualMessage }]
   });
 
-  try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: {
-          parts: [{ text: SYSTEM_PROMPT }]
-        },
-        contents,
-        generationConfig: {
-          temperature: 0.7,
-          topP: 0.9,
-          topK: 40,
-          maxOutputTokens: 512
-        },
-        safetySettings: [
-          { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-          { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-          { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-          { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
-        ]
-      })
-    });
+  let lastErrorMessage = '';
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('[BioBot Gemini] API Error:', response.status, errorData);
-      
-      if (response.status === 429) {
-        return '⏳ BioBot sedang sibuk menerima banyak pertanyaan. Coba lagi dalam beberapa detik ya!';
+  // Try supported Gemini models in sequence (1.5-flash -> 2.0-flash)
+  for (const model of GEMINI_MODELS) {
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents,
+          generationConfig: {
+            temperature: 0.7,
+            topP: 0.9,
+            maxOutputTokens: 512
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text && text.trim()) {
+          return text.trim();
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.warn(`[BioBot Gemini] Error with model ${model}:`, response.status, errorData);
+        
+        const errorMsg = errorData?.error?.message || '';
+        
+        // Handle invalid API Key directly
+        if (response.status === 400 && (errorMsg.toLowerCase().includes('api key') || errorMsg.toLowerCase().includes('invalid'))) {
+          return `🔑 **API Key Gemini Tidak Valid**\n\nGoogle menolak API Key yang dimasukkan: "${errorMsg}".\n\nSilakan periksa kembali kuncinya di **Pengaturan > API Key BioBot Gemini**. Pastikan kodenya berawalan \`AIzaSy...\` tanpa spasi berlebih.`;
+        }
+
+        if (response.status === 403) {
+          return `🔑 **Akses API Key Ditolak (403)**\n\nPastikan API Key di Google AI Studio mengaktifkan layanan **Generative Language API** dan tidak dibatasi IP.`;
+        }
+
+        if (response.status === 429) {
+          return '⏳ **BioBot sedang sibuk** (kuota per menit tercapai). Silakan coba lagi dalam beberapa detik ya!';
+        }
+
+        lastErrorMessage = errorMsg;
       }
-      if (response.status === 403) {
-        return '🔑 API Key tidak valid atau sudah expired. Hubungi guru/admin untuk memperbarui konfigurasi BioBot.';
-      }
-      return '❌ Maaf, BioBot mengalami gangguan koneksi. Coba lagi nanti ya!';
+    } catch (netError) {
+      console.warn(`[BioBot Gemini] Network error with model ${model}:`, netError);
+      lastErrorMessage = netError?.message || 'Network error';
     }
-
-    const data = await response.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (!text) {
-      return '🤔 Hmm, aku tidak bisa menjawab pertanyaan itu. Coba tanyakan dengan cara yang berbeda ya!';
-    }
-
-    return text.trim();
-  } catch (error) {
-    console.error('[BioBot Gemini] Network Error:', error);
-    return '🌐 Koneksi internet bermasalah. Pastikan kamu terhubung ke internet dan coba lagi!';
   }
+
+  // If all models failed, return null to let BioBotDrawer use offline response
+  console.warn('[BioBot Gemini] All models exhausted, falling back to offline. Last error:', lastErrorMessage);
+  return null;
 }
 
 /**
@@ -153,4 +183,5 @@ export async function askGemini(userMessage, stageId = 1, chatHistory = []) {
 export function isGeminiAvailable() {
   return Boolean(getGeminiApiKey());
 }
+
 

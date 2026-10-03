@@ -141,11 +141,23 @@ export const BioBotDrawer = () => {
       // 🧠 Gemini AI Mode — Real AI response
       try {
         const aiResponse = await askGemini(textToSend, selectedStageId, updatedMessages);
-        setMessages(prev => [...prev, { sender: 'bot', text: aiResponse }]);
+        if (aiResponse) {
+          setMessages(prev => [...prev, { sender: 'bot', text: aiResponse }]);
+        } else {
+          // Automatic graceful offline response fallback
+          const fallback = getOfflineResponse(textToSend, selectedStageId);
+          setMessages(prev => [...prev, { 
+            sender: 'bot', 
+            text: `${fallback}\n\n*(💡 Menjawab dari ensiklopedia materi lokal)*` 
+          }]);
+        }
       } catch (err) {
         console.error('[BioBot] Gemini error, falling back to offline:', err);
         const fallback = getOfflineResponse(textToSend, selectedStageId);
-        setMessages(prev => [...prev, { sender: 'bot', text: fallback }]);
+        setMessages(prev => [...prev, { 
+          sender: 'bot', 
+          text: `${fallback}\n\n*(💡 Menjawab dari ensiklopedia materi lokal)*` 
+        }]);
       }
       setIsTyping(false);
       soundMessage(true);
