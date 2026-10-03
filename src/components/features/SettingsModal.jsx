@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { Settings, Volume2, VolumeX, RotateCcw, LogOut, Unlock, MessageSquare, X } from 'lucide-react';
+import { Settings, Volume2, VolumeX, RotateCcw, LogOut, Unlock, MessageSquare, X, Key, Check } from 'lucide-react';
 import { sound } from '../../services/sound';
+import { getGeminiApiKey, setGeminiApiKey } from '../../services/gemini';
 
 export const SettingsModal = () => {
   const { 
@@ -16,6 +17,10 @@ export const SettingsModal = () => {
     handleLogout,
     setIsFeedbackOpen
   } = useGame();
+
+  const [geminiKeyInput, setGeminiKeyInput] = useState(getGeminiApiKey());
+  const [showKeyField, setShowKeyField] = useState(false);
+  const [keySaved, setKeySaved] = useState(false);
 
   if (!isSettingsOpen) return null;
 
@@ -74,6 +79,81 @@ export const SettingsModal = () => {
             >
               {soundOn ? 'AKTIF' : 'MATI'}
             </button>
+          </div>
+
+          {/* Gemini AI Key Settings */}
+          <div className="p-3 rounded-lg bg-[#fff8e7] border-2 border-[#361706] space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-indigo-600 border border-[#361706] flex items-center justify-center text-white text-sm flex-shrink-0">
+                  🤖
+                </div>
+                <div>
+                  <h4 className="font-pixel text-[8px] md:text-[9px] text-[#361706] uppercase font-bold flex items-center gap-1.5">
+                    API Key BioBot Gemini
+                    {getGeminiApiKey() ? (
+                      <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[6.5px]">AKTIF</span>
+                    ) : (
+                      <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[6.5px]">OFFLINE</span>
+                    )}
+                  </h4>
+                  <p className="text-[9px] text-[#543319] leading-tight mt-0.5">
+                    {getGeminiApiKey() ? 'Terhubung ke Google Gemini AI' : 'Mode offline aktif (opsional diisi)'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setShowKeyField(!showKeyField);
+                }}
+                className="px-2.5 py-1 rounded bg-[#ca7c38] hover:bg-[#df9b52] border border-[#361706] font-pixel text-[7.5px] uppercase text-[#2b1103] cursor-pointer active:translate-y-0.5"
+              >
+                {showKeyField ? 'Tutup' : 'Atur Key'}
+              </button>
+            </div>
+
+            {showKeyField && (
+              <div className="pt-2 border-t border-[#361706]/20 space-y-2">
+                <input
+                  type="password"
+                  placeholder="Paste Gemini API Key (AIzaSy...)"
+                  value={geminiKeyInput}
+                  onChange={(e) => setGeminiKeyInput(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-white border-2 border-[#361706] rounded-lg text-xs font-mono text-[#361706] placeholder-slate-400 focus:outline-none"
+                />
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-[7.5px] text-[#884318]">Dapatkan gratis di aistudio.google.com</span>
+                  <div className="flex gap-1.5">
+                    {getGeminiApiKey() && (
+                      <button
+                        onClick={() => {
+                          sound.playClick();
+                          setGeminiApiKey('');
+                          setGeminiKeyInput('');
+                          setKeySaved(true);
+                          setTimeout(() => setKeySaved(false), 2000);
+                        }}
+                        className="px-2 py-1 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded font-pixel text-[7px] uppercase border border-rose-300 cursor-pointer"
+                      >
+                        Hapus
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        sound.playClick();
+                        setGeminiApiKey(geminiKeyInput);
+                        setKeySaved(true);
+                        setTimeout(() => setKeySaved(false), 2000);
+                      }}
+                      className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-pixel text-[7.5px] uppercase border border-[#361706] cursor-pointer"
+                    >
+                      {keySaved ? 'Tersimpan! ✓' : 'Simpan'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Unlock All Stages */}

@@ -39,6 +39,31 @@ KONTEKS GAME:
 Siswa sedang bermain game ini dan mungkin bertanya tentang mekanisme game atau konsep genetika.`;
 
 /**
+ * Mengambil API Key dari localStorage (jika diatur di dalam aplikasi)
+ * atau dari environment variable VITE_GEMINI_API_KEY
+ */
+export function getGeminiApiKey() {
+  if (typeof window !== 'undefined') {
+    const localKey = localStorage.getItem('VITE_GEMINI_API_KEY');
+    if (localKey && localKey.trim()) return localKey.trim();
+  }
+  return import.meta.env.VITE_GEMINI_API_KEY || '';
+}
+
+/**
+ * Menyimpan API Key ke localStorage agar pengguna bisa mengatur langsung di aplikasi
+ */
+export function setGeminiApiKey(key) {
+  if (typeof window !== 'undefined') {
+    if (key && key.trim()) {
+      localStorage.setItem('VITE_GEMINI_API_KEY', key.trim());
+    } else {
+      localStorage.removeItem('VITE_GEMINI_API_KEY');
+    }
+  }
+}
+
+/**
  * Kirim pertanyaan ke Gemini AI dan dapatkan jawaban
  * @param {string} userMessage - Pertanyaan dari siswa
  * @param {number} stageId - Stage ID yang sedang aktif (1-8)
@@ -46,10 +71,10 @@ Siswa sedang bermain game ini dan mungkin bertanya tentang mekanisme game atau k
  * @returns {Promise<string>} - Jawaban dari Gemini
  */
 export async function askGemini(userMessage, stageId = 1, chatHistory = []) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
   
   if (!apiKey) {
-    return '⚠️ API Key Gemini belum diatur. Untuk mengaktifkan BioBot AI, tambahkan `VITE_GEMINI_API_KEY` di file `.env` lalu restart server.\n\nSementara itu, aku tetap bisa memberikan petunjuk dasar dari database lokal! 📚';
+    return '⚠️ API Key Gemini belum diatur. Anda bisa memasukkannya di Pengaturan > API Key Gemini, atau mengatur VITE_GEMINI_API_KEY di Vercel.\n\nSementara itu, aku tetap bisa memberikan petunjuk lengkap dari database lokal! 📚';
   }
 
   // Build conversation history for context
@@ -126,5 +151,6 @@ export async function askGemini(userMessage, stageId = 1, chatHistory = []) {
  * Cek apakah Gemini API tersedia
  */
 export function isGeminiAvailable() {
-  return Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+  return Boolean(getGeminiApiKey());
 }
+
