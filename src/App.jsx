@@ -7,6 +7,7 @@ import { TeacherReportModal } from './components/features/TeacherReportModal';
 import { LeaderboardModal } from './components/features/LeaderboardModal';
 import { SettingsModal } from './components/features/SettingsModal';
 import { DeveloperFeedbackModal } from './components/features/DeveloperFeedbackModal';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Firebase Auth & Group Dashboard imports
 import { AuthScreen } from './components/features/AuthScreen';
@@ -19,6 +20,7 @@ const HotsQuiz = lazy(() => import('./components/features/HotsQuiz').then(module
 const GenopediaPage = lazy(() => import('./components/features/GenopediaPage').then(module => ({ default: module.GenopediaPage })));
 const GroupDashboard = lazy(() => import('./components/features/GroupDashboard').then(module => ({ default: module.GroupDashboard })));
 const PixelRpgWorld = lazy(() => import('./components/rpg/PixelRpgWorld').then(module => ({ default: module.PixelRpgWorld })));
+const VirtualMicroscopeLab = lazy(() => import('./components/features/VirtualMicroscopeLab').then(module => ({ default: module.VirtualMicroscopeLab })));
 import { IntroVisualNovel } from './components/features/IntroVisualNovel';
 import { IntroCutsceneVideo } from './components/features/IntroCutsceneVideo';
 
@@ -29,6 +31,7 @@ import {
   Map, 
   GraduationCap, 
   BookOpen, 
+  FlaskConical,
   Trophy, 
   Settings, 
   LogOut 
@@ -42,6 +45,7 @@ const DesktopSidebar = () => {
     userName, 
     userRole, 
     setIsLeaderboardOpen, 
+    setIsBioBotOpen,
     setIsSettingsOpen, 
     handleLogout 
   } = useGame();
@@ -49,7 +53,10 @@ const DesktopSidebar = () => {
   const menuItems = [
     { id: 'main-menu', label: 'Menu Utama', icon: Home, action: () => navigateTo('main-menu') },
     { id: 'map', label: 'Play / Peta Game', icon: Map, action: () => navigateTo('map') },
-    { id: 'genopedia', label: 'Zona Belajar & Kelas', icon: BookOpen, action: () => navigateTo('genopedia') },
+    { id: 'genopedia', label: 'Materi & Belajar', icon: BookOpen, action: () => navigateTo('genopedia') },
+    { id: 'biobot', label: 'BioBot Companion', icon: Brain, action: () => setIsBioBotOpen(true) },
+    { id: 'leaderboard', label: 'Leaderboard Siswa', icon: Trophy, action: () => setIsLeaderboardOpen(true) },
+    { id: 'virtual-lab', label: 'Lab Mikroskop 3D', icon: FlaskConical, action: () => navigateTo('virtual-lab') },
   ];
 
   return (
@@ -80,9 +87,9 @@ const DesktopSidebar = () => {
           </div>
         </div>
 
-        {/* Navigation Link List (3 Consolidated Main Choices) */}
-        <nav className="space-y-2 text-left">
-          <span className="text-[8px] font-pixel text-[#ffd699]/60 uppercase tracking-widest block px-1 mb-1">3 Menu Utama</span>
+        {/* Navigation Link List */}
+        <nav className="space-y-1.5 text-left">
+          <span className="text-[8px] font-pixel text-[#ffd699]/60 uppercase tracking-widest block px-1 mb-1">Navigasi Utama</span>
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeView === item.id || (item.id === 'genopedia' && ['group-dashboard', 'hots-quiz', 'genopedia'].includes(activeView));
@@ -90,7 +97,7 @@ const DesktopSidebar = () => {
               <button
                 key={item.id}
                 onClick={() => { sound.playClick(); item.action(); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border-2 cursor-pointer transition text-[9px] font-pixel uppercase ${
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border-2 cursor-pointer transition text-[9px] font-pixel uppercase ${
                   isActive
                     ? 'bg-[#ca7c38] border-[#361706] text-[#2b1103] shadow-[2px_2px_0_#1a0b03]'
                     : 'bg-transparent border-transparent text-[#ffd699]/80 hover:text-white hover:bg-[#361706]'
@@ -107,14 +114,6 @@ const DesktopSidebar = () => {
       {/* Footer / System Utilities */}
       <div className="space-y-1.5 border-t-2 border-[#361706] pt-3">
         <span className="text-[8px] font-pixel text-[#ffd699]/60 uppercase tracking-widest block px-1 mb-1 text-left">Utilitas</span>
-        
-        <button
-          onClick={() => { sound.playClick(); setIsLeaderboardOpen(true); }}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[8px] font-pixel uppercase text-[#ffd699]/80 hover:text-[#facc15] hover:bg-[#361706] transition cursor-pointer text-left"
-        >
-          <Trophy className="w-4 h-4 text-[#facc15]" />
-          <span>LEADERBOARD</span>
-        </button>
 
         <button
           onClick={() => { sound.playClick(); setIsSettingsOpen(true); }}
@@ -146,6 +145,7 @@ const DesktopHeader = () => {
       case 'group-dashboard': return 'Portal Kelas Belajar';
       case 'hots-quiz': return 'Ujian Evaluasi Kuis HOTS';
       case 'genopedia': return 'Ensiklopedia Genetika';
+      case 'virtual-lab': return 'Laboratorium Mikroskop Virtual 3D';
       default: return 'Genetic Odyssey';
     }
   };
@@ -217,6 +217,11 @@ const GameMainContent = () => {
         {activeView === 'genopedia' && (
           <Suspense fallback={<div className="w-full min-h-screen bg-[#74c2e8]" />}>
             <GenopediaPage />
+          </Suspense>
+        )}
+        {activeView === 'virtual-lab' && (
+          <Suspense fallback={<div className="w-full min-h-screen bg-slate-950" />}>
+            <VirtualMicroscopeLab />
           </Suspense>
         )}
       </div>
@@ -366,8 +371,10 @@ const CustomGlobalModal = () => {
 
 export default function App() {
   return (
-    <GameProvider>
-      <AppShell />
-    </GameProvider>
+    <ErrorBoundary>
+      <GameProvider>
+        <AppShell />
+      </GameProvider>
+    </ErrorBoundary>
   );
 }

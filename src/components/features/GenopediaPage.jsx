@@ -29,14 +29,20 @@ import {
   ExternalLink,
   Download,
   BookMarked,
-  BookCheck,
   RefreshCw,
   Globe,
-  Play
+  Play,
+  Bot,
+  Trophy
 } from 'lucide-react';
 
 export const GenopediaPage = () => {
-  const { navigateTo, showAlert } = useGame();
+  const { 
+    navigateTo, 
+    showAlert, 
+    setIsBioBotOpen = () => {}, 
+    setIsLeaderboardOpen = () => {} 
+  } = useGame();
   
   // Header Main Tabs: 'materi' | 'decoder' | 'scholar'
   const [mainTab, setMainTab] = useState('materi');
@@ -1146,6 +1152,36 @@ export const GenopediaPage = () => {
               </div>
             )}
 
+            {/* BioBot AI Companion Quick Button */}
+            <button
+              onClick={() => {
+                sound.playClick();
+                setIsBioBotOpen(true);
+              }}
+              className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 border-2 sm:border-3 border-[#221208] text-white shadow-[2px_2px_0_#1a0b03] flex items-center gap-1.5 active:translate-y-0.5 cursor-pointer flex-shrink-0"
+              title="Tanya Asisten AI BioBot"
+            >
+              <span className="text-xs sm:text-sm animate-pulse">🤖</span>
+              <span className="font-pixel text-[7px] sm:text-[8px] uppercase font-bold hidden xs:inline text-white">
+                BioBot AI
+              </span>
+            </button>
+
+            {/* Leaderboard Quick Button */}
+            <button
+              onClick={() => {
+                sound.playClick();
+                setIsLeaderboardOpen(true);
+              }}
+              className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-[#eab308] hover:bg-[#facc15] border-2 sm:border-3 border-[#221208] text-[#2b1103] shadow-[2px_2px_0_#1a0b03] flex items-center gap-1.5 active:translate-y-0.5 cursor-pointer flex-shrink-0"
+              title="Papan Peringkat Siswa"
+            >
+              <span className="text-xs sm:text-sm">🏆</span>
+              <span className="font-pixel text-[7px] sm:text-[8px] uppercase font-bold hidden xs:inline text-[#2b1103]">
+                Peringkat
+              </span>
+            </button>
+
             <button
               onClick={() => {
                 sound.playClick();
@@ -1360,6 +1396,33 @@ export const GenopediaPage = () => {
                     {topics[selectedTopic].subTabs[selectedSubTopic].content}
                   </div>
 
+                  {/* Interactive BioBot AI Assistance Banner */}
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-400 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-xs text-left">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-blue-600 border border-blue-900 flex items-center justify-center text-white text-base flex-shrink-0 animate-bounce">
+                        🤖
+                      </div>
+                      <div>
+                        <h5 className="font-pixel text-[8.5px] text-blue-950 font-bold uppercase">
+                          Butuh Bantuan Materi Ini?
+                        </h5>
+                        <p className="text-[9.5px] text-blue-800 leading-tight">
+                          Tanyakan rumus persilangan, genotipe, atau fenotipe ke BioBot AI Companion.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        sound.playClick();
+                        setIsBioBotOpen(true);
+                      }}
+                      className="w-full sm:w-auto px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-pixel text-[8px] uppercase font-bold border border-blue-950 shadow-xs cursor-pointer active:translate-y-0.5 flex-shrink-0 flex items-center justify-center gap-1.5"
+                    >
+                      <span>Tanya BioBot AI</span>
+                      <span>✨</span>
+                    </button>
+                  </div>
+
                 </div>
 
                 {/* Bottom Navigation */}
@@ -1530,8 +1593,8 @@ export const GenopediaPage = () => {
           </div>
         )}
 
-        {/* ================= BOTTOM NAVIGATION SHELF (4 TABS) ================= */}
-        <div className="grid grid-cols-4 bg-[#2b1103] p-1.5 rounded-2xl border-4 border-[#221208] shadow-[4px_4px_0_#1a0b03] gap-1.5 mt-4">
+        {/* ================= BOTTOM NAVIGATION SHELF (6 TABS) ================= */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 bg-[#2b1103] p-1.5 rounded-2xl border-4 border-[#221208] shadow-[4px_4px_0_#1a0b03] gap-1.5 mt-4">
           <button
             onClick={() => { sound.playClick(); stopSpeaking(); navigateTo('main-menu'); }}
             className="py-2 px-1 rounded-xl text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer bg-[#3a1d0b] hover:bg-[#4a2610] text-[#ffd699] border-2 border-transparent"
@@ -1574,6 +1637,24 @@ export const GenopediaPage = () => {
           >
             <span className="text-base sm:text-lg">🏛️</span>
             <span className="font-pixel text-[7px] sm:text-[8px] uppercase">JURNAL</span>
+          </button>
+
+          <button
+            onClick={() => { sound.playClick(); setIsBioBotOpen(true); }}
+            className="py-2 px-1 rounded-xl text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer bg-gradient-to-b from-blue-700 to-blue-900 hover:from-blue-600 hover:to-blue-800 text-white border-2 border-blue-400 shadow-xs"
+            title="Tanya Asisten AI BioBot"
+          >
+            <span className="text-base sm:text-lg animate-pulse">🤖</span>
+            <span className="font-pixel text-[7px] sm:text-[8px] uppercase text-white font-bold">BIOBOT AI</span>
+          </button>
+
+          <button
+            onClick={() => { sound.playClick(); setIsLeaderboardOpen(true); }}
+            className="py-2 px-1 rounded-xl text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer bg-gradient-to-b from-amber-600 to-amber-800 hover:from-amber-500 hover:to-amber-700 text-amber-100 border-2 border-amber-300 shadow-xs"
+            title="Papan Peringkat Siswa"
+          >
+            <span className="text-base sm:text-lg">🏆</span>
+            <span className="font-pixel text-[7px] sm:text-[8px] uppercase text-amber-100 font-bold">PERINGKAT</span>
           </button>
         </div>
 

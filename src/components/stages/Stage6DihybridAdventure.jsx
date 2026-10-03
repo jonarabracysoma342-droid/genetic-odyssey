@@ -601,6 +601,10 @@ export const Stage6DihybridAdventure = () => {
   // Ratio state states
   const [ratioAnswer, setRatioAnswer] = useState('');
   
+  // Round 3 Interactive Analysis State (Saran: eksplorasi rasio & Hukum II Mendel)
+  const [activePhenotypeFilter, setActivePhenotypeFilter] = useState('Bulat Kuning');
+  const [conceptQuestionAnswer, setConceptQuestionAnswer] = useState(null);
+  
   // Feedback and progress
   const [feedback, setFeedback] = useState(null);
   const [stageCompleted, setStageCompleted] = useState(false);
@@ -850,7 +854,7 @@ export const Stage6DihybridAdventure = () => {
       setScore(prev => prev + 250);
       
       if (round === 1) {
-        // Complete Round 1 -> show transition
+        // Complete Round 1 -> show transition to Round 2
         setFeedback({
           type: 'success',
           message: 'Benar! Rasio fenotipe F2 Dihibrid adalah 9:3:3:1. Bagian 1 Selesai! Klik tombol di bawah untuk lanjut ke Bagian 2 (Model Gambar).'
@@ -858,19 +862,39 @@ export const Stage6DihybridAdventure = () => {
         setTimeout(() => {
           setStep(4); // intermediate transition step
           setFeedback(null);
-        }, 2000);
-      } else {
-        // Complete Round 2 -> Victory screen!
+        }, 1500);
+      } else if (round === 2) {
+        // Complete Round 2 -> show transition to Round 3 (Saran: Analisis Rasio & Hukum II Mendel)
         setFeedback({
           type: 'success',
-          message: 'Benar! Rasio fenotipe F2 Dihibrid adalah 9:3:3:1. Stage 6 sepenuhnya selesai!'
+          message: 'Luar biasa! Model gambar fenotipe selesai! Klik tombol di bawah untuk lanjut ke Bagian 3: Analisis Rasio & Pembuktian Hukum II Mendel.'
+        });
+        setTimeout(() => {
+          setStep(4); // intermediate transition step
+          setFeedback(null);
+        }, 1500);
+      } else {
+        // In Round 3, also check conceptQuestionAnswer
+        if (conceptQuestionAnswer !== 'A') {
+          sound.playWrong();
+          setFeedback({
+            type: 'error',
+            message: 'Rasio tepat! Sekarang pilih jawaban yang benar pada pertanyaan pembuktian Hukum Asortasi Bebas di bawah untuk menuntaskan stage!'
+          });
+          return;
+        }
+
+        // Complete Round 3 -> Victory screen!
+        setFeedback({
+          type: 'success',
+          message: 'Luar biasa! Seluruh 3 tahapan Dihibrid (Huruf, Gambar, & Pembuktian Hukum II Mendel) tuntas sempurna!'
         });
         setTimeout(() => {
           setStageCompleted(true);
           sound.playFanfare();
           try { confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } }); } catch(e){}
-          completeStage(6, 3, score + 250, 100, 60);
-        }, 2000);
+          completeStage(6, 3, score + 350, 100, 60);
+        }, 1800);
       }
     } else {
       sound.playWrong();
@@ -896,6 +920,27 @@ export const Stage6DihybridAdventure = () => {
     setActiveCell(null);
     setIncorrectCells([]);
     setRatioAnswer('');
+    setFeedback(null);
+  };
+
+  const handleTransitionToRound3 = () => {
+    sound.playClick();
+    setRound(3);
+    setStep(3); // Direct analysis step
+    setAssignedCols(['AB', 'Ab', 'aB', 'ab']);
+    setAssignedRows(['AB', 'Ab', 'aB', 'ab']);
+    const fullGrid = [
+      ['AABB', 'AABb', 'AaBB', 'AaBb'],
+      ['AABb', 'AAbb', 'AaBb', 'Aabb'],
+      ['AaBB', 'AaBb', 'aaBB', 'aaBb'],
+      ['AaBb', 'Aabb', 'aaBb', 'aabb']
+    ];
+    setGridCells(fullGrid);
+    setActiveCell(null);
+    setIncorrectCells([]);
+    setRatioAnswer('9:3:3:1');
+    setActivePhenotypeFilter('Bulat Kuning');
+    setConceptQuestionAnswer(null);
     setFeedback(null);
   };
 
@@ -955,7 +1000,7 @@ export const Stage6DihybridAdventure = () => {
         <div className="flex items-center gap-2">
           {/* Active Round indicator */}
           <div className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl bg-indigo-500/10 border-2 border-slate-800 text-[8.5px] sm:text-[9px] font-black text-indigo-900">
-            Bagian {round}/2
+            Bagian {round}/3
           </div>
 
           <div className="flex items-center gap-1.5 bg-amber-500/10 border-2 border-slate-800 px-2.5 sm:px-3 py-1 rounded-xl shadow-3xs">
@@ -972,20 +1017,23 @@ export const Stage6DihybridAdventure = () => {
             /* Intermediate Round Transition Screen */
             <div className="bg-white border-2 border-slate-800 rounded-3xl p-4 sm:p-6 shadow-[4px_4px_0px_#1e293b] text-center space-y-3 sm:space-y-4 max-w-sm mx-auto my-auto animate-scale-up max-h-[96vh] overflow-y-auto">
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-50 border-2 border-slate-800 flex items-center justify-center mx-auto shadow-3xs">
-                <span className="text-lg sm:text-xl font-black text-indigo-700">2</span>
+                <span className="text-lg sm:text-xl font-black text-indigo-700">{round === 1 ? '2' : '3'}</span>
               </div>
               <div className="space-y-1 sm:space-y-1.5">
-                <h3 className="text-sm sm:text-base font-black text-slate-800">BAGIAN 1 SELESAI!</h3>
+                <h3 className="text-sm sm:text-base font-black text-slate-800">
+                  {round === 1 ? 'BAGIAN 1 SELESAI!' : 'BAGIAN 2 SELESAI!'}
+                </h3>
                 <p className="text-[9.5px] sm:text-[10.5px] text-slate-600 font-bold leading-relaxed px-1">
-                  Luar biasa! Kamu berhasil menuntaskan persilangan dihibrid model huruf (genotipe).
-                  Sekarang, tantangan berikutnya adalah melakukan persilangan secara visual menggunakan model gambar fenotipe biji ercis.
+                  {round === 1 
+                    ? 'Luar biasa! Kamu berhasil menuntaskan persilangan dihibrid model huruf (genotipe). Sekarang, mari lakukan persilangan secara visual menggunakan model gambar fenotipe biji ercis.'
+                    : 'Hebat! Kamu berhasil menuntaskan model visual gambar fenotipe biji ercis. Sekarang masuk ke Bagian 3: Analisis Interaktif Rasio Mendel & Uji Pembuktian Hukum II Mendel (Asortasi Bebas)!'}
                 </p>
               </div>
               <button
-                onClick={handleTransitionToRound2}
+                onClick={round === 1 ? handleTransitionToRound2 : handleTransitionToRound3}
                 className="w-full py-2.5 sm:py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white font-black text-xs shadow-[3px_3px_0px_#1e293b] flex items-center justify-center gap-2 border-2 border-slate-800 cursor-pointer active:translate-y-0.5 active:shadow-none hover:scale-[1.02] transition-all"
               >
-                <span>LANJUT KE BAGIAN 2</span>
+                <span>{round === 1 ? 'LANJUT KE BAGIAN 2' : 'LANJUT KE BAGIAN 3'}</span>
                 <ArrowRight className="w-4 h-4 stroke-[3px]" />
               </button>
             </div>
@@ -1000,10 +1048,10 @@ export const Stage6DihybridAdventure = () => {
                     8. STAGE 6 - DIHYBRID ADVENTURE
                   </h1>
                   <p className="text-[8.5px] sm:text-[9.5px] font-bold text-slate-500 mt-0.5">
-                    Bagian {round}: {round === 1 ? 'Model Huruf (Genotipe)' : 'Model Gambar (Fenotipe)'} &bull; {' '}
+                    Bagian {round}: {round === 1 ? 'Model Huruf (Genotipe)' : round === 2 ? 'Model Gambar (Fenotipe)' : 'Analisis Rasio & Asortasi Bebas'} &bull; {' '}
                     {step === 1 && 'Susun kombinasi gamet dari masing-masing induk dihibrid!'}
                     {step === 2 && 'Tentukan hasil persilangan untuk setiap kotak Punnett!'}
-                    {step === 3 && 'Pilih rasio fenotipe F2 yang terbentuk dari persilangan!'}
+                    {step === 3 && (round === 3 ? 'Eksplorasi 4 fenotipe & jawab pembuktian Hukum II Mendel!' : 'Pilih rasio fenotipe F2 yang terbentuk dari persilangan!')}
                   </p>
                 </div>
               </div>
@@ -1312,30 +1360,49 @@ export const Stage6DihybridAdventure = () => {
                             const isActive = activeCell && activeCell[0] === rIndex && activeCell[1] === cIndex;
                             const showPhenotype = step === 3 || stageCompleted;
 
+                            // Round 3 filter check
+                            const currentGenotype = combineGametes(rowGamete, colGamete);
+                            const currentPheno = getPhenotypeInfo(currentGenotype).label;
+                            const isFilterMatch = round === 3 && activePhenotypeFilter && currentPheno === activePhenotypeFilter;
+                            const isFilterDimmed = round === 3 && activePhenotypeFilter && currentPheno !== activePhenotypeFilter;
+
                             return (
                               <div
                                 key={`cell-${rIndex}-${cIndex}`}
                                 onClick={() => isCellInteractive && handleCellSelect(rIndex, cIndex)}
-                                className={`aspect-square rounded-xl flex items-center justify-center transition-all cursor-pointer border-2 ${
+                                className={`aspect-square rounded-xl flex items-center justify-center transition-all cursor-pointer border-2 relative ${
                                   isActive
                                     ? 'bg-sky-100 border-sky-600 scale-105 ring-2 sm:ring-3 ring-sky-350 font-black'
                                     : isWrong
                                       ? 'bg-rose-55 border-rose-500 text-rose-800 animate-shake'
-                                      : cellValue
-                                        ? round === 1
-                                          ? showPhenotype
-                                            ? `${getPhenotypeInfo(cellValue).bgClass} border-slate-800 font-mono font-black text-[10px] sm:text-xs shadow-3xs animate-scale-up`
-                                            : 'bg-white border-slate-855 text-slate-850 font-mono font-black text-[10px] sm:text-xs shadow-3xs'
-                                          : /* Round 2: phenotype SeedIcon display */
-                                            `${getPhenotypeInfo(combineGametes(rowGamete, colGamete)).bgClass} border-slate-800 shadow-3xs flex items-center justify-center`
-                                        : 'bg-white border-slate-250 text-slate-350 font-mono font-black text-xs sm:text-sm'
+                                      : isFilterMatch
+                                        ? `${getPhenotypeInfo(currentGenotype).bgClass} border-slate-900 ring-4 ring-amber-400 scale-105 shadow-md z-10 animate-pulse`
+                                        : isFilterDimmed
+                                          ? `${getPhenotypeInfo(currentGenotype).bgClass} border-slate-300 opacity-40 grayscale-[30%]`
+                                          : cellValue
+                                            ? round === 1
+                                              ? showPhenotype
+                                                ? `${getPhenotypeInfo(cellValue).bgClass} border-slate-800 font-mono font-black text-[10px] sm:text-xs shadow-3xs animate-scale-up`
+                                                : 'bg-white border-slate-855 text-slate-850 font-mono font-black text-[10px] sm:text-xs shadow-3xs'
+                                              : round === 2
+                                                ? `${getPhenotypeInfo(combineGametes(rowGamete, colGamete)).bgClass} border-slate-800 shadow-3xs flex items-center justify-center`
+                                                : `${getPhenotypeInfo(currentGenotype).bgClass} border-slate-800 shadow-3xs flex items-center justify-center`
+                                            : 'bg-white border-slate-250 text-slate-350 font-mono font-black text-xs sm:text-sm'
                                 }`}
                               >
                                 {cellValue ? (
                                   round === 1 ? (
                                     cellValue
-                                  ) : (
+                                  ) : round === 2 ? (
                                     <SeedIcon genotypeOrPhenotype={cellValue} size={26} />
+                                  ) : (
+                                    /* Round 3: Combined SeedIcon + Genotype Letter + Phenotype */
+                                    <div className="flex flex-col items-center justify-center gap-0.5 select-none">
+                                      <SeedIcon genotypeOrPhenotype={currentGenotype} size={20} />
+                                      <span className="font-mono text-[7.5px] sm:text-[9px] font-black text-slate-900 leading-tight">
+                                        {cellValue}
+                                      </span>
+                                    </div>
                                   )
                                 ) : (
                                   '?'
@@ -1400,32 +1467,125 @@ export const Stage6DihybridAdventure = () => {
             )}
 
             {step === 3 && (
-              /* Step 3: Answer Ratio picker */
+              /* Step 3: Answer Ratio picker & Round 3 Interactive Analysis */
               <div className="border-t-2 border-slate-800/15 pt-3 sm:pt-4 space-y-3 flex-shrink-0 text-center">
-                <span className="text-[9px] sm:text-xs font-black text-slate-600 uppercase tracking-widest block">
-                  Pilih Rasio Fenotipe F2 Dihibrid yang Tepat
-                </span>
                 
-                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-                  {['9:3:3:1', '3:1', '1:2:1', '1:1:1:1'].map((r) => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => {
-                        sound.playClick();
-                        setRatioAnswer(r);
-                      }}
-                      className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl font-mono font-black text-xs sm:text-sm border-2 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none cursor-pointer transition-all ${
-                        ratioAnswer === r 
-                          ? 'bg-sky-100 border-sky-600 text-sky-900 scale-105 ring-2 ring-sky-300' 
-                          : 'bg-white border-slate-800 text-slate-800 hover:bg-slate-50'
-                      }`}
-                    >
-                      {r}
-                    </button>
-                  ))}
+                {/* Round 3 Specific: Interactive Phenotype Filter Cards */}
+                {round === 3 && (
+                  <div className="space-y-2 p-2.5 sm:p-3 bg-amber-50/80 rounded-2xl border-2 border-amber-300 shadow-3xs max-w-2xl mx-auto">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9.5px] sm:text-[10.5px] font-black text-amber-950 uppercase tracking-wide flex items-center gap-1.5">
+                        <span>🔍 Analisis Interaktif 4 Fenotipe (Klik untuk Highlight di Papan):</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-amber-800 bg-white/80 px-2 py-0.5 rounded-full border border-amber-300">
+                        Total 16 Kotak
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
+                      {[
+                        { label: 'Bulat Kuning', gen: 'A_B_', count: '9/16 (56.25%)', color: '#facc15', bg: 'bg-amber-100 border-amber-500 text-amber-950' },
+                        { label: 'Bulat Hijau', gen: 'A_bb', count: '3/16 (18.75%)', color: '#84cc16', bg: 'bg-lime-100 border-lime-500 text-lime-950' },
+                        { label: 'Keriput Kuning', gen: 'aaB_', count: '3/16 (18.75%)', color: '#f97316', bg: 'bg-orange-100 border-orange-500 text-orange-950' },
+                        { label: 'Keriput Hijau', gen: 'aabb', count: '1/16 (6.25%)', color: '#10b981', bg: 'bg-emerald-100 border-emerald-500 text-emerald-950' }
+                      ].map((item) => {
+                        const isSelected = activePhenotypeFilter === item.label;
+                        return (
+                          <button
+                            key={item.label}
+                            type="button"
+                            onClick={() => {
+                              sound.playClick();
+                              setActivePhenotypeFilter(item.label);
+                            }}
+                            className={`p-2 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                              isSelected
+                                ? `${item.bg} ring-2 ring-slate-900 shadow-sm scale-105 font-black`
+                                : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-[9px] sm:text-[10px] truncate">{item.label}</span>
+                              <SeedIcon genotypeOrPhenotype={item.label} size={16} />
+                            </div>
+                            <div className="text-[8px] font-mono font-bold mt-0.5 text-slate-600">{item.count}</div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Ratio Selection */}
+                <div className="space-y-1.5">
+                  <span className="text-[9px] sm:text-xs font-black text-slate-600 uppercase tracking-widest block">
+                    {round === 3 ? '1. Tentukan Rasio Perbandingan Fenotipe F2 Dihibrid:' : 'Pilih Rasio Fenotipe F2 Dihibrid yang Tepat:'}
+                  </span>
+                  
+                  <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+                    {['9:3:3:1', '3:1', '1:2:1', '1:1:1:1'].map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => {
+                          sound.playClick();
+                          setRatioAnswer(r);
+                        }}
+                        className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-xl font-mono font-black text-xs sm:text-sm border-2 shadow-[2px_2px_0px_#1e293b] active:translate-y-0.5 active:shadow-none cursor-pointer transition-all ${
+                          ratioAnswer === r 
+                            ? 'bg-sky-100 border-sky-600 text-sky-900 scale-105 ring-2 ring-sky-300' 
+                            : 'bg-white border-slate-800 text-slate-800 hover:bg-slate-50'
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
+                {/* Round 3 Concept Question (Hukum II Mendel) */}
+                {round === 3 && (
+                  <div className="p-3 bg-white border-2 border-indigo-200 rounded-2xl max-w-xl mx-auto text-left space-y-2 shadow-3xs">
+                    <span className="text-[9.5px] font-black text-indigo-900 uppercase tracking-wide block">
+                      2. Uji Pembuktian Hukum II Mendel (Asortasi Bebas):
+                    </span>
+                    <p className="text-[10px] sm:text-[11px] text-slate-700 font-medium leading-relaxed">
+                      Munculnya variasi baru (Bulat Hijau &amp; Keriput Kuning) pada F2 membuktikan bahwa:
+                    </p>
+                    <div className="space-y-1.5">
+                      {[
+                        { key: 'A', text: 'Alel gen bentuk (A/a) dan alel gen warna (B/b) memisah & mengelompok secara BEBAS independen tanpa terikat sifat induk asalnya.' },
+                        { key: 'B', text: 'Gen bentuk dan gen warna selalu bertaut kaku pada kromosom yang sama.' }
+                      ].map((opt) => {
+                        const isChosen = conceptQuestionAnswer === opt.key;
+                        return (
+                          <button
+                            key={opt.key}
+                            type="button"
+                            onClick={() => {
+                              sound.playClick();
+                              setConceptQuestionAnswer(opt.key);
+                            }}
+                            className={`w-full p-2 rounded-xl border text-left text-[9.5px] sm:text-[10.5px] font-medium transition cursor-pointer flex items-start gap-2 ${
+                              isChosen
+                                ? 'bg-indigo-50 border-indigo-600 text-indigo-950 ring-1 ring-indigo-400 font-bold'
+                                : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800'
+                            }`}
+                          >
+                            <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black shrink-0 mt-0.5 ${
+                              isChosen ? 'bg-indigo-600 text-white' : 'bg-slate-300 text-slate-700'
+                            }`}>
+                              {opt.key}
+                            </span>
+                            <span className="leading-snug">{opt.text}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottom Action Buttons */}
                 <div className="flex flex-wrap justify-center pt-2 gap-3">
                   <button
                     type="button"
@@ -1446,7 +1606,7 @@ export const Stage6DihybridAdventure = () => {
                         : 'bg-slate-200 border-slate-400 text-slate-400 cursor-not-allowed shadow-none'
                     }`}
                   >
-                    <span>SELESAIKAN DIHIBRID</span>
+                    <span>{round === 3 ? 'KLAIM BINTANG 3 & SELESAI 🏆' : 'SELESAIKAN DIHIBRID'}</span>
                     <ArrowRight className="w-4 h-4 stroke-[3px]" />
                   </button>
                 </div>

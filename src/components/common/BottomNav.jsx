@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
-import { Play, BookOpen, Menu } from 'lucide-react';
+import { Play, BookOpen, Menu, FlaskConical } from 'lucide-react';
 
 export const BottomNav = () => {
   const { activeView, navigateTo, setIsSettingsOpen } = useGame();
@@ -20,9 +20,15 @@ export const BottomNav = () => {
     },
     { 
       id: 'genopedia', 
-      label: 'Zona Belajar', 
+      label: 'Materi', 
       icon: BookOpen, 
       action: () => navigateTo('genopedia') 
+    },
+    { 
+      id: 'virtual-lab', 
+      label: 'Lab 3D', 
+      icon: FlaskConical, 
+      action: () => navigateTo('virtual-lab') 
     },
   ];
 

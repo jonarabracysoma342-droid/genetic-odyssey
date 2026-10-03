@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../../context/GameContext';
 import { BIOBOT_HINTS, STAGES, GENOPEDIA_TERMS } from '../../data/geneticsData';
-import { Bot, Sparkles, Lightbulb, ChevronRight, Send } from 'lucide-react';
+import { Bot, Sparkles, Lightbulb, ChevronRight, Send, Zap, Wifi, WifiOff } from 'lucide-react';
 import { sound } from '../../services/sound';
+import { askGemini, isGeminiAvailable } from '../../services/gemini';
 
 export const BioBotDrawer = () => {
   const { isBioBotOpen, setIsBioBotOpen, currentStageId } = useGame();
@@ -10,12 +11,15 @@ export const BioBotDrawer = () => {
   const [messages, setMessages] = useState([
     { 
       sender: 'bot', 
-      text: `Halo! Aku BioBot, asisten AI belajarmu. Ada yang bisa kubantu mengenai materi genetika atau tantangan di game ini?\n\nSilakan ketik pertanyaanmu di bawah atau pilih salah satu tombol petunjuk cepat!` 
+      text: isGeminiAvailable()
+        ? `Halo! Aku BioBot, asisten AI cerdas berbasis **Gemini AI** 🧠✨\n\nAku bisa menjawab pertanyaan apapun tentang genetika Mendel secara real-time! Silakan ketik pertanyaanmu atau gunakan tombol petunjuk cepat di bawah.`
+        : `Halo! Aku BioBot, asisten belajarmu. Ada yang bisa kubantu mengenai materi genetika atau tantangan di game ini?\n\nSilakan ketik pertanyaanmu di bawah atau pilih salah satu tombol petunjuk cepat!`
     }
   ]);
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const geminiEnabled = isGeminiAvailable();
 
   // Sync active stage when drawer opens
   useEffect(() => {
@@ -66,8 +70,8 @@ export const BioBotDrawer = () => {
     } catch(e){}
   };
 
-  // Automated Response Engine (Simulated Gemini AI Agent)
-  const getBotResponse = (input, stageId) => {
+  // Offline Fallback Response Engine (used when Gemini API is not available)
+  const getOfflineResponse = (input, stageId) => {
     const cleanInput = input.toLowerCase().trim();
     
     // Greetings
@@ -112,9 +116,6 @@ export const BioBotDrawer = () => {
     if (cleanInput.includes('hukum mendel') || cleanInput.includes('hukum 1') || cleanInput.includes('hukum 2') || cleanInput.includes('segregasi') || cleanInput.includes('asortasi')) {
       return "**Hukum Mendel I (Segregasi Bebas)**: Pasangan alel berpisah secara bebas pada saat pembentukan gamet.\n\n**Hukum Mendel II (Asortasi Bebas)**: Alel-alel dari gen yang berbeda mengelompok secara bebas pada saat pembuahan.";
     }
-    if (cleanInput.includes('letal') || cleanInput.includes('mati')) {
-      return "**Gen Letal** adalah gen yang menyebabkan kematian pada individu yang memilikinya dalam keadaan homozigot (baik homozigot dominan maupun resesif), sehingga merubah perbandingan rasio persilangan.";
-    }
     if (cleanInput.includes('intermediet')) {
       return "**Intermediet** adalah sifat campuran/gabungan dari kedua induk akibat tidak adanya sifat dominan penuh. Contoh: bunga merah (MM) x bunga putih (mm) menghasilkan anak berwarna merah muda (Mm).";
     }
@@ -124,24 +125,39 @@ export const BioBotDrawer = () => {
     return `Mengenai topik **${currentTopic}**, apakah kamu ingin menanyakan hal spesifik seperti:\n\n1. Definisi istilah (misal: *'apa itu fenotipe'*, *'apa itu alel'*)\n2. Petunjuk kuis (misal: *'cara menyelesaikan stage'*, *'minta petunjuk'*)\n3. Contoh persilangan (misal: *'rasio monohibrid'*)\n\nSilakan ketik pertanyaan di bawah!`;
   };
 
-  // Submit chat message
-  const handleSendMessage = (textToSend) => {
-    if (!textToSend.trim()) return;
+  // Submit chat message — routes to Gemini AI or offline fallback
+  const handleSendMessage = async (textToSend) => {
+    if (!textToSend.trim() || isTyping) return;
     
     // Add user message
     const userMsg = { sender: 'user', text: textToSend };
-    setMessages(prev => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setChatInput('');
     setIsTyping(true);
     soundMessage(false);
     
-    // AI processing delay (looks like real computation)
-    setTimeout(() => {
-      const botResponse = getBotResponse(textToSend, selectedStageId);
-      setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+    if (geminiEnabled) {
+      // 🧠 Gemini AI Mode — Real AI response
+      try {
+        const aiResponse = await askGemini(textToSend, selectedStageId, updatedMessages);
+        setMessages(prev => [...prev, { sender: 'bot', text: aiResponse }]);
+      } catch (err) {
+        console.error('[BioBot] Gemini error, falling back to offline:', err);
+        const fallback = getOfflineResponse(textToSend, selectedStageId);
+        setMessages(prev => [...prev, { sender: 'bot', text: fallback }]);
+      }
       setIsTyping(false);
       soundMessage(true);
-    }, 800);
+    } else {
+      // 📚 Offline Mode — Keyword matching fallback
+      setTimeout(() => {
+        const botResponse = getOfflineResponse(textToSend, selectedStageId);
+        setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+        setIsTyping(false);
+        soundMessage(true);
+      }, 800);
+    }
   };
 
   // Get stage-specific quick hints
@@ -177,12 +193,28 @@ export const BioBotDrawer = () => {
         {/* Drawer Header */}
         <div className="flex justify-between items-center border-b border-slate-100 pb-3 flex-shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md">
+            <div className={`w-9 h-9 rounded-full ${geminiEnabled ? 'bg-gradient-to-br from-indigo-600 to-purple-600' : 'bg-indigo-600'} text-white flex items-center justify-center shadow-md`}>
               <Bot className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-serif-display font-extrabold text-slate-900 text-base leading-tight">BioBot Assistant</h3>
-              <p className="text-[10px] text-slate-500 font-medium">Asisten Belajar Genetika Interaktif</p>
+              <h3 className="font-serif-display font-extrabold text-slate-900 text-base leading-tight flex items-center gap-1.5">
+                BioBot Assistant
+                {geminiEnabled && <Zap className="w-3.5 h-3.5 text-amber-500 animate-pulse" />}
+              </h3>
+              <p className="text-[10px] text-slate-500 font-medium flex items-center gap-1">
+                {geminiEnabled ? (
+                  <>
+                    <Wifi className="w-2.5 h-2.5 text-emerald-500" />
+                    <span className="text-emerald-600 font-bold">Gemini AI Aktif</span>
+                    <span className="text-slate-400">• Real-time AI</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="w-2.5 h-2.5 text-slate-400" />
+                    <span>Mode Offline • Database Lokal</span>
+                  </>
+                )}
+              </p>
             </div>
           </div>
           <button 
@@ -195,7 +227,9 @@ export const BioBotDrawer = () => {
 
         {/* Topic Context Dropdown */}
         <div className="py-2.5 border-b border-slate-100 flex-shrink-0 space-y-1">
-          <label className="text-[9px] font-black text-slate-400 tracking-wider uppercase block">Topik Pembahasan AI</label>
+          <label className="text-[9px] font-black text-slate-400 tracking-wider uppercase block">
+            {geminiEnabled ? 'Konteks Topik AI' : 'Topik Pembahasan'}
+          </label>
           <select 
             value={selectedStageId} 
             onChange={(e) => handleStageChange(Number(e.target.value))}
@@ -217,7 +251,7 @@ export const BioBotDrawer = () => {
               }`}
             >
               {msg.sender === 'bot' && (
-                <div className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                <div className={`w-6 h-6 rounded-full ${geminiEnabled ? 'bg-gradient-to-br from-indigo-100 to-purple-100 border-indigo-200' : 'bg-slate-100 border-slate-200'} border flex items-center justify-center text-indigo-600 flex-shrink-0`}>
                   <Bot className="w-3.5 h-3.5" />
                 </div>
               )}
@@ -237,7 +271,7 @@ export const BioBotDrawer = () => {
           {isTyping && (
             <div className="flex items-center gap-2 text-slate-400 text-[9px] font-black tracking-wide ml-8 animate-pulse">
               <Bot className="w-3.5 h-3.5 animate-spin" />
-              <span>BioBot sedang mengetik...</span>
+              <span>{geminiEnabled ? 'BioBot AI sedang berpikir...' : 'BioBot sedang mengetik...'}</span>
             </div>
           )}
           
@@ -253,7 +287,8 @@ export const BioBotDrawer = () => {
               <button
                 key={i}
                 onClick={() => handleSendMessage(sug)}
-                className="text-[9px] bg-slate-50 hover:bg-indigo-50 border border-slate-200/80 hover:border-indigo-200 text-slate-650 hover:text-indigo-800 px-2.5 py-1 rounded-full font-bold transition duration-200 cursor-pointer focus:outline-none shadow-3xs"
+                disabled={isTyping}
+                className="text-[9px] bg-slate-50 hover:bg-indigo-50 border border-slate-200/80 hover:border-indigo-200 text-slate-650 hover:text-indigo-800 px-2.5 py-1 rounded-full font-bold transition duration-200 cursor-pointer focus:outline-none shadow-3xs disabled:opacity-40"
               >
                 💡 {sug}
               </button>
@@ -269,13 +304,14 @@ export const BioBotDrawer = () => {
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Tanyakan konsep genetika..."
-              className="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-[11px] font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-3xs"
+              placeholder={geminiEnabled ? "Tanya apapun soal genetika..." : "Tanyakan konsep genetika..."}
+              disabled={isTyping}
+              className="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-[11px] font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-3xs disabled:opacity-60"
             />
             <button
               type="submit"
-              disabled={!chatInput.trim()}
-              className="w-9 h-9 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl flex items-center justify-center cursor-pointer transition shadow-3xs flex-shrink-0"
+              disabled={!chatInput.trim() || isTyping}
+              className={`w-9 h-9 ${geminiEnabled ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700' : 'bg-indigo-600 hover:bg-indigo-700'} disabled:opacity-40 text-white rounded-xl flex items-center justify-center cursor-pointer transition shadow-3xs flex-shrink-0`}
             >
               <Send className="w-4 h-4" />
             </button>
